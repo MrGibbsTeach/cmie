@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_ai_data_unit1",
+  "title": "AI & Data Literacy Series – Unit 1: Data Foundations (Year 7)",
+  "year_level": "Year 7",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "Data Shapes the AI World" },
+    { "title": "What Counts as Personal Data?" },
+    { "title": "Structured vs Unstructured Data (Text, Images, Clicks)" },
+    { "title": "Data Quality: Noise, Errors, and Missing Values" },
+    { "title": "Bias in Training Data and AI Fairness" },
+    { "title": "How Recommendation Systems Use Your Data" },
+    { "title": "Designing Fair Data Collection in the Classroom" }
+  ],
+  "lesson_videos": {}
+}

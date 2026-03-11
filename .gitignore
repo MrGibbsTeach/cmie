@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+
+# Environment / secrets
+.env
+api key.txt
+
+# Generated outputs
+generated_lessons/
+output/
+packages/
+releases/
+
+# Local database
+cmie.db
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Logs / temp
+*.log
