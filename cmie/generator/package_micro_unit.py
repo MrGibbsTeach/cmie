@@ -9,8 +9,8 @@ PACKAGES_DIR = Path("packages")
 
 # Legacy constants for the original micro-unit.
 # These are kept ONLY for standalone packaging / manifest generation.
-MICRO_UNIT_NAME: str = "AI & Data Literacy Series – Unit 1: Data Foundations (Year 7)"
-YEAR_LEVEL: str = "Year 7"
+MICRO_UNIT_NAME: str = "AI & Data Literacy Series – Unit 1: Data Foundations (Lower Secondary)"
+YEAR_LEVEL: str = "Lower Secondary"
 
 
 def _load_lesson_jsons() -> List[Tuple[Path, Dict[str, Any]]]:

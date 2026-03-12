@@ -582,12 +582,16 @@ def _add_visual_comparison_slide(prs: Presentation, blueprints, slide_def: Dict[
     return s
 
 
-def _add_structured_slide(prs: Presentation, blueprints, slide_def: Dict[str, Any]) -> None:
+def _render_visual_comparison_slide(prs: Presentation, blueprints, slide_def: Dict[str, Any]) -> None:
+    return _add_visual_comparison_slide(prs, blueprints, slide_def)
+
+
+def _render_default_content_like_slide(
+    prs: Presentation,
+    blueprints,
+    slide_def: Dict[str, Any],
+) -> None:
     slide_type = (slide_def.get("type") or "content").strip()
-
-    if slide_type == "visual_comparison":
-        return _add_visual_comparison_slide(prs, blueprints, slide_def)
-
     title_text = slide_def.get("title", "") or ""
     body_text = slide_def.get("body", "") or ""
     speaker_notes = slide_def.get("speaker_notes", "") or ""
@@ -632,8 +636,25 @@ def _add_structured_slide(prs: Presentation, blueprints, slide_def: Dict[str, An
         _set_bullets(s, body_text, max_lines=4, font_size_pt=20)
 
     _write_speaker_notes(s, speaker_notes)
-
     return s
+
+
+SLIDE_RENDERERS = {
+    "visual_comparison": _render_visual_comparison_slide,
+    "hook": _render_default_content_like_slide,
+    "video": _render_default_content_like_slide,
+    "content": _render_default_content_like_slide,
+    "real_world": _render_default_content_like_slide,
+    "activity": _render_default_content_like_slide,
+    "reflection": _render_default_content_like_slide,
+    "teacher_notes": _render_default_content_like_slide,
+}
+
+
+def _add_structured_slide(prs: Presentation, blueprints, slide_def: Dict[str, Any]) -> None:
+    slide_type = (slide_def.get("type") or "content").strip()
+    renderer = SLIDE_RENDERERS.get(slide_type, _render_default_content_like_slide)
+    return renderer(prs, blueprints, slide_def)
 
 # --------------------------------------------------------------------
 # Main conversion

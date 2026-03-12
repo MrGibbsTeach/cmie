@@ -101,7 +101,7 @@ def build_assessment_prompt(manifest: Dict[str, Any]) -> str:
         f"Year level: {year_level}\n"
         f"Lesson sequence:\n{lesson_block}\n\n"
         "Context:\n"
-        "- This is a Year 7 AI & data literacy unit.\n"
+        "- This is a Lower Secondary AI & data literacy unit.\n"
         "- Students have explored data, personal data, structured vs unstructured data,\n"
         "  data quality, bias and fairness, recommendation systems, and fair data collection.\n"
         "- They have been using a reusable analytical framework (like DATA LENS) throughout.\n\n"
@@ -156,7 +156,7 @@ def build_assessment_prompt(manifest: Dict[str, Any]) -> str:
         "  }\n"
         "}\n\n"
         "Constraints:\n"
-        "- Keep language appropriate for Year 7 students and their teachers.\n"
+        "- Keep language appropriate for Lower Secondary students and their teachers.\n"
         "- The task must be realistic for a 1–2 lesson in-class assessment plus some prep time.\n"
         "- The rubric should be 4-level: Exemplary, Proficient, Developing, Beginning.\n"
         "- Focus on data literacy, AI understanding, fairness, and critical thinking.\n"
@@ -291,7 +291,7 @@ def generate_summative_assessment(
     title : str
         Human-readable unit title.
     year_level : str
-        e.g. "Year 7".
+        e.g. "Lower Secondary".
     subject : str
         e.g. "Digital Technologies".
     output_dir : Path

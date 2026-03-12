@@ -15,7 +15,7 @@ def run_batch(unit_cfg: UnitConfig) -> List[Tuple[Path, Path]]:
     """
 
     print(f"Running batch for unit: {unit_cfg.title}")
-    print(f"Year level: {unit_cfg.year_level}")
+    print(f"Audience: {unit_cfg.year_level}")
     print(f"Total topics: {len(unit_cfg.topics)}\n")
 
     results: List[Tuple[Path, Path]] = []

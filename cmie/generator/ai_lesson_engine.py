@@ -58,7 +58,7 @@ def build_lesson_prompt(cfg: LessonConfig) -> str:
         f"- Year level: {cfg.year_level}\n"
         f"- Lesson number: {cfg.lesson_number}\n"
         f"- Topic: {cfg.topic_title}\n\n"
-        "The lesson must support a Year 7 AI & data literacy unit.\n"
+        "The lesson must support a Lower Secondary AI & data literacy unit.\n"
         "Students have been working with data, personal data, structured vs "
         "unstructured data, data quality, bias and fairness, recommendation "
         "systems, and fair data collection.\n\n"
@@ -166,7 +166,7 @@ def _build_presenter_notes_prompt(
     slide_block = "\n".join(slide_lines)
 
     return (
-        "You are an expert Year 7 Digital Technologies teacher, instructional coach, and classroom presenter.\n\n"
+        "You are an expert Lower Secondary Digital Technologies teacher, instructional coach, and classroom presenter.\n\n"
         "Your task is to write premium-quality presenter notes for each slide in a lesson.\n\n"
         f"Lesson context:\n"
         f"- Unit: {cfg.micro_unit_name}\n"
@@ -248,7 +248,7 @@ def _call_openai_for_presenter_notes(
             {
                 "role": "system",
                 "content": (
-                    "You are an expert Year 7 Digital Technologies teacher. "
+                    "You are an expert Lower Secondary Digital Technologies teacher. "
                     "You write premium presenter notes for commercial classroom resources. "
                     "Your notes must sound like a real teacher preparing to teach the slide, not a generic AI assistant. "
                     "They must be specific, practical, varied by slide type, and immediately usable in class. "

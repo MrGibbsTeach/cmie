@@ -69,7 +69,7 @@ def _build_marketing_prompt(unit_meta: Dict[str, Any], lessons: List[Dict[str, A
         "}\n\n"
         "Rules:\n"
         "- Audience: busy Digital Technologies teachers in Australian and international schools.\n"
-        "- Focus on AI and data literacy, aligned to lower secondary (approx Year 7 / Grade 6–8).\n"
+        "- Focus on AI and data literacy, aligned to lower secondary.\n"
         "- Short description: max 150 words, marketplace friendly.\n"
         "- Long description: 600–900 words, scannable with headings and bullet points.\n"
         "- Tags: 12–18 phrases, no leading '#', all lower case.\n"
