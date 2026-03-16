@@ -45,6 +45,155 @@ class LessonConfig:
 # Prompt + schema
 # --------------------------------------------------------------------
 
+def build_lesson_architect_prompt(cfg: LessonConfig) -> str:
+    return (
+        "You are an expert curriculum architect designing a strong lower secondary Digital Technologies lesson.\n\n"
+        f"Design the lesson architecture for:\n"
+        f"- Unit: {cfg.micro_unit_name}\n"
+        f"- Audience: {cfg.year_level}\n"
+        f"- Lesson number: {cfg.lesson_number}\n"
+        f"- Topic: {cfg.topic_title}\n\n"
+        "The lesson is part of an AI and data literacy unit.\n\n"
+        "Respond ONLY with valid JSON using this schema:\n"
+        "{\n"
+        '  "lesson_title": string,\n'
+        '  "lesson_objective": string,\n'
+        '  "essential_question": string,\n'
+        '  "success_criteria": [string],\n'
+        '  "starter": {\n'
+        '    "title": string,\n'
+        '    "hook_scenario": string,\n'
+        '    "teacher_move": string,\n'
+        '    "student_task": string\n'
+        "  },\n"
+        '  "key_concepts": [\n'
+        "    {\n"
+        '      "heading": string,\n'
+        '      "big_idea": string,\n'
+        '      "student_example": string,\n'
+        '      "misconception": string\n'
+        "    }\n"
+        "  ],\n"
+        '  "real_world_example": {\n'
+        '    "title": string,\n'
+        '    "context": string,\n'
+        '    "why_it_matters": string\n'
+        "  },\n"
+        '  "guided_practice": {\n'
+        '    "title": string,\n'
+        '    "task": string,\n'
+        '    "teacher_move": string\n'
+        "  },\n"
+        '  "application": {\n'
+        '    "title": string,\n'
+        '    "task": string,\n'
+        '    "output": string,\n'
+        '    "success_criteria": [string]\n'
+        "  },\n"
+        '  "reflection": {\n'
+        '    "title": string,\n'
+        '    "questions": [string],\n'
+        '    "exit_ticket": string\n'
+        "  },\n"
+        '  "teacher_notes": {\n'
+        '    "misconceptions": [string],\n'
+        '    "differentiation": [string],\n'
+        '    "extension": [string]\n'
+        "  }\n"
+        "}\n\n"
+        "Rules:\n"
+        "- Make the lesson highly teachable.\n"
+        "- Keep the sequence realistic for one class lesson.\n"
+        "- Make activities concrete, not generic.\n"
+        "- Use lower secondary / middle school appropriate language.\n"
+        "- Avoid country-specific references.\n"
+    )
+
+
+def build_lesson_writer_prompt(cfg: LessonConfig, architecture: Dict[str, Any]) -> str:
+    architecture_json = json.dumps(architecture, ensure_ascii=False, indent=2)
+
+    return (
+        "You are an expert lesson writer for lower secondary Digital Technologies.\n\n"
+        f"Write a full polished lesson from this architecture.\n\n"
+        f"Lesson context:\n"
+        f"- Unit: {cfg.micro_unit_name}\n"
+        f"- Audience: {cfg.year_level}\n"
+        f"- Lesson number: {cfg.lesson_number}\n"
+        f"- Topic: {cfg.topic_title}\n\n"
+        "Architecture:\n"
+        f"{architecture_json}\n\n"
+        "Respond ONLY with valid JSON using this schema:\n"
+        "{\n"
+        '  "lesson_title": string,\n'
+        '  "essential_question": string,\n'
+        '  "objectives": [string],\n'
+        '  "hook_scenario": string,\n'
+        '  "core_sections": [\n'
+        "    {\n"
+        '      "heading": string,\n'
+        '      "content": string\n'
+        "    }\n"
+        "  ],\n"
+        '  "real_world_example": {\n'
+        '    "heading": string,\n'
+        '    "context": string,\n'
+        '    "takeaways": [string]\n'
+        "  },\n"
+        '  "activity": {\n'
+        '    "title": string,\n'
+        '    "description": string,\n'
+        '    "output_description": string,\n'
+        '    "success_criteria": [string]\n'
+        "  },\n"
+        '  "reflection_questions": [string],\n'
+        '  "teacher_notes": {\n'
+        '    "misconceptions": [string],\n'
+        '    "differentiation": [string],\n'
+        '    "extension": [string]\n'
+        "  }\n"
+        "}\n\n"
+        "Rules:\n"
+        "- Explanations must be teachable, not textbook-like.\n"
+        "- Each core section should be concise but clear.\n"
+        "- Use concrete lower secondary examples.\n"
+        "- The activity must have a clear output and visible success criteria.\n"
+        "- Reflection questions should promote explanation, not just recall.\n"
+    )
+
+
+def build_lesson_critic_prompt(
+    cfg: LessonConfig,
+    architecture: Dict[str, Any],
+    draft_lesson: Dict[str, Any],
+) -> str:
+    architecture_json = json.dumps(architecture, ensure_ascii=False, indent=2)
+    draft_json = json.dumps(draft_lesson, ensure_ascii=False, indent=2)
+
+    return (
+        "You are an expert curriculum editor and lesson critic.\n\n"
+        "Your job is to improve the draft lesson so it is clearer, more teachable, "
+        "more engaging, and more commercially useful for teachers.\n\n"
+        f"Lesson context:\n"
+        f"- Unit: {cfg.micro_unit_name}\n"
+        f"- Audience: {cfg.year_level}\n"
+        f"- Topic: {cfg.topic_title}\n\n"
+        "Original architecture:\n"
+        f"{architecture_json}\n\n"
+        "Draft lesson:\n"
+        f"{draft_json}\n\n"
+        "Improve the lesson where needed.\n\n"
+        "Check for:\n"
+        "- weak or vague activities\n"
+        "- repetitive wording\n"
+        "- overly abstract explanations\n"
+        "- unclear real-world links\n"
+        "- missing teachable examples\n"
+        "- poor alignment between objectives and activity\n\n"
+        "Respond ONLY with valid JSON using the SAME schema as the draft lesson.\n"
+    )
+
+
 
 def build_lesson_prompt(cfg: LessonConfig) -> str:
     """
@@ -133,6 +282,61 @@ def _call_openai_for_lesson(cfg: LessonConfig, model: str = "gpt-4.1-mini") -> D
             raise
 
     return data
+
+def _call_openai_json(prompt: str, model: str = "gpt-4.1-mini", system_message: str = "Respond only with strict JSON.") -> Dict[str, Any]:
+    client = ensure_openai_client()
+
+    resp = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": prompt},
+        ],
+        temperature=0.4,
+    )
+
+    raw = resp.choices[0].message.content.strip()
+
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        start = raw.find("{")
+        end = raw.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            return json.loads(raw[start:end + 1])
+        raise
+
+
+def _call_openai_for_lesson_architecture(cfg: LessonConfig, model: str = "gpt-4.1-mini") -> Dict[str, Any]:
+    prompt = build_lesson_architect_prompt(cfg)
+    return _call_openai_json(
+        prompt=prompt,
+        model=model,
+        system_message="You are an expert curriculum architect. Respond only with strict JSON.",
+    )
+
+
+def _call_openai_for_lesson_draft(cfg: LessonConfig, architecture: Dict[str, Any], model: str = "gpt-4.1-mini") -> Dict[str, Any]:
+    prompt = build_lesson_writer_prompt(cfg, architecture)
+    return _call_openai_json(
+        prompt=prompt,
+        model=model,
+        system_message="You are an expert lesson writer. Respond only with strict JSON.",
+    )
+
+
+def _call_openai_for_lesson_critique(
+    cfg: LessonConfig,
+    architecture: Dict[str, Any],
+    draft_lesson: Dict[str, Any],
+    model: str = "gpt-4.1-mini",
+) -> Dict[str, Any]:
+    prompt = build_lesson_critic_prompt(cfg, architecture, draft_lesson)
+    return _call_openai_json(
+        prompt=prompt,
+        model=model,
+        system_message="You are an expert curriculum editor. Respond only with strict JSON.",
+    )
 
 # --------------------------------------------------------------------
 # Presenter notes enhancement
@@ -854,7 +1058,10 @@ def generate_lesson_schema(
     model: str = "gpt-4.1-mini",
 ) -> Dict[str, Any]:
     """
-    Generate a full lesson JSON, including slides, from OpenAI.
+    Generate a full lesson JSON using a 3-stage AI pipeline:
+    1. Architect
+    2. Writer
+    3. Critic
     """
     cfg = LessonConfig(
         micro_unit_name=micro_unit_name,
@@ -864,36 +1071,42 @@ def generate_lesson_schema(
         video_url=video_url,
     )
 
-    raw_schema = _call_openai_for_lesson(cfg, model=model)
+    # Stage 1: lesson architecture
+    architecture = _call_openai_for_lesson_architecture(cfg, model=model)
+
+    # Stage 2: lesson draft
+    draft_lesson = _call_openai_for_lesson_draft(cfg, architecture, model=model)
+
+    # Stage 3: lesson critique / improvement
+    final_lesson_schema = _call_openai_for_lesson_critique(
+        cfg,
+        architecture,
+        draft_lesson,
+        model=model,
+    )
 
     lesson: Dict[str, Any] = {}
     lesson["unit_name"] = micro_unit_name
     lesson["year_level"] = year_level
     lesson["lesson_number"] = lesson_number
-    lesson["lesson_title"] = raw_schema.get("lesson_title") or topic_title
+    lesson["lesson_title"] = final_lesson_schema.get("lesson_title") or topic_title
     lesson["topic_title"] = topic_title
-    lesson["essential_question"] = raw_schema.get("essential_question", "")
+    lesson["essential_question"] = final_lesson_schema.get("essential_question", "")
 
-    # Objectives: keep max 3, cleaned
-    raw_objectives = raw_schema.get("objectives", []) or []
+    raw_objectives = final_lesson_schema.get("objectives", []) or []
     cleaned_objectives: List[str] = []
     for obj in raw_objectives[:3]:
-        if not isinstance(obj, str):
-            continue
-        text = obj.strip()
-        if not text:
-            continue
-        cleaned_objectives.append(text)
+        if isinstance(obj, str) and obj.strip():
+            cleaned_objectives.append(obj.strip())
     lesson["objectives"] = cleaned_objectives
 
-    # Video + real-world example from schema
     lesson["video_url"] = video_url
-    lesson["real_world_example"] = raw_schema.get("real_world_example", {}) or {}
+    lesson["real_world_example"] = final_lesson_schema.get("real_world_example", {}) or {}
 
-    # Build slides first with simple draft notes
-    draft_slides = build_slide_deck(cfg, raw_schema)
+    # Build slides
+    draft_slides = build_slide_deck(cfg, final_lesson_schema)
 
-    # Upgrade all presenter notes in one AI call
+    # Upgrade presenter notes
     enhanced_slides = enhance_slide_presenter_notes(
         cfg=cfg,
         lesson_title=lesson["lesson_title"],
@@ -902,6 +1115,7 @@ def generate_lesson_schema(
         model=model,
     )
 
+    # Local polish pass
     polished_slides = polish_slide_presenter_notes(enhanced_slides)
 
     lesson["slides"] = polished_slides
