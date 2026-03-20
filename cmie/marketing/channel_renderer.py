@@ -5,118 +5,60 @@ from pathlib import Path
 from typing import Dict, Any
 
 
-def load_bundle_marketing(bundle_root: Path) -> Dict[str, Any]:
-    path = bundle_root / "bundle_marketing.json"
+def load_marketing_assets(unit_root: Path) -> Dict[str, Any]:
+    path = unit_root / "marketing" / "marketing_assets.json"
     if not path.exists():
-        raise FileNotFoundError(f"Missing bundle_marketing.json at {path}")
+        raise FileNotFoundError(f"Missing marketing_assets.json at {path}")
 
     with path.open(encoding="utf-8") as f:
         return json.load(f)
 
 
-def render_tpt_listing(data: Dict[str, Any]) -> str:
-    title = data.get("bundle_title", "")
-    subtitle = data.get("bundle_subtitle", "")
-    short = data.get("short_description", "")
-    long_desc = data.get("long_description", "")
-    included = data.get("whats_included", [])
-    outcomes = data.get("learning_outcomes", [])
-    ideal = data.get("ideal_for", [])
-    why = data.get("why_this_bundle", [])
+def _format_listing_block(data: Dict[str, Any]) -> str:
+    lines = [
+        f"TITLE:\n{data.get('title', '').strip()}",
+        "",
+        f"PRICE:\n{data.get('price', '').strip()}",
+        "",
+        f"DESCRIPTION:\n{data.get('description', '').strip()}",
+    ]
 
-    return f"""
-{title} | AI Literacy | Middle School Computer Science | Grades 6-8
+    tags = data.get("tags", [])
+    if tags:
+        lines.extend([
+            "",
+            "TAGS:",
+            ", ".join(str(tag) for tag in tags),
+        ])
 
-{subtitle}
-
-{short}
-
---------------------------------------------------
-
-⭐ WHAT’S INCLUDED:
-
-{chr(10).join(f"• {item}" for item in included)}
-
---------------------------------------------------
-
-🎯 STUDENT LEARNING OUTCOMES:
-
-{chr(10).join(f"• {item}" for item in outcomes)}
-
---------------------------------------------------
-
-🚀 WHY TEACHERS LOVE THIS BUNDLE:
-
-{chr(10).join(f"• {item}" for item in why)}
-
---------------------------------------------------
-
-👩‍🏫 PERFECT FOR:
-
-{chr(10).join(f"• {item}" for item in ideal)}
-
---------------------------------------------------
-
-📌 IDEAL FOR:
-• Grades 6–8
-• Middle School Computer Science
-• Digital Technology
-• STEM enrichment
-• AI literacy units
-
---------------------------------------------------
-
-{long_desc}
-
---------------------------------------------------
-
-This resource is designed for global English-speaking classrooms.
-Aligned with common middle school computer science standards.
-Editable files included.
-"""
-
-def render_tes_listing(data: Dict[str, Any]) -> str:
-    return f"""
-{data.get("bundle_title", "")}
-
-{data.get("long_description", "")}
-
-Included:
-{chr(10).join(f"- {item}" for item in data.get("whats_included", []))}
-
-Perfect for:
-{chr(10).join(f"- {item}" for item in data.get("ideal_for", []))}
-"""
-
-def render_gumroad_listing(data: Dict[str, Any]) -> str:
-    return f"""
-# {data.get("bundle_title", "")}
-
-## {data.get("bundle_subtitle", "")}
-
-{data.get("long_description", "")}
-
----
-
-## What You Get
-
-{chr(10).join(f"- {item}" for item in data.get("whats_included", []))}
-
----
-
-## Learning Outcomes
-
-{chr(10).join(f"- {item}" for item in data.get("learning_outcomes", []))}
-"""
+    return "\n".join(lines).strip()
 
 
-def generate_channel_files(bundle_root: Path) -> None:
-    data = load_bundle_marketing(bundle_root)
+def generate_channel_files(unit_root: Path) -> None:
+    data = load_marketing_assets(unit_root)
+    unit_data = data.get("unit", {})
 
-    tpt = render_tpt_listing(data)
-    tes = render_tes_listing(data)
-    gumroad = render_gumroad_listing(data)
+    if not unit_data:
+        raise ValueError("marketing_assets.json missing 'unit' section")
 
-    (bundle_root / "tpt_listing.txt").write_text(tpt, encoding="utf-8")
-    (bundle_root / "tes_listing.txt").write_text(tes, encoding="utf-8")
-    (bundle_root / "gumroad_description.md").write_text(gumroad, encoding="utf-8")
+    listings_root = unit_root / "bundle_listings"
+    listings_root.mkdir(parents=True, exist_ok=True)
+
+    tpt_data = unit_data.get("tpt", {})
+    tes_data = unit_data.get("tes", {})
+    gumroad_data = unit_data.get("gumroad", {})
+
+    (listings_root / "tpt_listing.txt").write_text(
+        _format_listing_block(tpt_data),
+        encoding="utf-8",
+    )
+
+    (listings_root / "tes_listing.txt").write_text(
+        _format_listing_block(tes_data),
+        encoding="utf-8",
+    )
+
+    (listings_root / "gumroad_description.md").write_text(
+        _format_listing_block(gumroad_data),
+        encoding="utf-8",
+    )

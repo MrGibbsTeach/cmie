@@ -2,134 +2,85 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 
-def load_lesson_json(lesson_path: Path) -> Dict[str, Any]:
-    with lesson_path.open(encoding="utf-8") as f:
+def load_marketing_assets(unit_root: Path) -> Dict[str, Any]:
+    path = unit_root / "marketing" / "marketing_assets.json"
+    if not path.exists():
+        raise FileNotFoundError(f"Missing marketing_assets.json at {path}")
+
+    with path.open(encoding="utf-8") as f:
         return json.load(f)
 
 
-# ------------------------------------------------------------
-# TPT LISTING
-# ------------------------------------------------------------
-
-def render_lesson_tpt(data: Dict[str, Any]) -> str:
-    title = data.get("lesson_title", "")
-    eq = data.get("essential_question", "")
-    objectives = data.get("objectives", [])
-
-    return f"""
-{title} | AI Literacy | Middle School Computer Science | Grades 6–8
-
-ESSENTIAL QUESTION
-{eq}
-
---------------------------------------------------
-LEARNING OBJECTIVES
-
-{chr(10).join(f"- {o}" for o in objectives)}
-
---------------------------------------------------
-WHAT YOU GET
-
-- Fully editable lesson slides (PPTX)
-- Structured lesson flow (Explore → Learn → Apply → Reflect)
-- Real-world AI example
-- Reflection questions
-- Teacher notes for teacher-facing guidance
-
---------------------------------------------------
-IDEAL FOR
-
-- Grades 6–8 Computer Science / Digital Technology
-- STEM and AI literacy units
-- Teachers introducing ethical and fair use of AI
-
-This lesson is part of the AI Data Foundations unit.
-Search for the full unit to get assessments and student workbook included.
-""".strip()
+def _slugify(value: str) -> str:
+    value = value.strip().lower()
+    out = []
+    for ch in value:
+        if ch.isalnum():
+            out.append(ch)
+        else:
+            out.append("-")
+    slug = "".join(out)
+    while "--" in slug:
+        slug = slug.replace("--", "-")
+    return slug.strip("-")
 
 
-# ------------------------------------------------------------
-# TES LISTING
-# ------------------------------------------------------------
+def _format_listing_block(data: Dict[str, Any]) -> str:
+    lines = [
+        f"TITLE:\n{data.get('title', '').strip()}",
+        "",
+        f"PRICE:\n{data.get('price', '').strip()}",
+        "",
+        f"DESCRIPTION:\n{data.get('description', '').strip()}",
+    ]
 
-def render_lesson_tes(data: Dict[str, Any]) -> str:
-    title = data.get("lesson_title", "")
-    eq = data.get("essential_question", "")
-    objectives = data.get("objectives", [])
+    tags = data.get("tags", [])
+    if tags:
+        lines.extend([
+            "",
+            "TAGS:",
+            ", ".join(str(tag) for tag in tags),
+        ])
 
-    return f"""
-{title}
+    return "\n".join(lines).strip()
 
-Essential Question
-{eq}
-
-This fully editable lesson introduces key AI and data literacy concepts using a clear Explore–Learn–Apply–Reflect structure suitable for Grades 6–8.
-
-Learning Objectives
-{chr(10).join(f"- {o}" for o in objectives)}
-
-Includes
-- PowerPoint lesson slides (PPTX)
-- Real-world AI example
-- Reflection questions
-- Teacher notes
-""".strip()
-
-
-# ------------------------------------------------------------
-# GUMROAD LISTING
-# ------------------------------------------------------------
-
-def render_lesson_gumroad(data: Dict[str, Any]) -> str:
-    title = data.get("lesson_title", "")
-    objectives = data.get("objectives", [])
-
-    return f"""
-# {title}
-
-Editable middle school AI lesson for Grades 6–8.
-
-## Students will
-
-{chr(10).join(f"- {o}" for o in objectives)}
-
-## What is included
-
-- PowerPoint lesson slides (PPTX)
-- Structured teaching flow (Explore, Learn, Apply, Reflect)
-- Real-world AI example and reflection questions
-- Teacher notes to support delivery
-""".strip()
-
-
-# ------------------------------------------------------------
-# GENERATE FILES
-# ------------------------------------------------------------
 
 def generate_lesson_channel_files(unit_root: Path) -> None:
-    lessons_dir = unit_root / "lessons"
+    data = load_marketing_assets(unit_root)
+    lessons: List[Dict[str, Any]] = data.get("lessons", [])
 
-    if not lessons_dir.exists():
-        raise FileNotFoundError(f"No lessons directory found at {lessons_dir}")
+    if not lessons:
+        raise ValueError("marketing_assets.json missing 'lessons' section")
 
-    for lesson_json in lessons_dir.glob("*.json"):
-        data = load_lesson_json(lesson_json)
-        lesson_slug = lesson_json.stem
+    listings_root = unit_root / "lesson_listings"
+    listings_root.mkdir(parents=True, exist_ok=True)
 
-        lesson_folder = unit_root / "lesson_listings" / lesson_slug
+    for lesson in lessons:
+        lesson_number = lesson.get("lesson_number", "")
+        lesson_title = lesson.get("lesson_title", "lesson")
+        lesson_slug = f"{int(lesson_number):02d}-{_slugify(lesson_title)}" if str(lesson_number).isdigit() else _slugify(lesson_title)
+
+        lesson_folder = listings_root / lesson_slug
         lesson_folder.mkdir(parents=True, exist_ok=True)
 
+        tpt_data = lesson.get("tpt", {})
+        tes_data = lesson.get("tes", {})
+        gumroad_data = lesson.get("gumroad", {})
+
         (lesson_folder / "tpt_listing.txt").write_text(
-            render_lesson_tpt(data), encoding="utf-8"
+            _format_listing_block(tpt_data),
+            encoding="utf-8",
         )
 
         (lesson_folder / "tes_listing.txt").write_text(
-            render_lesson_tes(data), encoding="utf-8"
+            _format_listing_block(tes_data),
+            encoding="utf-8",
         )
 
         (lesson_folder / "gumroad_description.md").write_text(
-            render_lesson_gumroad(data), encoding="utf-8"
+            _format_listing_block(gumroad_data),
+            encoding="utf-8",
         )

@@ -10,10 +10,6 @@ def ensure_openai_client() -> OpenAI:
 
 
 def _collect_lesson_summaries(lessons_dir: Path) -> List[Dict[str, Any]]:
-    """
-    Read each lesson JSON in lessons_dir and pull out high-level info
-    for the marketing prompt.
-    """
     summaries: List[Dict[str, Any]] = []
 
     for path in sorted(lessons_dir.glob("*.json")):
@@ -34,9 +30,6 @@ def _collect_lesson_summaries(lessons_dir: Path) -> List[Dict[str, Any]]:
 
 
 def _build_marketing_prompt(unit_meta: Dict[str, Any], lessons: List[Dict[str, Any]]) -> str:
-    """
-    Build the prompt for generating marketplace-ready marketing copy.
-    """
     title = unit_meta["title"]
     year_level = unit_meta["year_level"]
     subject = unit_meta["subject"]
@@ -46,55 +39,124 @@ def _build_marketing_prompt(unit_meta: Dict[str, Any], lessons: List[Dict[str, A
         num = l.get("lesson_number")
         lt = l.get("lesson_title") or ""
         eq = l.get("essential_question") or ""
-        lesson_lines.append(f"- Lesson {num}: {lt} — EQ: {eq}")
+        objectives = l.get("objectives") or []
+
+        lesson_lines.append(f"Lesson {num}: {lt}")
+        lesson_lines.append(f"Essential question: {eq}")
+        if objectives:
+            lesson_lines.append("Objectives:")
+            for obj in objectives[:3]:
+                lesson_lines.append(f"- {obj}")
+        lesson_lines.append("")
 
     lessons_block = "\n".join(lesson_lines)
 
-    return (
-        "You are an expert in writing curriculum product listings for teacher marketplaces "
-        "(e.g. TPT, TES, Etsy for teachers).\n\n"
-        "Write marketing copy for a DIGITAL DOWNLOAD unit using ONLY this JSON schema:\n"
-        "{\n"
-        '  "seo_title": string,\n'
-        '  "subtitle": string,\n'
-        '  "short_description": string,\n'
-        '  "long_description": string,\n'
-        '  "tags": [string],\n'
-        '  "whats_included": [string],\n'
-        '  "learning_outcomes": [string],\n'
-        '  "ideal_for": [string],\n'
-        '  "why_this_unit": [string],\n'
-        '  "bundle_cross_sell": string,\n'
-        '  "price_recommendation": string\n'
-        "}\n\n"
-        "Rules:\n"
-        "- Audience: busy Digital Technologies teachers in Australian and international schools.\n"
-        "- Focus on AI and data literacy, aligned to lower secondary.\n"
-        "- Short description: max 150 words, marketplace friendly.\n"
-        "- Long description: 600–900 words, scannable with headings and bullet points.\n"
-        "- Tags: 12–18 phrases, no leading '#', all lower case.\n"
-        "- Whats_included: concrete file types (PowerPoint slides, student workbook, assessment, etc.).\n"
-        "- Learning_outcomes: student-facing outcomes, not generic fluff.\n"
-        "- Ideal_for: mention year levels, subjects, and teaching contexts.\n"
-        "- Why_this_unit: specific reasons this product stands out from generic AI lessons.\n"
-        "- Bundle_cross_sell: one paragraph suggesting how this unit fits into a larger AI course bundle.\n"
-        "- Price_recommendation: give a single price in AUD for a standard commercial marketplace.\n\n"
-        "Product to describe:\n"
-        f'- Unit title: "{title}"\n'
-        f"- Subject: {subject}\n"
-        f"- Year level: {year_level}\n\n"
-        "Lessons in this unit:\n"
-        f"{lessons_block}\n"
-    )
+    return f"""
+You are a high-conversion curriculum product marketer.
+
+You write listings that SELL to teachers on TPT, TES, and Gumroad.
+
+Return ONLY valid JSON in this exact structure:
+
+{{
+  "unit": {{
+    "tpt": {{ "title": "", "description": "", "tags": [], "price": "" }},
+    "tes": {{ "title": "", "description": "", "tags": [], "price": "" }},
+    "gumroad": {{ "title": "", "description": "", "tags": [], "price": "" }}
+  }},
+  "lessons": [
+    {{
+      "lesson_number": 1,
+      "lesson_title": "",
+      "tpt": {{ "title": "", "description": "", "tags": [], "price": "" }},
+      "tes": {{ "title": "", "description": "", "tags": [], "price": "" }},
+      "gumroad": {{ "title": "", "description": "", "tags": [], "price": "" }}
+    }}
+  ]
+}}
+
+CORE GOAL:
+Every listing must clearly communicate:
+- what the teacher gets
+- what the students will learn or be able to do
+- why this saves time and works in real classrooms
+
+You are not describing lessons.
+You are selling a solution to a teacher's problem.
+
+MANDATORY CONTENT RULES:
+Every listing must include:
+1. A strong hook in the first 2 lines
+   - must include “no prep” or “ready to teach”
+   - must mention saving time or reducing workload
+2. WHAT YOU GET section
+   - editable slides (PPTX)
+   - structured lesson flow
+   - activities
+   - teacher notes
+   - reflection or workbook tasks
+3. STUDENT OUTCOMES
+   - what students will understand, identify, explain, analyse, or apply
+4. WHY THIS WORKS
+   - classroom practicality
+   - clarity of content
+   - progression across lessons for units
+5. PERFECT FOR
+   - year level range
+   - subject area
+   - teacher type
+6. CROSS-SELL
+   - every lesson must include that it is part of the full unit
+
+TONE RULES:
+- write like a teacher selling to another teacher
+- be confident and direct
+- avoid vague generic curriculum language
+
+PLATFORM RULES:
+TPT:
+- strongest hook
+- clear headings
+- bullet points
+- keyword-rich title
+
+TES:
+- slightly more formal
+- still benefit-driven
+- less formatting
+
+Gumroad:
+- clean markdown
+- premium tone
+- focus on completeness and value
+
+PRICING:
+- full unit should feel like strong value
+- individual lessons should make the full unit feel like the better deal
+
+PRODUCT:
+Unit: "{title}"
+Subject: {subject}
+Year level: {year_level}
+Total lessons: {len(lessons)}
+
+Lessons:
+{lessons_block}
+
+FINAL RULES:
+- do not return top-level keys like TPT, TES, Gumroad
+- use exactly the keys "unit" and "lessons"
+- "unit" must contain exactly "tpt", "tes", "gumroad"
+- "lessons" must be a list with one object per lesson
+- each lesson object must include lesson_number, lesson_title, tpt, tes, gumroad
+- return JSON only
+"""
 
 
 def generate_marketing_assets(
     unit_meta: Dict[str, Any],
     lessons_dir: Path,
 ) -> Dict[str, Any]:
-    """
-    Main public API: returns a dict with marketing copy ready for saving as JSON.
-    """
     client = ensure_openai_client()
 
     lessons = _collect_lesson_summaries(lessons_dir)
@@ -105,7 +167,10 @@ def generate_marketing_assets(
         messages=[
             {
                 "role": "system",
-                "content": "You write curriculum product listings and respond ONLY with valid JSON.",
+                "content": (
+                    "You write high-conversion curriculum product listings for TPT, TES, and Gumroad "
+                    "and respond ONLY with valid JSON."
+                ),
             },
             {"role": "user", "content": prompt},
         ],
@@ -114,15 +179,19 @@ def generate_marketing_assets(
 
     raw = resp.choices[0].message.content.strip()
 
-    # Defensive JSON parse
     try:
         data = json.loads(raw)
     except json.JSONDecodeError:
         start = raw.find("{")
         end = raw.rfind("}")
         if start != -1 and end != -1 and end > start:
-            data = json.loads(raw[start : end + 1])
+            data = json.loads(raw[start:end + 1])
         else:
             raise
+
+    if "unit" not in data or "lessons" not in data:
+        raise ValueError(
+            f"Marketing output did not match required schema. Top-level keys were: {list(data.keys())}"
+        )
 
     return data

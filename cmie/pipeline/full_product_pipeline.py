@@ -6,17 +6,26 @@ import logging
 import shutil
 from pathlib import Path
 from typing import List, Optional, Tuple
+from docx import Document
+from docx.shared import Inches, Pt
+from cmie.generator.readme_generator import generate_unit_readme
 
 from docx import Document
 
 from cmie.core.unit_config import UnitConfig
-from cmie.generator.batch_generate import run_batch
 from cmie.generator import assessment_generator
+from cmie.generator.ai_lesson_engine import slugify
 from cmie.generator.assessment_markdown import render_assessment_markdown
-from cmie.generator.workbook_generator import generate_student_workbook
+from cmie.generator.batch_generate import run_batch
+from cmie.generator.canva_prompts import (
+    assessment_json_to_canva_prompt,
+    roadmap_markdown_to_canva_prompt,
+    workbook_markdown_to_canva_prompt,
+)
 from cmie.generator.roadmap_generator import generate_unit_roadmap
-from cmie.validation.unit_validation import validate_unit
+from cmie.generator.workbook_generator import generate_student_workbook
 from cmie.marketing.marketing_generator import generate_marketing_assets
+from cmie.validation.unit_validation import validate_unit
 
 # Optional – listings generator may not exist yet
 try:
@@ -48,21 +57,94 @@ def setup_logger() -> logging.Logger:
 
 def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> None:
     """
-    Very simple markdown-to-docx: treat each line as a paragraph.
-
-    This is intentionally minimal; the main goal is to get editable
-    Word docs automatically. You can improve formatting later if needed.
+    Convert simple markdown-like workbook/task files into a cleaner DOCX.
+    Supports:
+    - #, ##, ### headings
+    - bullet points
+    - horizontal rules
+    - response box blocks triggered by [Write your response below]
+    - page breaks before each new lesson
     """
     logger.info(f"  Converting {md_path.name} -> {docx_path.name}")
     text = md_path.read_text(encoding="utf-8")
+    lines = text.splitlines()
 
     doc = Document()
-    for line in text.splitlines():
-        doc.add_paragraph(line)
+
+    style = doc.styles["Normal"]
+    style.font.name = "Aptos"
+    style.font.size = Pt(11)
+
+    def add_response_box(rows: int = 5) -> None:
+        table = doc.add_table(rows=rows, cols=1)
+        table.style = "Table Grid"
+
+        for row in table.rows:
+            row.height = Inches(0.6)
+            cell = row.cells[0]
+            cell.text = ""
+
+    previous_was_blank = True
+
+    for raw_line in lines:
+        stripped = raw_line.strip()
+
+        if not stripped:
+            if not previous_was_blank:
+                doc.add_paragraph("")
+            previous_was_blank = True
+            continue
+
+        previous_was_blank = False
+
+        if stripped == "---":
+            doc.add_paragraph("")
+            continue
+
+        if stripped.startswith("# "):
+            p = doc.add_paragraph(style="Title")
+            p.add_run(stripped[2:].strip())
+            continue
+
+        if stripped.startswith("## "):
+            heading_text = stripped[3:].strip()
+
+            if heading_text.upper().startswith("LESSON "):
+                if len(doc.paragraphs) > 0:
+                    doc.add_page_break()
+
+            p = doc.add_paragraph(style="Heading 1")
+            run = p.add_run(heading_text)
+            run.bold = True
+            run.font.size = Pt(16)
+            continue
+
+        if stripped.startswith("### "):
+            p = doc.add_paragraph(style="Heading 2")
+            p.add_run(stripped[4:].strip())
+            doc.add_paragraph("")
+            continue
+
+        if stripped == "[Write your response below]":
+            p = doc.add_paragraph()
+            run = p.add_run("Write your response below:")
+            run.italic = True
+            add_response_box(rows=5)
+            doc.add_paragraph("")
+            continue
+
+        if set(stripped) == {"_"}:
+            continue
+
+        if stripped.startswith("- "):
+            p = doc.add_paragraph(style="List Bullet")
+            p.add_run(stripped[2:].strip())
+            continue
+
+        doc.add_paragraph(stripped)
 
     docx_path.parent.mkdir(parents=True, exist_ok=True)
-    doc.save(docx_path)
-
+    doc.save(str(docx_path))
 
 # --------------------------------------------------------------------
 # Stages
@@ -75,7 +157,7 @@ def stage_lessons(
     logger: logging.Logger,
 ) -> Tuple[Path, Path, List[Path]]:
     """
-    Generate lessons and copy JSON + PPTX into the unit release folder.
+    Generate lessons and copy lesson JSON + public PPTX into the unit release folder.
     """
     logger.info("Stage: lessons")
 
@@ -84,21 +166,17 @@ def stage_lessons(
     lessons_dir.mkdir(parents=True, exist_ok=True)
     slides_dir.mkdir(parents=True, exist_ok=True)
 
-    # Clear existing content (only within these folders)
     for p in lessons_dir.glob("*.json"):
         p.unlink()
     for p in slides_dir.glob("*.pptx"):
         p.unlink()
 
-    # Run the batch lesson generator using the unit config
     results = run_batch(cfg)
 
     copied_lessons: List[Path] = []
     for lesson_json, pptx in results:
-        # Use the topic slug (parent folder name) as the JSON filename
-        topic_slug = lesson_json.parent.name  # e.g. "data-shapes-the-ai-world"
+        topic_slug = lesson_json.parent.name
         dest_json = lessons_dir / f"{topic_slug}.json"
-
         dest_pptx = slides_dir / pptx.name
 
         shutil.copy2(lesson_json, dest_json)
@@ -122,7 +200,6 @@ def stage_assessment(
     dest_dir = unit_root / "assessment"
     dest_dir.mkdir(parents=True, exist_ok=True)
 
-    # Use pipeline-friendly API that writes JSON into dest_dir
     assessment_generator.generate_summative_assessment(
         unit_id=cfg.unit_id,
         title=cfg.title,
@@ -131,9 +208,10 @@ def stage_assessment(
         output_dir=dest_dir,
     )
 
-    # Render markdown in dest_dir (using the JSON we just wrote)
     render_assessment_markdown(dest_dir)
+    prompt_path = assessment_json_to_canva_prompt(dest_dir / "assessment.json")
 
+    logger.info(f"  Canva assessment prompt created: {prompt_path}")
     logger.info("  Assessment generated.")
     return dest_dir
 
@@ -146,6 +224,7 @@ def stage_workbook(
     logger: logging.Logger,
 ) -> Path:
     logger.info("Stage: workbook")
+
     unit_config_dict = {
         "unit_id": cfg.unit_id,
         "title": cfg.title,
@@ -153,8 +232,17 @@ def stage_workbook(
         "subject": cfg.subject,
         "version": cfg.version,
     }
-    workbook_path = generate_student_workbook(unit_root, unit_config_dict, lessons_dir, assessment_dir)
+
+    workbook_path = generate_student_workbook(
+        unit_root,
+        unit_config_dict,
+        lessons_dir,
+        assessment_dir,
+    )
+    prompt_path = workbook_markdown_to_canva_prompt(workbook_path)
+
     logger.info(f"  Workbook file: {workbook_path}")
+    logger.info(f"  Canva workbook prompt created: {prompt_path}")
     return workbook_path
 
 
@@ -166,6 +254,7 @@ def stage_roadmap(
     logger: logging.Logger,
 ) -> Path:
     logger.info("Stage: roadmap")
+
     unit_config_dict = {
         "unit_id": cfg.unit_id,
         "title": cfg.title,
@@ -173,10 +262,102 @@ def stage_roadmap(
         "subject": cfg.subject,
         "version": cfg.version,
     }
-    meta = generate_unit_roadmap(unit_root, unit_config_dict, lessons_dir, assessment_dir)
+
+    meta = generate_unit_roadmap(
+        unit_root,
+        unit_config_dict,
+        lessons_dir,
+        assessment_dir,
+    )
     roadmap_path = Path(meta["file"])
+    prompt_path = roadmap_markdown_to_canva_prompt(roadmap_path)
+
     logger.info(f"  Roadmap file: {roadmap_path}")
+    logger.info(f"  Canva roadmap prompt created: {prompt_path}")
     return roadmap_path
+
+def stage_readme(
+    cfg: UnitConfig,
+    unit_root: Path,
+    lessons_dir: Path,
+    assessment_dir: Optional[Path],
+    logger: logging.Logger,
+) -> Path:
+    logger.info("Stage: readme")
+
+    unit_config_dict = {
+        "unit_id": cfg.unit_id,
+        "title": cfg.title,
+        "year_level": cfg.year_level,
+        "subject": cfg.subject,
+        "version": cfg.version,
+    }
+
+    readme_path = generate_unit_readme(
+        unit_root=unit_root,
+        unit_config=unit_config_dict,
+        lessons_dir=lessons_dir,
+        assessment_dir=assessment_dir,
+    )
+
+    logger.info(f"  README file: {readme_path}")
+    return readme_path
+
+def stage_canva_prompts(
+    cfg: UnitConfig,
+    unit_root: Path,
+    lessons_dir: Path,
+    assessment_dir: Path,
+    logger: logging.Logger,
+) -> None:
+    """
+    Collect all Canva prompts into a single production folder.
+    This is NOT part of the public release.
+    """
+    logger.info("Stage: canva_prompts")
+
+    canva_root = unit_root / "05_Canva_Prompts"
+    canva_root.mkdir(parents=True, exist_ok=True)
+
+    slides_dir_out = canva_root / "01_Lesson_Slides"
+    assessment_dir_out = canva_root / "02_Assessment"
+    workbook_dir_out = canva_root / "03_Student_Workbook"
+    roadmap_dir_out = canva_root / "04_Unit_Roadmap"
+
+    for d in [slides_dir_out, assessment_dir_out, workbook_dir_out, roadmap_dir_out]:
+        d.mkdir(parents=True, exist_ok=True)
+
+    # -------------------------
+    # Lesson slide prompts
+    # -------------------------
+    generated_unit_dir = Path("generated_lessons") / slugify(cfg.title)
+
+    if generated_unit_dir.exists():
+        for prompt_file in generated_unit_dir.rglob("*-canva-prompt.txt"):
+            shutil.copy2(prompt_file, slides_dir_out / prompt_file.name)
+
+    # -------------------------
+    # Assessment prompts
+    # -------------------------
+    for prompt_file in assessment_dir.glob("*-canva-prompt.txt"):
+        shutil.copy2(prompt_file, assessment_dir_out / prompt_file.name)
+
+    # -------------------------
+    # Workbook prompts
+    # -------------------------
+    workbook_dir = unit_root / "workbook"
+    for prompt_file in workbook_dir.glob("*-canva-prompt.txt"):
+        shutil.copy2(prompt_file, workbook_dir_out / prompt_file.name)
+
+    # -------------------------
+    # Roadmap prompts
+    # -------------------------
+    roadmap_dir = unit_root / "roadmap"
+    for prompt_file in roadmap_dir.glob("*-canva-prompt.txt"):
+        shutil.copy2(prompt_file, roadmap_dir_out / prompt_file.name)
+
+    logger.info(f"  Canva prompts collected at: {canva_root}")
+
 
 def stage_marketing(
     cfg: UnitConfig,
@@ -216,6 +397,7 @@ def stage_listings(
     logger: logging.Logger,
 ) -> None:
     logger.info("Stage: listings")
+
     if generate_listings_for_unit is None:
         logger.info("  Listings generator not available; skipping.")
         return
@@ -227,6 +409,7 @@ def stage_listings(
         "subject": cfg.subject,
         "version": cfg.version,
     }
+
     try:
         generate_listings_for_unit(unit_root, unit_config_dict)  # type: ignore
         logger.info("  Listings generated.")
@@ -238,22 +421,23 @@ def stage_packaging(
     cfg: UnitConfig,
     unit_root: Path,
     releases_root: Path,
-    lessons_dir: Path,
     slides_dir: Path,
     assessment_dir: Path,
     workbook_path: Path,
     roadmap_path: Path,
+    readme_path: Path,
     logger: logging.Logger,
 ) -> None:
     """
     Create:
     - Internal zip of the full unit_root
-    - Public editable folder with PPTX and DOCX (no zip for public)
+    - Public editable folder with PPTX and DOCX
+    - Central Canva prompt folder for production workflow
     """
     logger.info("Stage: packaging")
 
     # -----------------------------
-    # Internal zip (for your own archive / internal use)
+    # Internal zip
     # -----------------------------
     artifacts_root = releases_root / "artifacts"
     artifacts_root.mkdir(parents=True, exist_ok=True)
@@ -287,7 +471,7 @@ def stage_packaging(
     for pptx in slides_dir.glob("*.pptx"):
         shutil.copy2(pptx, public_slides / pptx.name)
 
-    # 02 – Assessment (DOCX from markdown)
+    # 02 – Assessment
     public_assessment = public_root / "02_Assessment"
     public_assessment.mkdir(parents=True, exist_ok=True)
 
@@ -304,31 +488,40 @@ def stage_packaging(
             logger,
         )
 
-    # 03 – Student Workbook (DOCX)
+    # 03 – Student Workbook
     public_workbook = public_root / "03_Student_Workbook"
     public_workbook.mkdir(parents=True, exist_ok=True)
 
-    workbook_md = workbook_path
-    if workbook_md.exists():
+    if workbook_path.exists():
         markdown_to_docx(
-            workbook_md,
+            workbook_path,
             public_workbook / "Student_Workbook.docx",
             logger,
         )
 
-    # 04 – Unit Roadmap (DOCX)
+    # 04 – Unit Roadmap
     public_roadmap = public_root / "04_Unit_Roadmap"
     public_roadmap.mkdir(parents=True, exist_ok=True)
 
-    roadmap_md = roadmap_path
-    if roadmap_md.exists():
+    if roadmap_path.exists():
         markdown_to_docx(
-            roadmap_md,
+            roadmap_path,
             public_roadmap / "Unit_Roadmap.docx",
             logger,
         )
 
-    # 05 – Listings (optional, if present)
+    # 05 – Teacher Guide
+    public_teacher_guide = public_root / "05_Teacher_Guide"
+    public_teacher_guide.mkdir(parents=True, exist_ok=True)
+
+    if readme_path.exists():
+        markdown_to_docx(
+            readme_path,
+            public_teacher_guide / "README.docx",
+            logger,
+        )
+
+    # 05 – Listings (optional)
     listings_dir = unit_root / "listings"
     if listings_dir.exists():
         public_listings = public_root / "05_Listings"
@@ -336,8 +529,7 @@ def stage_packaging(
         for f in listings_dir.glob("*.*"):
             shutil.copy2(f, public_listings / f.name)
 
-    logger.info(f"  Public editable folder created: {public_root}")
-
+    
 
 # --------------------------------------------------------------------
 # Main
@@ -355,38 +547,44 @@ def run_pipeline(config_path: Path, releases_root: Path) -> None:
     unit_root = releases_root / cfg.unit_id
     unit_root.mkdir(parents=True, exist_ok=True)
 
-    # Stages
     lessons_dir, slides_dir, _ = stage_lessons(cfg, unit_root, logger)
     assessment_dir = stage_assessment(cfg, unit_root, logger)
     workbook_path = stage_workbook(cfg, unit_root, lessons_dir, assessment_dir, logger)
     roadmap_path = stage_roadmap(cfg, unit_root, lessons_dir, assessment_dir, logger)
-    marketing_path = stage_marketing(cfg, unit_root, lessons_dir, logger)
+    readme_path = stage_readme(cfg, unit_root, lessons_dir, assessment_dir, logger)
 
-    # Listings are optional – skip cleanly if the generator isn't available
+    stage_canva_prompts(
+        cfg=cfg,
+        unit_root=unit_root,
+        lessons_dir=lessons_dir,
+        assessment_dir=assessment_dir,
+        logger=logger,
+    )
+
+    _marketing_path = stage_marketing(cfg, unit_root, lessons_dir, logger)
+
     try:
         stage_listings(cfg, unit_root, logger)
     except ImportError:
         logger.info("Listings generator not available; skipping.")
 
     stage_packaging(
-        cfg,
-        unit_root,
-        releases_root,
-        lessons_dir,
-        slides_dir,
-        assessment_dir,
-        workbook_path,
-        roadmap_path,
-        logger,
+        cfg=cfg,
+        unit_root=unit_root,
+        releases_root=releases_root,
+        slides_dir=slides_dir,
+        assessment_dir=assessment_dir,
+        workbook_path=workbook_path,
+        roadmap_path=roadmap_path,
+        readme_path=readme_path,
+        logger=logger,
     )
 
-        # Validation summary
     errors = validate_unit(unit_root)
 
     report_path = unit_root / "validation_report.md"
     with report_path.open("w", encoding="utf-8") as f:
         f.write(f"# Validation report for {cfg.unit_id} ({cfg.version})\n\n")
-
         if errors:
             f.write("## Status\n\n")
             f.write("⚠️ Validation completed **with issues**.\n\n")
@@ -401,10 +599,10 @@ def run_pipeline(config_path: Path, releases_root: Path) -> None:
         logger.info("Validation completed with issues:")
         for e in errors:
             logger.info(f"  - {e}")
-        logger.info(f"Full validation report written to {report_path}")
     else:
         logger.info("Validation completed: no structural issues detected.")
-        logger.info(f"Validation report written to {report_path}")
+
+    logger.info(f"Validation report written to {report_path}")
 
 
 def main() -> None:
