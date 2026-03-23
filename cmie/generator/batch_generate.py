@@ -3,9 +3,14 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List, Tuple
 
-from .ai_lesson_engine import generate_and_save_lesson
-from .slide_generator import lesson_json_to_pptx, lesson_json_to_public_pptx
 from cmie.core.unit_config import UnitConfig
+
+from .ai_lesson_engine import generate_and_save_lesson
+from .slide_generator import (
+    lesson_json_to_pptx,
+    lesson_json_to_public_pptx,
+)
+from .canva_prompts import lesson_json_to_canva_prompt
 
 
 def run_batch(unit_cfg: UnitConfig) -> List[Tuple[Path, Path]]:
@@ -15,6 +20,7 @@ def run_batch(unit_cfg: UnitConfig) -> List[Tuple[Path, Path]]:
 
     Full deck is still generated for internal use.
     Public deck is what gets returned for release packaging.
+    Canva prompt files are also generated beside each lesson JSON.
     """
 
     print(f"Running batch for unit: {unit_cfg.title}")
@@ -37,11 +43,15 @@ def run_batch(unit_cfg: UnitConfig) -> List[Tuple[Path, Path]]:
         # Full teacher/internal deck
         full_pptx_path: Path = lesson_json_to_pptx(lesson_json_path)
 
-        # Public ALai-friendly deck
+        # Public Canva-friendly deck
         public_pptx_path: Path = lesson_json_to_public_pptx(lesson_json_path)
+
+        # Canva prompt text file
+        canva_prompt_path: Path = lesson_json_to_canva_prompt(lesson_json_path)
 
         print(f"Saved full deck to: {full_pptx_path}")
         print(f"Saved public deck to: {public_pptx_path}")
+        print(f"Saved Canva prompt to: {canva_prompt_path}")
 
         # IMPORTANT: public deck returned for packaging
         results.append((lesson_json_path, public_pptx_path))

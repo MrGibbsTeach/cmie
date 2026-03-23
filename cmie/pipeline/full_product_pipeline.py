@@ -6,22 +6,22 @@ import logging
 import shutil
 from pathlib import Path
 from typing import List, Optional, Tuple
-from docx import Document
-from docx.shared import Inches, Pt
-from cmie.generator.readme_generator import generate_unit_readme
 
 from docx import Document
+from docx.shared import Inches, Pt
 
 from cmie.core.unit_config import UnitConfig
 from cmie.generator import assessment_generator
 from cmie.generator.ai_lesson_engine import slugify
 from cmie.generator.assessment_markdown import render_assessment_markdown
 from cmie.generator.batch_generate import run_batch
+from cmie.generator.canva_csv_generator import export_unit_canva_csv
 from cmie.generator.canva_prompts import (
     assessment_json_to_canva_prompt,
     roadmap_markdown_to_canva_prompt,
     workbook_markdown_to_canva_prompt,
 )
+from cmie.generator.readme_generator import generate_unit_readme
 from cmie.generator.roadmap_generator import generate_unit_roadmap
 from cmie.generator.workbook_generator import generate_student_workbook
 from cmie.marketing.marketing_generator import generate_marketing_assets
@@ -186,6 +186,29 @@ def stage_lessons(
     logger.info(f"  {len(copied_lessons)} lessons copied.")
     return lessons_dir, slides_dir, copied_lessons
 
+def stage_canva_csv(
+    cfg: UnitConfig,
+    unit_root: Path,
+    logger: logging.Logger,
+) -> Path:
+    logger.info("Stage: canva_csv")
+
+    lesson_root = Path("generated_lessons") / slugify(cfg.title)
+    lesson_json_paths = sorted(lesson_root.glob("*/lesson.json"))
+
+    output_dir = unit_root / "04_Slides_CSV"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    csv_path = output_dir / f"{cfg.unit_id}_canva_slides.csv"
+
+    export_unit_canva_csv(
+        unit_title=cfg.title,
+        lesson_json_paths=lesson_json_paths,
+        output_csv=csv_path,
+    )
+
+    logger.info(f"  Canva CSV created: {csv_path}")
+    return csv_path
 
 def stage_assessment(
     cfg: UnitConfig,
@@ -302,30 +325,32 @@ def stage_readme(
 
     logger.info(f"  README file: {readme_path}")
     return readme_path
-
-def stage_canva_prompts(
-    cfg: UnitConfig,
-    unit_root: Path,
-    lessons_dir: Path,
-    assessment_dir: Path,
-    logger: logging.Logger,
-) -> None:
-    """
-    Collect all Canva prompts into a single production folder.
-    This is NOT part of the public release.
-    """
-    logger.info("Stage: canva_prompts")
-
-    canva_root = unit_root / "05_Canva_Prompts"
-    canva_root.mkdir(parents=True, exist_ok=True)
-
-    slides_dir_out = canva_root / "01_Lesson_Slides"
-    assessment_dir_out = canva_root / "02_Assessment"
-    workbook_dir_out = canva_root / "03_Student_Workbook"
-    roadmap_dir_out = canva_root / "04_Unit_Roadmap"
-
-    for d in [slides_dir_out, assessment_dir_out, workbook_dir_out, roadmap_dir_out]:
-        d.mkdir(parents=True, exist_ok=True)
+            # -------------------------
+            # Legacy Canva prompts for Slides
+            # -------------------------
+            # def stage_canva_prompts(
+            #     cfg: UnitConfig,
+            #     unit_root: Path,
+            #     lessons_dir: Path,
+            #     assessment_dir: Path,
+            #     logger: logging.Logger,
+            # ) -> None:
+            #     """
+            #     Collect all Canva prompts into a single production folder.
+            #     This is NOT part of the public release.
+            #     """
+            #     logger.info("Stage: canva_prompts")
+            #
+            #     canva_root = unit_root / "05_Canva_Prompts"
+            #     canva_root.mkdir(parents=True, exist_ok=True)
+            #
+            #     slides_dir_out = canva_root / "01_Lesson_Slides"
+            #     assessment_dir_out = canva_root / "02_Assessment"
+            #     workbook_dir_out = canva_root / "03_Student_Workbook"
+            #     roadmap_dir_out = canva_root / "04_Unit_Roadmap"
+            #
+            #     for d in [slides_dir_out, assessment_dir_out, workbook_dir_out, roadmap_dir_out]:
+            #         d.mkdir(parents=True, exist_ok=True)
 
     # -------------------------
     # Lesson slide prompts
@@ -552,14 +577,16 @@ def run_pipeline(config_path: Path, releases_root: Path) -> None:
     workbook_path = stage_workbook(cfg, unit_root, lessons_dir, assessment_dir, logger)
     roadmap_path = stage_roadmap(cfg, unit_root, lessons_dir, assessment_dir, logger)
     readme_path = stage_readme(cfg, unit_root, lessons_dir, assessment_dir, logger)
+    csv_path = stage_canva_csv(cfg, unit_root, logger)
 
-    stage_canva_prompts(
-        cfg=cfg,
-        unit_root=unit_root,
-        lessons_dir=lessons_dir,
-        assessment_dir=assessment_dir,
-        logger=logger,
-    )
+                # # Legacy for Canva Prompts for slides ##
+                # stage_canva_prompts(
+                #     cfg=cfg,
+                #     unit_root=unit_root,
+                #     lessons_dir=lessons_dir,
+                #     assessment_dir=assessment_dir,
+                #     logger=logger,
+                # )
 
     _marketing_path = stage_marketing(cfg, unit_root, lessons_dir, logger)
 

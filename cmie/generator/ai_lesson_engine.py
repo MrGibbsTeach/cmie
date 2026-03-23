@@ -47,13 +47,37 @@ class LessonConfig:
 
 def build_lesson_architect_prompt(cfg: LessonConfig) -> str:
     return (
-        "You are an expert curriculum architect designing a strong lower secondary Digital Technologies lesson.\n\n"
+        "You are an expert curriculum architect designing a high-quality lower secondary Digital Technologies lesson.\n\n"
+
+        "Each lesson must result in 10–15 slides when later converted to presentation format.\n"
+        "Design the lesson with a clear teaching flow and embedded student thinking.\n\n"
+
         f"Design the lesson architecture for:\n"
         f"- Unit: {cfg.micro_unit_name}\n"
         f"- Audience: {cfg.year_level}\n"
         f"- Lesson number: {cfg.lesson_number}\n"
         f"- Topic: {cfg.topic_title}\n\n"
+
         "The lesson is part of an AI and data literacy unit.\n\n"
+
+        "Required lesson structure:\n"
+        "- Hook scenario (engaging, relatable)\n"
+        "- Lesson Objective (ONE clear sentence)\n"
+        "- Success Criteria (3 dot points, no 'I can')\n"
+        "- Concept 1 (with example + misconception)\n"
+        "- Check for understanding (1–2 questions)\n"
+        "- Concept 2 (with example + misconception)\n"
+        "- Real-world example\n"
+        "- Mini task (short think/pair/share)\n"
+        "- Main activity (10–15 minutes, clear output)\n"
+        "- Reflection questions\n"
+        "- Exit ticket\n\n"
+
+        "Optional (include if useful):\n"
+        "- Additional concept\n"
+        "- Misconception focus\n"
+        "- Extension challenge\n\n"
+
         "Respond ONLY with valid JSON using this schema:\n"
         "{\n"
         '  "lesson_title": string,\n'
@@ -74,6 +98,7 @@ def build_lesson_architect_prompt(cfg: LessonConfig) -> str:
         '      "misconception": string\n'
         "    }\n"
         "  ],\n"
+        '  "check_for_understanding": [string],\n'
         '  "real_world_example": {\n'
         '    "title": string,\n'
         '    "context": string,\n'
@@ -101,28 +126,46 @@ def build_lesson_architect_prompt(cfg: LessonConfig) -> str:
         '    "extension": [string]\n'
         "  }\n"
         "}\n\n"
-        "Rules:\n"
-        "- Make the lesson highly teachable.\n"
-        "- Keep the sequence realistic for one class lesson.\n"
-        "- Make activities concrete, not generic.\n"
-        "- Use lower secondary / middle school appropriate language.\n"
-        "- Avoid country-specific references.\n"
-    )
 
+        "Rules:\n"
+        "- Keep explanations concise and student-friendly.\n"
+        "- Every concept must include a concrete example.\n"
+        "- Activities must be specific and actionable.\n"
+        "- Avoid vague or generic instructions.\n"
+        "- Ensure the lesson can run in a single class period.\n"
+    )
 
 def build_lesson_writer_prompt(cfg: LessonConfig, architecture: Dict[str, Any]) -> str:
     architecture_json = json.dumps(architecture, ensure_ascii=False, indent=2)
 
     return (
         "You are an expert lesson writer for lower secondary Digital Technologies.\n\n"
+        "Write slide-ready lesson content that is concise, clear, and classroom-ready.\n\n"
+        "Non-negotiable writing rules:\n"
+        "- Keep all slide titles under 23 characters including spaces.\n"
+        "- Keep subtitles short and punchy.\n"
+        "- Keep explanations to 3-4 sentences maximum.\n"
+        "- Use short, slide-friendly wording, not long paragraphs.\n"
+        "- Every concept must include a concrete example.\n"
+        "- Avoid filler, repetition, and generic phrasing.\n"
+        "- Do not use phrases like 'Use this slide to' or 'This section'.\n"
+        "- Write like a teacher preparing lesson slide content, not a teacher guide.\n"
+        "- Mini tasks must be quick and concrete.\n"
+        "- Main activities must include 3 clear steps.\n"
+        "- Extended activities must deepen thinking, not repeat the main task.\n"
+        "- Prefer outputs such as list, sort, compare, explain, justify, classify, or predict.\n"
+        "- Reflection questions should promote explanation, not just recall.\n\n"
+
         f"Write a full polished lesson from this architecture.\n\n"
         f"Lesson context:\n"
         f"- Unit: {cfg.micro_unit_name}\n"
         f"- Audience: {cfg.year_level}\n"
         f"- Lesson number: {cfg.lesson_number}\n"
         f"- Topic: {cfg.topic_title}\n\n"
+
         "Architecture:\n"
         f"{architecture_json}\n\n"
+
         "Respond ONLY with valid JSON using this schema:\n"
         "{\n"
         '  "lesson_title": string,\n'
@@ -153,12 +196,13 @@ def build_lesson_writer_prompt(cfg: LessonConfig, architecture: Dict[str, Any]) 
         '    "extension": [string]\n'
         "  }\n"
         "}\n\n"
+
         "Rules:\n"
         "- Explanations must be teachable, not textbook-like.\n"
-        "- Each core section should be concise but clear.\n"
+        "- Each core section should be concise, clear, and slide-friendly.\n"
         "- Use concrete lower secondary examples.\n"
         "- The activity must have a clear output and visible success criteria.\n"
-        "- Reflection questions should promote explanation, not just recall.\n"
+        "- Keep wording practical, punchy, and easy to place on presentation slides.\n"
     )
 
 
@@ -172,28 +216,46 @@ def build_lesson_critic_prompt(
 
     return (
         "You are an expert curriculum editor and lesson critic.\n\n"
-        "Your job is to improve the draft lesson so it is clearer, more teachable, "
-        "more engaging, and more commercially useful for teachers.\n\n"
+        "Your job is to refine the lesson so it is concise, slide-ready, highly teachable, "
+        "and commercially strong for teachers.\n\n"
+
+        "Non-negotiable editing rules:\n"
+        "- Keep all slide titles under 23 characters including spaces.\n"
+        "- Reduce long text into short, punchy, slide-friendly phrasing.\n"
+        "- Remove repetition, filler, and generic wording.\n"
+        "- Ensure all explanations are clear and limited to 3–4 sentences max.\n"
+        "- Ensure every concept includes a concrete example.\n"
+        "- Replace vague activities with specific, structured tasks.\n"
+        "- Ensure activities include clear steps and a clear student output.\n"
+        "- Ensure extended activities deepen thinking, not repeat work.\n"
+        "- Prefer practical classroom language over abstract explanation.\n\n"
+
         f"Lesson context:\n"
         f"- Unit: {cfg.micro_unit_name}\n"
         f"- Audience: {cfg.year_level}\n"
         f"- Topic: {cfg.topic_title}\n\n"
+
         "Original architecture:\n"
         f"{architecture_json}\n\n"
+
         "Draft lesson:\n"
         f"{draft_json}\n\n"
-        "Improve the lesson where needed.\n\n"
-        "Check for:\n"
+
+        "Check and improve:\n"
         "- weak or vague activities\n"
+        "- overly long or dense explanations\n"
         "- repetitive wording\n"
-        "- overly abstract explanations\n"
-        "- unclear real-world links\n"
-        "- missing teachable examples\n"
+        "- unclear real-world examples\n"
+        "- missing or weak student outputs\n"
         "- poor alignment between objectives and activity\n\n"
+
+        "Output requirements:\n"
+        "- Keep structure identical to the input schema\n"
+        "- Improve wording, clarity, and usability\n"
+        "- Make the lesson feel ready to use with minimal editing\n\n"
+
         "Respond ONLY with valid JSON using the SAME schema as the draft lesson.\n"
     )
-
-
 
 def build_lesson_prompt(cfg: LessonConfig) -> str:
     """

@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_ai_data_unit2",
+  "title": "AI & Data Literacy Series – Unit 2: Data + AI Models",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "What Is an AI Model?" },
+    { "title": "How AI Learns from Data" },
+    { "title": "Training Data vs Testing Data" },
+    { "title": "Finding Patterns and Making Predictions" },
+    { "title": "Classification Models: Sorting Data into Groups" },
+    { "title": "How AI Models Power Recommendations" },
+    { "title": "Designing a Simple AI Model" }
+  ],
+  "lesson_videos": {}
+}
