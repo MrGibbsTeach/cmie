@@ -1,3 +1,6 @@
+# LEGACY: Canva prompt generation system (replaced by CSV → Canva workflow)
+# Do not delete yet. Still partially referenced in pipeline.
+
 from __future__ import annotations
 
 import json

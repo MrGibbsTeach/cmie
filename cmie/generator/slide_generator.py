@@ -1,3 +1,7 @@
+# LEGACY: PPTX slide generation system (replaced by CSV → Canva workflow)
+# Do not delete yet. Still referenced by batch_generate.py.
+
+
 from __future__ import annotations
 
 import copy

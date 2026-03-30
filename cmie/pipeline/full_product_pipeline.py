@@ -27,7 +27,6 @@ from cmie.generator.workbook_generator import generate_student_workbook
 from cmie.marketing.marketing_generator import generate_marketing_assets
 from cmie.validation.unit_validation import validate_unit
 
-# Optional – listings generator may not exist yet
 try:
     from cmie.generator.listing_generator import generate_listings_for_unit  # type: ignore
 except Exception:  # pragma: no cover
@@ -146,6 +145,7 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
     docx_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(docx_path))
 
+
 # --------------------------------------------------------------------
 # Stages
 # --------------------------------------------------------------------
@@ -155,36 +155,31 @@ def stage_lessons(
     cfg: UnitConfig,
     unit_root: Path,
     logger: logging.Logger,
-) -> Tuple[Path, Path, List[Path]]:
+) -> Tuple[Path, List[Path]]:
     """
-    Generate lessons and copy lesson JSON + public PPTX into the unit release folder.
+    Generate lessons and copy lesson JSON files into the unit release folder.
+    Slides are now handled via CSV.
     """
     logger.info("Stage: lessons")
 
     lessons_dir = unit_root / "lessons"
-    slides_dir = unit_root / "slides"
     lessons_dir.mkdir(parents=True, exist_ok=True)
-    slides_dir.mkdir(parents=True, exist_ok=True)
 
     for p in lessons_dir.glob("*.json"):
-        p.unlink()
-    for p in slides_dir.glob("*.pptx"):
         p.unlink()
 
     results = run_batch(cfg)
 
     copied_lessons: List[Path] = []
-    for lesson_json, pptx in results:
+    for lesson_json in results:
         topic_slug = lesson_json.parent.name
         dest_json = lessons_dir / f"{topic_slug}.json"
-        dest_pptx = slides_dir / pptx.name
-
         shutil.copy2(lesson_json, dest_json)
-        shutil.copy2(pptx, dest_pptx)
         copied_lessons.append(dest_json)
 
     logger.info(f"  {len(copied_lessons)} lessons copied.")
-    return lessons_dir, slides_dir, copied_lessons
+    return lessons_dir, copied_lessons
+
 
 def stage_canva_csv(
     cfg: UnitConfig,
@@ -210,14 +205,12 @@ def stage_canva_csv(
     logger.info(f"  Canva CSV created: {csv_path}")
     return csv_path
 
+
 def stage_assessment(
     cfg: UnitConfig,
     unit_root: Path,
     logger: logging.Logger,
 ) -> Path:
-    """
-    Generate assessment JSON + markdown directly into unit_root/assessment.
-    """
     logger.info("Stage: assessment")
 
     dest_dir = unit_root / "assessment"
@@ -299,6 +292,7 @@ def stage_roadmap(
     logger.info(f"  Canva roadmap prompt created: {prompt_path}")
     return roadmap_path
 
+
 def stage_readme(
     cfg: UnitConfig,
     unit_root: Path,
@@ -325,63 +319,6 @@ def stage_readme(
 
     logger.info(f"  README file: {readme_path}")
     return readme_path
-            # -------------------------
-            # Legacy Canva prompts for Slides
-            # -------------------------
-            # def stage_canva_prompts(
-            #     cfg: UnitConfig,
-            #     unit_root: Path,
-            #     lessons_dir: Path,
-            #     assessment_dir: Path,
-            #     logger: logging.Logger,
-            # ) -> None:
-            #     """
-            #     Collect all Canva prompts into a single production folder.
-            #     This is NOT part of the public release.
-            #     """
-            #     logger.info("Stage: canva_prompts")
-            #
-            #     canva_root = unit_root / "05_Canva_Prompts"
-            #     canva_root.mkdir(parents=True, exist_ok=True)
-            #
-            #     slides_dir_out = canva_root / "01_Lesson_Slides"
-            #     assessment_dir_out = canva_root / "02_Assessment"
-            #     workbook_dir_out = canva_root / "03_Student_Workbook"
-            #     roadmap_dir_out = canva_root / "04_Unit_Roadmap"
-            #
-            #     for d in [slides_dir_out, assessment_dir_out, workbook_dir_out, roadmap_dir_out]:
-            #         d.mkdir(parents=True, exist_ok=True)
-
-    # -------------------------
-    # Lesson slide prompts
-    # -------------------------
-    generated_unit_dir = Path("generated_lessons") / slugify(cfg.title)
-
-    if generated_unit_dir.exists():
-        for prompt_file in generated_unit_dir.rglob("*-canva-prompt.txt"):
-            shutil.copy2(prompt_file, slides_dir_out / prompt_file.name)
-
-    # -------------------------
-    # Assessment prompts
-    # -------------------------
-    for prompt_file in assessment_dir.glob("*-canva-prompt.txt"):
-        shutil.copy2(prompt_file, assessment_dir_out / prompt_file.name)
-
-    # -------------------------
-    # Workbook prompts
-    # -------------------------
-    workbook_dir = unit_root / "workbook"
-    for prompt_file in workbook_dir.glob("*-canva-prompt.txt"):
-        shutil.copy2(prompt_file, workbook_dir_out / prompt_file.name)
-
-    # -------------------------
-    # Roadmap prompts
-    # -------------------------
-    roadmap_dir = unit_root / "roadmap"
-    for prompt_file in roadmap_dir.glob("*-canva-prompt.txt"):
-        shutil.copy2(prompt_file, roadmap_dir_out / prompt_file.name)
-
-    logger.info(f"  Canva prompts collected at: {canva_root}")
 
 
 def stage_marketing(
@@ -390,9 +327,6 @@ def stage_marketing(
     lessons_dir: Path,
     logger: logging.Logger,
 ) -> Path:
-    """
-    Generate marketplace-ready marketing copy for this unit.
-    """
     logger.info("Stage: marketing")
 
     dest_dir = unit_root / "marketing"
@@ -446,7 +380,6 @@ def stage_packaging(
     cfg: UnitConfig,
     unit_root: Path,
     releases_root: Path,
-    slides_dir: Path,
     assessment_dir: Path,
     workbook_path: Path,
     roadmap_path: Path,
@@ -456,8 +389,7 @@ def stage_packaging(
     """
     Create:
     - Internal zip of the full unit_root
-    - Public editable folder with PPTX and DOCX
-    - Central Canva prompt folder for production workflow
+    - Public editable folder with CSV and DOCX outputs
     """
     logger.info("Stage: packaging")
 
@@ -490,11 +422,13 @@ def stage_packaging(
 
     public_root.mkdir(parents=True, exist_ok=True)
 
-    # 01 – Lesson Slides
-    public_slides = public_root / "01_Lesson_Slides"
-    public_slides.mkdir(parents=True, exist_ok=True)
-    for pptx in slides_dir.glob("*.pptx"):
-        shutil.copy2(pptx, public_slides / pptx.name)
+    # 01 – Lesson Slides CSV
+    public_slides_csv = public_root / "01_Lesson_Slides_CSV"
+    public_slides_csv.mkdir(parents=True, exist_ok=True)
+
+    csv_dir = unit_root / "04_Slides_CSV"
+    for csv_file in csv_dir.glob("*.csv"):
+        shutil.copy2(csv_file, public_slides_csv / csv_file.name)
 
     # 02 – Assessment
     public_assessment = public_root / "02_Assessment"
@@ -546,15 +480,18 @@ def stage_packaging(
             logger,
         )
 
-    # 05 – Listings (optional)
+    # 06 – Listings
     listings_dir = unit_root / "listings"
     if listings_dir.exists():
-        public_listings = public_root / "05_Listings"
+        public_listings = public_root / "06_Listings"
         public_listings.mkdir(parents=True, exist_ok=True)
-        for f in listings_dir.glob("*.*"):
-            shutil.copy2(f, public_listings / f.name)
 
-    
+        for f in listings_dir.rglob("*.*"):
+            if f.is_file():
+                dest = public_listings / f.relative_to(listings_dir)
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(f, dest)
+
 
 # --------------------------------------------------------------------
 # Main
@@ -572,21 +509,12 @@ def run_pipeline(config_path: Path, releases_root: Path) -> None:
     unit_root = releases_root / cfg.unit_id
     unit_root.mkdir(parents=True, exist_ok=True)
 
-    lessons_dir, slides_dir, _ = stage_lessons(cfg, unit_root, logger)
+    lessons_dir, _ = stage_lessons(cfg, unit_root, logger)
     assessment_dir = stage_assessment(cfg, unit_root, logger)
     workbook_path = stage_workbook(cfg, unit_root, lessons_dir, assessment_dir, logger)
     roadmap_path = stage_roadmap(cfg, unit_root, lessons_dir, assessment_dir, logger)
     readme_path = stage_readme(cfg, unit_root, lessons_dir, assessment_dir, logger)
-    csv_path = stage_canva_csv(cfg, unit_root, logger)
-
-                # # Legacy for Canva Prompts for slides ##
-                # stage_canva_prompts(
-                #     cfg=cfg,
-                #     unit_root=unit_root,
-                #     lessons_dir=lessons_dir,
-                #     assessment_dir=assessment_dir,
-                #     logger=logger,
-                # )
+    _csv_path = stage_canva_csv(cfg, unit_root, logger)
 
     _marketing_path = stage_marketing(cfg, unit_root, lessons_dir, logger)
 
@@ -599,7 +527,6 @@ def run_pipeline(config_path: Path, releases_root: Path) -> None:
         cfg=cfg,
         unit_root=unit_root,
         releases_root=releases_root,
-        slides_dir=slides_dir,
         assessment_dir=assessment_dir,
         workbook_path=workbook_path,
         roadmap_path=roadmap_path,
