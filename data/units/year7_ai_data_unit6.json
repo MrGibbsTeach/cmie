@@ -1,0 +1,31 @@
+{
+  "unit_id": "year7_ai_data_unit6",
+  "title": "AI & Data Literacy Series – Unit 6: AI in Business",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    {
+      "title": "AI in Modern Business"
+    },
+    {
+      "title": "Automation and Efficiency"
+    },
+    {
+      "title": "AI in Customer Experience"
+    },
+    {
+      "title": "Data-Driven Decisions"
+    },
+    {
+      "title": "Risks of AI in Business"
+    },
+    {
+      "title": "Jobs and the Future of Work"
+    },
+    {
+      "title": "Designing an AI Business Solution"
+    }
+  ],
+  "lesson_videos": {}
+}

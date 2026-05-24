@@ -1,0 +1,31 @@
+{
+  "unit_id": "year7_ai_data_unit3",
+  "title": "AI & Data Literacy Series – Unit 3: AI Ethics + Bias",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    {
+      "title": "What Is AI Bias?"
+    },
+    {
+      "title": "Where Bias Comes From in Data"
+    },
+    {
+      "title": "Real-World Examples of Biased AI"
+    },
+    {
+      "title": "Fair vs Unfair AI Decisions"
+    },
+    {
+      "title": "Who Is Responsible for AI Decisions?"
+    },
+    {
+      "title": "Designing Fair AI Systems"
+    },
+    {
+      "title": "Evaluating AI for Bias"
+    }
+  ],
+  "lesson_videos": {}
+}

@@ -12,9 +12,8 @@ def run_batch(unit_cfg: UnitConfig) -> List[Path]:
     """
     Generate all lessons for a unit and return a list of lesson JSON paths.
 
-    Legacy PPTX generation and lesson Canva prompt generation have been removed
-    from the active workflow. Slides are now produced via unit-level CSV export
-    for Canva Sheets.
+    Legacy PPTX generation has been removed from the active workflow.
+    Slides are now produced via unit-level CSV export for Canva template generation.
     """
 
     print(f"Running batch for unit: {unit_cfg.title}")

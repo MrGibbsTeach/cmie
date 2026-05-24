@@ -16,6 +16,52 @@ def _load_lessons(lessons_dir: Path) -> List[Dict[str, Any]]:
 
     return lessons
 
+def _lesson_specific_task(title: str) -> List[str]:
+    t = title.lower()
+
+    if "bias" in t:
+        return [
+            "### Quick Task: Spot the Bias",
+            "- Which example shows bias?",
+            "- Why is it biased?",
+            "- Who might be affected?",
+            ""
+        ]
+
+    if "fair" in t:
+        return [
+            "### Quick Task: Fair or Unfair?",
+            "- Decide if the AI decision is fair",
+            "- Explain your reasoning",
+            "- Suggest one improvement",
+            ""
+        ]
+
+    if "responsible" in t:
+        return [
+            "### Quick Task: Who Is Responsible?",
+            "- List all people involved",
+            "- Who should be accountable?",
+            "- Explain why",
+            ""
+        ]
+
+    if "design" in t:
+        return [
+            "### Quick Task: Improve the System",
+            "- What is one flaw?",
+            "- How would you fix it?",
+            "- How does your fix improve fairness?",
+            ""
+        ]
+
+    return [
+        "### Quick Task",
+        "- Apply today’s idea to a real-world example",
+        "- Explain your thinking",
+        ""
+    ]
+
 
 def generate_student_workbook(
     unit_root: Path,
@@ -74,6 +120,10 @@ def generate_student_workbook(
             for o in objs[:3]:
                 lines.append(f"- {o}")
             lines.append("")
+
+        # Lesson-specific task
+        lines.extend(_lesson_specific_task(lt))
+        lines.append("")
 
         # Section 1
         lines.append("### Explain this idea in your own words:")

@@ -1,0 +1,31 @@
+{
+  "unit_id": "year7_ai_data_unit5",
+  "title": "AI & Data Literacy Series – Unit 5: AI in Education",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    {
+      "title": "What Is AI in Education?"
+    },
+    {
+      "title": "AI Tools for Learning"
+    },
+    {
+      "title": "Benefits of AI for Students"
+    },
+    {
+      "title": "Risks and Limitations in Schools"
+    },
+    {
+      "title": "AI and Academic Integrity"
+    },
+    {
+      "title": "Teacher vs AI Roles"
+    },
+    {
+      "title": "Designing an AI Learning Tool"
+    }
+  ],
+  "lesson_videos": {}
+}

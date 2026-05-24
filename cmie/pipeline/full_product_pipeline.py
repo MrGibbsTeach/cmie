@@ -16,11 +16,6 @@ from cmie.generator.ai_lesson_engine import slugify
 from cmie.generator.assessment_markdown import render_assessment_markdown
 from cmie.generator.batch_generate import run_batch
 from cmie.generator.canva_csv_generator import export_unit_canva_csv
-from cmie.generator.canva_prompts import (
-    assessment_json_to_canva_prompt,
-    roadmap_markdown_to_canva_prompt,
-    workbook_markdown_to_canva_prompt,
-)
 from cmie.generator.readme_generator import generate_unit_readme
 from cmie.generator.roadmap_generator import generate_unit_roadmap
 from cmie.generator.workbook_generator import generate_student_workbook
@@ -225,9 +220,7 @@ def stage_assessment(
     )
 
     render_assessment_markdown(dest_dir)
-    prompt_path = assessment_json_to_canva_prompt(dest_dir / "assessment.json")
 
-    logger.info(f"  Canva assessment prompt created: {prompt_path}")
     logger.info("  Assessment generated.")
     return dest_dir
 
@@ -255,12 +248,9 @@ def stage_workbook(
         lessons_dir,
         assessment_dir,
     )
-    prompt_path = workbook_markdown_to_canva_prompt(workbook_path)
 
     logger.info(f"  Workbook file: {workbook_path}")
-    logger.info(f"  Canva workbook prompt created: {prompt_path}")
     return workbook_path
-
 
 def stage_roadmap(
     cfg: UnitConfig,
@@ -286,10 +276,8 @@ def stage_roadmap(
         assessment_dir,
     )
     roadmap_path = Path(meta["file"])
-    prompt_path = roadmap_markdown_to_canva_prompt(roadmap_path)
 
     logger.info(f"  Roadmap file: {roadmap_path}")
-    logger.info(f"  Canva roadmap prompt created: {prompt_path}")
     return roadmap_path
 
 
@@ -375,6 +363,78 @@ def stage_listings(
     except Exception as e:  # pragma: no cover
         logger.warning(f"  Listings generation failed: {e}")
 
+def render_rubric_table(
+    rubric_json_path: Path,
+    output_docx: Path,
+    logger: logging.Logger,
+) -> None:
+    """
+    Render rubric.json into a proper DOCX table instead of dumping markdown.
+    """
+    logger.info(f"  Converting {rubric_json_path.name} -> {output_docx.name}")
+
+    with rubric_json_path.open(encoding="utf-8") as f:
+        rubric = json.load(f)
+
+    levels = rubric.get("levels", ["Exemplary", "Proficient", "Developing", "Beginning"])
+    criteria = rubric.get("criteria", [])
+
+    doc = Document()
+
+    style = doc.styles["Normal"]
+    style.font.name = "Aptos"
+    style.font.size = Pt(11)
+
+    doc.add_paragraph("Assessment rubric and marking guide", style="Title")
+    doc.add_paragraph("")
+    doc.add_paragraph("Rubric", style="Heading 1")
+
+    table = doc.add_table(rows=len(criteria) + 1, cols=len(levels) + 1)
+    table.style = "Table Grid"
+
+    # Header row
+    table.cell(0, 0).text = "Criterion"
+    for i, level in enumerate(levels, start=1):
+        table.cell(0, i).text = str(level)
+
+    # Body rows
+    for row_idx, crit in enumerate(criteria, start=1):
+        table.cell(row_idx, 0).text = str(crit.get("name", ""))
+        descriptors = crit.get("descriptors", {})
+        for col_idx, level in enumerate(levels, start=1):
+            table.cell(row_idx, col_idx).text = str(descriptors.get(level, ""))
+
+    # Marking guide
+    marking_path = rubric_json_path.parent / "marking_guide.json"
+    if marking_path.exists():
+        with marking_path.open(encoding="utf-8") as f:
+            marking = json.load(f)
+
+        doc.add_paragraph("")
+        doc.add_paragraph("Marking guide", style="Heading 1")
+
+        general = marking.get("general_notes", [])
+        if general:
+            doc.add_paragraph("General notes", style="Heading 2")
+            for item in general:
+                doc.add_paragraph(str(item), style="List Bullet")
+
+        features = marking.get("high_quality_response_features", [])
+        if features:
+            doc.add_paragraph("Features of high-quality responses", style="Heading 2")
+            for item in features:
+                doc.add_paragraph(str(item), style="List Bullet")
+
+        misconceptions = marking.get("common_misconceptions", [])
+        if misconceptions:
+            doc.add_paragraph("Common misconceptions", style="Heading 2")
+            for item in misconceptions:
+                doc.add_paragraph(str(item), style="List Bullet")
+
+    output_docx.parent.mkdir(parents=True, exist_ok=True)
+    doc.save(str(output_docx))
+
+
 
 def stage_packaging(
     cfg: UnitConfig,
@@ -404,6 +464,20 @@ def stage_packaging(
     shutil.make_archive(str(zip_base), "zip", root_dir=unit_root)
     logger.info("  Internal zip created.")
 
+
+    required_files = [
+        assessment_dir / "assessment_task.md",
+        assessment_dir / "assessment_rubric_marking.md",
+        workbook_path,
+        roadmap_path,
+        readme_path,
+    ]
+
+    missing = [str(p) for p in required_files if not p.exists()]
+
+    if missing:
+        raise RuntimeError(f"Missing required files before packaging: {missing}")
+
     # -----------------------------
     # Public editable folder
     # -----------------------------
@@ -430,22 +504,30 @@ def stage_packaging(
     for csv_file in csv_dir.glob("*.csv"):
         shutil.copy2(csv_file, public_slides_csv / csv_file.name)
 
-    # 02 – Assessment
+            # 02 – Assessment
     public_assessment = public_root / "02_Assessment"
     public_assessment.mkdir(parents=True, exist_ok=True)
 
     task_md = assessment_dir / "assessment_task.md"
-    rubric_md = assessment_dir / "assessment_rubric_marking.md"
+    rubric_json = assessment_dir / "rubric.json"
 
     if task_md.exists():
-        markdown_to_docx(task_md, public_assessment / "Assessment_Task.docx", logger)
-
-    if rubric_md.exists():
         markdown_to_docx(
-            rubric_md,
+            task_md,
+            public_assessment / "Assessment_Task.docx",
+            logger,
+        )
+    else:
+        logger.warning(f"Assessment task markdown missing: {task_md}")
+
+    if rubric_json.exists():
+        render_rubric_table(
+            rubric_json,
             public_assessment / "Assessment_Rubric_and_Marking.docx",
             logger,
         )
+    else:
+        logger.warning(f"Assessment rubric JSON missing: {rubric_json}")
 
     # 03 – Student Workbook
     public_workbook = public_root / "03_Student_Workbook"
@@ -457,6 +539,8 @@ def stage_packaging(
             public_workbook / "Student_Workbook.docx",
             logger,
         )
+    else:
+        logger.warning(f"Workbook markdown missing: {workbook_path}")
 
     # 04 – Unit Roadmap
     public_roadmap = public_root / "04_Unit_Roadmap"
@@ -468,6 +552,8 @@ def stage_packaging(
             public_roadmap / "Unit_Roadmap.docx",
             logger,
         )
+    else:
+        logger.warning(f"Roadmap markdown missing: {roadmap_path}")
 
     # 05 – Teacher Guide
     public_teacher_guide = public_root / "05_Teacher_Guide"
@@ -479,6 +565,9 @@ def stage_packaging(
             public_teacher_guide / "README.docx",
             logger,
         )
+    else:
+        logger.warning(f"Teacher guide markdown missing: {readme_path}")
+
 
     # 06 – Listings
     listings_dir = unit_root / "listings"

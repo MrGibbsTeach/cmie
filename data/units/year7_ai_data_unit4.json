@@ -1,0 +1,31 @@
+{
+  "unit_id": "year7_ai_data_unit4",
+  "title": "AI & Data Literacy Series – Unit 4: AI Systems + Applications",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    {
+      "title": "What Is an AI System?"
+    },
+    {
+      "title": "AI in Everyday Life"
+    },
+    {
+      "title": "How AI Systems Make Decisions"
+    },
+    {
+      "title": "Inputs, Processes, and Outputs"
+    },
+    {
+      "title": "Limits of AI Systems"
+    },
+    {
+      "title": "Humans Working with AI"
+    },
+    {
+      "title": "Designing an AI System for a Real Need"
+    }
+  ],
+  "lesson_videos": {}
+}

@@ -1,0 +1,31 @@
+{
+  "unit_id": "year7_ai_data_unit8",
+  "title": "AI & Data Literacy Series – Unit 8: AI in Society",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    {
+      "title": "AI in Everyday Society"
+    },
+    {
+      "title": "AI and Privacy"
+    },
+    {
+      "title": "AI and Surveillance"
+    },
+    {
+      "title": "Bias and Inequality in Society"
+    },
+    {
+      "title": "Regulation of AI"
+    },
+    {
+      "title": "Public Perception of AI"
+    },
+    {
+      "title": "Designing Responsible AI Systems"
+    }
+  ],
+  "lesson_videos": {}
+}
