@@ -119,7 +119,7 @@ def generate_unit_readme(
 
     lines.append("## Notes for teachers")
     lines.append("")
-    lines.append("- No specialist AI background is required")
+    lines.append("- No specialist background in the topic is required to teach this unit")
     lines.append("- Materials are designed for lower secondary learners")
     lines.append("- Slides, workbook, and assessment are intended to work together as one package")
     lines.append("")

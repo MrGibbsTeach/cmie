@@ -165,18 +165,27 @@ def infer_unit_focus(unit_name: str, lessons: List[Dict[str, Any]]) -> Dict[str,
             ),
         }
 
+    # Generic, topic-neutral fallback -- the two branches above are
+    # AI-specific and only fire for units that actually mention those
+    # keywords. Previously this fallback was *also* AI-themed ("AI and
+    # data literacy unit", "AI outcomes"), which fed a wrong framing into
+    # the AI generation prompt for any non-AI unit (e.g. Networks &
+    # Hardware) and produced an assessment that talked about "AI
+    # outcomes" despite the unit having nothing to do with AI.
+    lesson_titles = ", ".join(
+        str(lesson.get("lesson_title", "")) for lesson in lessons if lesson.get("lesson_title")
+    )
     return {
         "unit_context": (
-            "This is a Lower Secondary AI and data literacy unit. Students have explored how data "
-            "is collected, organised, interpreted, and used in AI systems."
+            f"This is a Lower Secondary {unit_name} unit. Students have explored: {lesson_titles}."
         ),
         "scenario": (
-            "A digital system is collecting and using student data to make recommendations and support decisions."
+            f"A real-world scenario requiring students to apply what they've learned across this unit's lessons."
         ),
-        "assessment_title": "Evaluating Data Use in an AI System",
-        "driving_question": "How can we evaluate the quality, fairness, and usefulness of data in AI systems?",
+        "assessment_title": f"Applying {unit_name}",
+        "driving_question": f"How can we apply the key ideas from this unit to a real-world situation?",
         "task_focus": (
-            "evaluate how data quality, fairness, and system design affect AI outcomes"
+            "apply the unit's key concepts to a real-world scenario, explaining and justifying decisions with evidence"
         ),
     }
 

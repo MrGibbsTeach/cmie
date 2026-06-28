@@ -178,12 +178,15 @@ def _build_hook_line(title: str, subject: str) -> str:
 def _build_unit_includes(
     lesson_count: int,
     has_slides_csv: bool,
+    has_pptx_slides: bool,
     has_roadmap: bool,
     has_workbook: bool,
 ) -> List[str]:
     includes: List[str] = []
     includes.append(f"- {lesson_count} fully planned lessons with objectives and essential questions")
-    if has_slides_csv:
+    if has_pptx_slides:
+        includes.append("- Fully editable PowerPoint (PPTX) slide deck for every lesson")
+    elif has_slides_csv:
         includes.append("- Canva-ready lesson slide CSV for fast template-based deck creation")
     if has_roadmap:
         includes.append("- Unit roadmap / scope and sequence")
@@ -243,6 +246,7 @@ def _build_lesson_listing_lines(
     activity_summary: str,
     platform_label: str,
     lesson_number: Optional[int] = None,
+    has_pptx_slides: bool = False,
 ) -> List[str]:
     unit_short_title = extract_unit_short_title(unit_title)
 
@@ -279,7 +283,10 @@ def _build_lesson_listing_lines(
     lines.append(includes_heading)
     lines.append("")
     lines.append("- 1 fully planned lesson")
-    lines.append("- Canva-ready slide content included in the unit CSV workflow")
+    if has_pptx_slides:
+        lines.append("- Fully editable PowerPoint (PPTX) slide deck")
+    else:
+        lines.append("- Canva-ready slide content included in the unit CSV workflow")
     lines.append("- Hook, concept development, activity, reflection, and exit ticket")
 
     if real_world_example:
@@ -332,7 +339,7 @@ def generate_workbook_listing(unit_title: str, lesson_count: int = 7) -> str:
         lines.append("Reflect on learning and identify questions")
         lines.append("Explore patterns, predictions, and recommendations")
     else:
-        lines.append("Explain key AI and data concepts in their own words")
+        lines.append("Explain key concepts from the unit in their own words")
         lines.append("Apply ideas to real-world scenarios")
         lines.append("Reflect on learning and identify questions")
         lines.append("Explore core ideas from the unit")
@@ -383,10 +390,10 @@ def generate_assessment_listing(unit_title: str) -> str:
         lines.append("Evaluate model outputs using evidence")
         lines.append("Demonstrate understanding through a structured written task")
     else:
-        lines.append("Apply key AI concepts to a real-world scenario")
+        lines.append("Apply key concepts from the unit to a real-world scenario")
         lines.append("Explain decisions using evidence")
         lines.append("Show understanding through a structured task")
-        lines.append("Reflect on how AI systems work in practice")
+        lines.append("Reflect on how the unit's ideas work in practice")
 
     lines.append("")
     lines.append("🔹 Why teachers love this resource")
@@ -425,6 +432,7 @@ def generate_marketplace_listings(
     has_roadmap = (roadmap_dir / "unit_roadmap.md").exists()
     has_workbook = (workbook_dir / "student_workbook.md").exists()
     has_slides_csv = (lessons_dir.parent / "04_Slides_CSV").exists()
+    has_pptx_slides = any((lessons_dir.parent / "slides").glob("*.pptx")) if (lessons_dir.parent / "slides").exists() else False
 
     overview = _build_unit_overview(title, subject)
     assessment_title = assessment.get("assessment_title", "")
@@ -432,6 +440,7 @@ def generate_marketplace_listings(
     includes = _build_unit_includes(
         lesson_count=lesson_count,
         has_slides_csv=has_slides_csv,
+        has_pptx_slides=has_pptx_slides,
         has_roadmap=has_roadmap,
         has_workbook=has_workbook,
     )
@@ -501,7 +510,19 @@ def generate_marketplace_listings(
 
     lesson_files: List[Dict[str, str]] = []
 
-    for idx, lesson_json_path in enumerate(sorted(lessons_dir.glob("*.json")), start=1):
+    # Sort by each lesson's actual lesson_number, not alphabetically by
+    # filename/slug -- filenames are slugified topic titles, so alphabetical
+    # order does not match the real lesson sequence and previously caused
+    # listings to display the wrong "Lesson N" label (e.g. lesson 1 labelled
+    # "Lesson 6"). Fall back to alphabetical only if lesson_number is absent.
+    def _lesson_sort_key(p: Path):
+        data = _load_json(p)
+        num = data.get("lesson_number")
+        return (0, num) if isinstance(num, int) else (1, p.name)
+
+    sorted_lesson_paths = sorted(lessons_dir.glob("*.json"), key=_lesson_sort_key)
+
+    for idx, lesson_json_path in enumerate(sorted_lesson_paths, start=1):
         lesson_data = _load_json(lesson_json_path)
         slug = lesson_json_path.stem
 
@@ -532,6 +553,7 @@ def generate_marketplace_listings(
                         activity_summary=activity_summary,
                         platform_label="TPT",
                         lesson_number=idx,
+                        has_pptx_slides=has_pptx_slides,
                     )
                 )
             )
@@ -550,6 +572,7 @@ def generate_marketplace_listings(
                         activity_summary=activity_summary,
                         platform_label="TES",
                         lesson_number=idx,
+                        has_pptx_slides=has_pptx_slides,
                     )
                 )
             )
@@ -568,6 +591,7 @@ def generate_marketplace_listings(
                         activity_summary=activity_summary,
                         platform_label="GUMROAD",
                         lesson_number=idx,
+                        has_pptx_slides=has_pptx_slides,
                     )
                 )
             )

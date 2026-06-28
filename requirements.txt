@@ -1,3 +1,6 @@
 openai
 python-pptx
 python-docx
+yt-dlp
+playwright
+python-dotenv

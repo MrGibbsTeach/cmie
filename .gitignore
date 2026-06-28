@@ -11,6 +11,8 @@ venv/
 # Environment / secrets
 .env
 api key.txt
+.gumroad_session.json
+.tpt_session.json
 
 # Generated outputs
 generated_lessons/
@@ -28,3 +30,8 @@ Thumbs.db
 
 # Logs / temp
 *.log
+
+# Node / Next.js (webapp/frontend)
+node_modules/
+.next/
+*.tsbuildinfo

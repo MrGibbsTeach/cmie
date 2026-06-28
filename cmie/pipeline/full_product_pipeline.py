@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import re
 import shutil
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -78,26 +79,80 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
             cell = row.cells[0]
             cell.text = ""
 
-    previous_was_blank = True
+    def add_runs_with_bold(paragraph, text: str) -> None:
+        """Split on **bold** markers and add real bold runs instead of
+        leaving literal asterisks in the output -- markdown_to_docx only
+        handled block-level markdown (headings/bullets), not inline bold,
+        so '**Year level:**' etc rendered as literal asterisks in every
+        generated docx (roadmap, assessment, teacher guide)."""
+        parts = re.split(r"\*\*(.+?)\*\*", text)
+        for i, part in enumerate(parts):
+            if not part:
+                continue
+            run = paragraph.add_run(part)
+            run.bold = bool(i % 2)
 
-    for raw_line in lines:
+    def is_table_row(line: str) -> bool:
+        return line.strip().startswith("|") and line.strip().endswith("|")
+
+    def is_table_separator(line: str) -> bool:
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        return all(c == "" or set(c) <= {"-", ":"} for c in cells) and len(cells) > 0
+
+    def add_markdown_table(rows: List[str]) -> None:
+        parsed = [
+            [c.strip() for c in row.strip().strip("|").split("|")]
+            for row in rows
+            if not is_table_separator(row)
+        ]
+        if not parsed:
+            return
+        n_cols = max(len(r) for r in parsed)
+        table = doc.add_table(rows=len(parsed), cols=n_cols)
+        table.style = "Table Grid"
+        for r, row_cells in enumerate(parsed):
+            for c in range(n_cols):
+                cell_text = row_cells[c] if c < len(row_cells) else ""
+                cell = table.cell(r, c)
+                cell.text = ""
+                add_runs_with_bold(cell.paragraphs[0], cell_text)
+                if r == 0:
+                    for run in cell.paragraphs[0].runs:
+                        run.bold = True
+
+    previous_was_blank = True
+    i = 0
+    while i < len(lines):
+        raw_line = lines[i]
         stripped = raw_line.strip()
 
         if not stripped:
             if not previous_was_blank:
                 doc.add_paragraph("")
             previous_was_blank = True
+            i += 1
             continue
 
         previous_was_blank = False
 
+        if is_table_row(stripped):
+            table_lines = []
+            while i < len(lines) and is_table_row(lines[i].strip()):
+                table_lines.append(lines[i].strip())
+                i += 1
+            add_markdown_table(table_lines)
+            doc.add_paragraph("")
+            continue
+
         if stripped == "---":
             doc.add_paragraph("")
+            i += 1
             continue
 
         if stripped.startswith("# "):
             p = doc.add_paragraph(style="Title")
-            p.add_run(stripped[2:].strip())
+            add_runs_with_bold(p, stripped[2:].strip())
+            i += 1
             continue
 
         if stripped.startswith("## "):
@@ -111,12 +166,14 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
             run = p.add_run(heading_text)
             run.bold = True
             run.font.size = Pt(16)
+            i += 1
             continue
 
         if stripped.startswith("### "):
             p = doc.add_paragraph(style="Heading 2")
-            p.add_run(stripped[4:].strip())
+            add_runs_with_bold(p, stripped[4:].strip())
             doc.add_paragraph("")
+            i += 1
             continue
 
         if stripped == "[Write your response below]":
@@ -125,17 +182,22 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
             run.italic = True
             add_response_box(rows=5)
             doc.add_paragraph("")
+            i += 1
             continue
 
         if set(stripped) == {"_"}:
+            i += 1
             continue
 
         if stripped.startswith("- "):
             p = doc.add_paragraph(style="List Bullet")
-            p.add_run(stripped[2:].strip())
+            add_runs_with_bold(p, stripped[2:].strip())
+            i += 1
             continue
 
-        doc.add_paragraph(stripped)
+        p = doc.add_paragraph()
+        add_runs_with_bold(p, stripped)
+        i += 1
 
     docx_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(str(docx_path))
@@ -174,6 +236,33 @@ def stage_lessons(
 
     logger.info(f"  {len(copied_lessons)} lessons copied.")
     return lessons_dir, copied_lessons
+
+
+def stage_pptx_slides(
+    cfg: UnitConfig,
+    unit_root: Path,
+    lessons_dir: Path,
+    logger: logging.Logger,
+) -> Tuple[Path, List[Path]]:
+    """
+    Generate editable PPTX decks directly from lesson JSON, no Canva step.
+    Replaces the Canva CSV -> manual-export workflow for units that don't
+    want a Canva dependency.
+    """
+    logger.info("Stage: pptx_slides")
+
+    from cmie.generator.pptx_generator import lesson_json_to_pptx
+
+    slides_dir = unit_root / "slides"
+    slides_dir.mkdir(parents=True, exist_ok=True)
+
+    pptx_paths: List[Path] = []
+    for lesson_json in sorted(lessons_dir.glob("*.json")):
+        out_path = lesson_json_to_pptx(lesson_json, output_dir=slides_dir)
+        pptx_paths.append(out_path)
+
+    logger.info(f"  {len(pptx_paths)} PPTX decks generated in {slides_dir}")
+    return slides_dir, pptx_paths
 
 
 def stage_canva_csv(
@@ -392,10 +481,14 @@ def render_rubric_table(
     table = doc.add_table(rows=len(criteria) + 1, cols=len(levels) + 1)
     table.style = "Table Grid"
 
-    # Header row
+    # Header row -- attach a generic A-D grade band to each level so the
+    # rubric can actually be used for grading, not just qualitative feedback.
+    grade_bands = {"Exemplary": "A", "Proficient": "B", "Developing": "C", "Beginning": "D"}
     table.cell(0, 0).text = "Criterion"
     for i, level in enumerate(levels, start=1):
-        table.cell(0, i).text = str(level)
+        level_str = str(level)
+        grade = grade_bands.get(level_str)
+        table.cell(0, i).text = f"{level_str} ({grade})" if grade else level_str
 
     # Body rows
     for row_idx, crit in enumerate(criteria, start=1):
@@ -496,13 +589,22 @@ def stage_packaging(
 
     public_root.mkdir(parents=True, exist_ok=True)
 
-    # 01 – Lesson Slides CSV
-    public_slides_csv = public_root / "01_Lesson_Slides_CSV"
-    public_slides_csv.mkdir(parents=True, exist_ok=True)
+    # 01 – Lesson Slides: prefer direct-generated PPTX (no Canva step needed)
+    # over the Canva CSV workflow, when PPTX decks exist.
+    direct_slides_dir = unit_root / "slides"
+    direct_pptx_files = list(direct_slides_dir.glob("*.pptx")) if direct_slides_dir.exists() else []
 
-    csv_dir = unit_root / "04_Slides_CSV"
-    for csv_file in csv_dir.glob("*.csv"):
-        shutil.copy2(csv_file, public_slides_csv / csv_file.name)
+    if direct_pptx_files:
+        public_slides = public_root / "01_Lesson_Slides"
+        public_slides.mkdir(parents=True, exist_ok=True)
+        for pptx_file in direct_pptx_files:
+            shutil.copy2(pptx_file, public_slides / pptx_file.name)
+    else:
+        public_slides_csv = public_root / "01_Lesson_Slides_CSV"
+        public_slides_csv.mkdir(parents=True, exist_ok=True)
+        csv_dir = unit_root / "04_Slides_CSV"
+        for csv_file in csv_dir.glob("*.csv"):
+            shutil.copy2(csv_file, public_slides_csv / csv_file.name)
 
             # 02 – Assessment
     public_assessment = public_root / "02_Assessment"
@@ -562,7 +664,7 @@ def stage_packaging(
     if readme_path.exists():
         markdown_to_docx(
             readme_path,
-            public_teacher_guide / "README.docx",
+            public_teacher_guide / "Teacher_Guide.docx",
             logger,
         )
     else:
@@ -599,11 +701,11 @@ def run_pipeline(config_path: Path, releases_root: Path) -> None:
     unit_root.mkdir(parents=True, exist_ok=True)
 
     lessons_dir, _ = stage_lessons(cfg, unit_root, logger)
+    _slides_dir, _pptx_paths = stage_pptx_slides(cfg, unit_root, lessons_dir, logger)
     assessment_dir = stage_assessment(cfg, unit_root, logger)
     workbook_path = stage_workbook(cfg, unit_root, lessons_dir, assessment_dir, logger)
     roadmap_path = stage_roadmap(cfg, unit_root, lessons_dir, assessment_dir, logger)
     readme_path = stage_readme(cfg, unit_root, lessons_dir, assessment_dir, logger)
-    _csv_path = stage_canva_csv(cfg, unit_root, logger)
 
     _marketing_path = stage_marketing(cfg, unit_root, lessons_dir, logger)
 

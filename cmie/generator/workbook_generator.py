@@ -46,7 +46,7 @@ def _lesson_specific_task(title: str) -> List[str]:
             ""
         ]
 
-    if "design" in t:
+    if "design" in t and ("ai" in t or "fair" in t or "bias" in t):
         return [
             "### Quick Task: Improve the System",
             "- What is one flaw?",
@@ -144,7 +144,7 @@ def generate_student_workbook(
         lines.append("### Apply the idea to a new situation:")
         lines.append("- Describe a scenario where this idea appears:")
         lines.append("- What could go wrong in this scenario?")
-        lines.append("- How could data or AI be used fairly here?")
+        lines.append("- What's one important thing to consider in this scenario?")
         lines.append("")
         lines.append("[Write your response below]")
         lines.append("")

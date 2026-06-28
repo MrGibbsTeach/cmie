@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_networks_hardware_unit1",
+  "title": "Networks & Hardware: Unit 1 – Building and Securing a Network",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "What Is a Network?" },
+    { "title": "Selecting Hardware for a Network" },
+    { "title": "Wired vs Wireless Networks" },
+    { "title": "How Data Travels Across a Network" },
+    { "title": "Network Security Basics" },
+    { "title": "Connecting and Troubleshooting Networks" },
+    { "title": "Designing a Network for a Real Scenario" }
+  ],
+  "lesson_videos": {}
+}
