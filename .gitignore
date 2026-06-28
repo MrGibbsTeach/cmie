@@ -13,6 +13,7 @@ venv/
 api key.txt
 .gumroad_session.json
 .tpt_session.json
+.tes_session.json
 
 # Generated outputs
 generated_lessons/

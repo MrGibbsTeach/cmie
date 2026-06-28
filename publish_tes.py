@@ -1,19 +1,24 @@
 """
-CLI: publish a unit to TES via Playwright (persistent Chrome profile).
+CLI: publish a unit's bundle to TES via Playwright.
 
 Usage:
-    python publish_tes.py --unit year7_ai_data_unit1
-    python publish_tes.py --all
-    python publish_tes.py --scout          # open TES upload page for inspection
+    python publish_tes.py --unit year7_networks_hardware_unit1
+    python publish_tes.py --unit year7_networks_hardware_unit1 --price 9.99
 
-IMPORTANT: Close Chrome before running. Two instances cannot share the profile.
-Set CHROME_PROFILE env var if you want to use a different profile directory.
+TES upload is a 5-step wizard (Description -> Add Files -> Categories ->
+Licence -> Publish). This script fills all 5 steps and stops at the final
+"Publish" screen WITHOUT checking the copyright confirmation box or
+clicking "Publish now" -- the resource is saved as a draft on your Author
+Dashboard for manual review, same pattern as the TPT/Gumroad scripts.
 
+Credentials: set TES_EMAIL and TES_PASSWORD in .env. Session cookies are
+cached in .tes_session.json after the first successful login.
 Pricing: set TES_PRICE_GBP in .env (default 9.99). TES uses GBP.
 """
 import argparse
 import logging
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -32,7 +37,100 @@ PROJECT_ROOT  = Path(__file__).parent
 RELEASES_ROOT = PROJECT_ROOT / "releases"
 PRICE_GBP     = float(os.getenv("TES_PRICE_GBP", "9.99"))
 
-TES_UPLOAD_URL = "https://www.tes.com/my-resources"
+TES_BASE            = "https://www.tes.com"
+TES_LOGIN_URL       = f"{TES_BASE}/authn/sign-in"
+TES_UPLOAD_URL      = f"{TES_BASE}/my-resources"
+TES_UPLOAD_FORM_URL = f"{TES_BASE}/teaching-resource/upload"
+COOKIES_FILE        = PROJECT_ROOT / ".tes_session.json"
+
+# Defaults that fit this project's content (Lower Secondary / Year 7
+# Australian Digital Technologies units sold as a full unit bundle).
+DEFAULT_AGE_RANGE  = "11-14"
+DEFAULT_CURRICULUM = "Australian"
+DEFAULT_SUBJECT    = "Computing"
+DEFAULT_RESOURCE_TYPE = "Unit of work"
+
+
+# ---------------------------------------------------------------------------
+# Login (mirrors the cookie-cache + form-login fallback pattern used by
+# publish_tpt.py / publish_gumroad.py, instead of relying solely on the
+# manual browser.py::setup() flow)
+# ---------------------------------------------------------------------------
+
+def _save_session(context) -> None:
+    import json
+    cookies = context.cookies()
+    COOKIES_FILE.write_text(json.dumps(cookies, indent=2), encoding="utf-8")
+    log.info(f"Session saved to {COOKIES_FILE}")
+
+
+def _load_session(context) -> bool:
+    import json
+    if not COOKIES_FILE.exists():
+        return False
+    try:
+        cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
+        context.add_cookies(cookies)
+        log.info("TES session cookies loaded from file.")
+        return True
+    except Exception as e:
+        log.warning(f"Could not load TES session file: {e}")
+        return False
+
+
+def _check_logged_in(page) -> bool:
+    # The real unauthenticated redirect target is /authn/sign-in.
+    return "authn/sign-in" not in page.url and "tes.com/register" not in page.url
+
+
+def _login(page, context, email: str, password: str) -> None:
+    if _load_session(context):
+        page.goto(TES_UPLOAD_URL, wait_until="domcontentloaded", timeout=15000)
+        page.wait_for_timeout(2000)
+        if _check_logged_in(page):
+            log.info("Logged in via saved TES session cookies.")
+            return
+        log.info("Saved TES session expired — trying form login.")
+
+    if not email or not password:
+        raise RuntimeError(
+            "No TES_EMAIL/TES_PASSWORD in .env and no saved session. "
+            "Either set those in .env, or run: "
+            "python -c \"from cmie.publishing.browser import setup; setup()\" to log in manually once."
+        )
+
+    page.goto(TES_LOGIN_URL, wait_until="domcontentloaded", timeout=15000)
+    page.wait_for_timeout(1500)
+
+    email_field = page.get_by_label("Email", exact=False)
+    if email_field.count() == 0:
+        email_field = page.locator("input[type='email'], input[name*='email' i], input[placeholder*='email' i]")
+    email_field.first.fill(email)
+
+    password_field = page.locator("input[type='password']")
+    password_field.first.fill(password)
+    page.wait_for_timeout(500)
+
+    submit = page.get_by_role("button", name=re.compile(r"log.?in|sign.?in|continue", re.I))
+    if submit.count() > 0:
+        submit.first.click()
+    else:
+        password_field.first.press("Enter")
+
+    try:
+        page.wait_for_url(lambda u: "sign-in" not in u and "authn" not in u, timeout=15000)
+    except Exception:
+        pass
+
+    page.wait_for_timeout(1500)
+    if not _check_logged_in(page):
+        raise RuntimeError(
+            "TES login failed. Check TES_EMAIL/TES_PASSWORD in .env, or the login form's "
+            "selectors may have changed -- check releases/debug_tes_login_error.png."
+        )
+
+    _save_session(context)
+    log.info("TES form login succeeded.")
 
 
 # ---------------------------------------------------------------------------
@@ -47,12 +145,6 @@ def _read_listing(unit_folder: Path) -> dict:
         text  = md_path.read_text(encoding="utf-8").strip()
         lines = text.splitlines()
         title = lines[0].lstrip("#").strip() if lines else unit_folder.name
-        # First non-blank line after title = tagline
-        tagline = ""
-        for line in lines[1:]:
-            if line.strip():
-                tagline = line.strip()
-                break
         description = "\n".join(lines[1:]).strip()
     elif legacy_path.exists():
         text = legacy_path.read_text(encoding="utf-8").strip()
@@ -67,43 +159,20 @@ def _read_listing(unit_folder: Path) -> dict:
                 sections[current_key].append(line)
         title       = "\n".join(sections.get("TITLE", [])).strip()
         description = "\n".join(sections.get("DESCRIPTION", [])).strip()
-        tagline     = description.split("\n")[0] if description else ""
     else:
         raise FileNotFoundError(f"No TES listing found in {unit_folder}")
 
     if len(title) > 100:
         title = title[:100].rsplit(" ", 1)[0]
 
-    return {"title": title, "tagline": tagline, "description": description}
+    return {"title": title, "description": description}
 
 
 # ---------------------------------------------------------------------------
-# TES upload flow
+# TES upload flow -- a 5-step wizard, not a single-page form. Each step's
+# fields only exist in the DOM once that step is reached, so this can't be
+# filled out of order.
 # ---------------------------------------------------------------------------
-
-def _check_logged_in(page) -> bool:
-    return "tes.com/login" not in page.url and "tes.com/register" not in page.url
-
-
-def _navigate_to_upload(page) -> None:
-    page.goto(TES_UPLOAD_URL, wait_until="domcontentloaded", timeout=30000)
-    page.wait_for_timeout(2000)
-    if not _check_logged_in(page):
-        raise RuntimeError(
-            "Not logged in to TES. Run setup first: "
-            "python -c \"from cmie.publishing.browser import setup; setup()\""
-        )
-    log.info(f"My resources page: {page.url}")
-
-    # Click "Add resource" link in the sidebar
-    try:
-        page.get_by_text("Add resource", exact=True).first.click()
-        page.wait_for_load_state("domcontentloaded", timeout=15000)
-        page.wait_for_timeout(2000)
-        log.info(f"Upload form: {page.url}")
-    except Exception as e:
-        log.warning(f"Could not click 'Add resource': {e} — proceeding from {page.url}")
-
 
 def _take_debug_screenshot(page, name: str) -> None:
     path = RELEASES_ROOT / f"debug_tes_{name}.png"
@@ -111,144 +180,136 @@ def _take_debug_screenshot(page, name: str) -> None:
     log.info(f"Screenshot: {path}")
 
 
-def _fill_title(page, title: str) -> None:
-    selectors = [
-        "input[name='title']",
-        "input[placeholder*='title' i]",
-        "input[placeholder*='Title']",
-        "input[id*='title' i]",
-        "[aria-label*='title' i]",
-    ]
-    for sel in selectors:
-        try:
-            el = page.locator(sel).first
-            if el.count() and el.is_visible():
-                el.click(click_count=3)
-                el.fill(title)
-                log.info(f"Title filled: {title}")
-                return
-        except Exception:
-            continue
-    # Fallback: first text input
-    page.locator("input[type='text']").first.fill(title)
-    log.info(f"Title filled (fallback): {title}")
+def _navigate_to_upload(page, context, email: str, password: str) -> None:
+    page.goto(TES_UPLOAD_URL, wait_until="domcontentloaded", timeout=30000)
+    page.wait_for_timeout(2000)
+    if not _check_logged_in(page):
+        _login(page, context, email, password)
+
+    # Navigate directly to the known upload-form URL -- the "Add resource"
+    # nav link is not reliably the first match Playwright finds (a hidden
+    # duplicate exists elsewhere in the page), so clicking it is flaky.
+    page.goto(TES_UPLOAD_FORM_URL, wait_until="domcontentloaded", timeout=20000)
+    page.wait_for_timeout(2000)
+    log.info(f"Upload form (step 1, Description): {page.url}")
 
 
-def _fill_description(page, description: str) -> None:
-    # TES uses SimpleMDE — raw textarea is hidden, must interact with CodeMirror
-    try:
-        page.evaluate(
-            "(text) => navigator.clipboard.writeText(text).catch(() => {})",
-            description[:4000],
-        )
-        cm = page.locator(".CodeMirror")
-        cm.click()
-        page.keyboard.press("Control+a")
-        page.keyboard.press("Control+v")
-        page.wait_for_timeout(800)
-        log.info("Description filled.")
-        return
-    except Exception as e:
-        log.warning(f"CodeMirror fill failed: {e}")
-    log.warning("Could not find description field.")
+def _step1_description(page, title: str, description: str) -> None:
+    title_input = page.locator("input[placeholder*='Title' i], input#title, input[name='title']")
+    title_input.first.click()
+    title_input.first.fill(title[:60])
+    log.info(f"Title filled: {title[:60]}")
+
+    # TES uses a markdown editor (CodeMirror) -- raw markdown (headings,
+    # bullets, **bold**) is supported and rendered, so no HTML conversion
+    # is needed here unlike Gumroad/TPT's rich-text editors.
+    cm = page.locator(".CodeMirror")
+    page.evaluate(
+        "(text) => navigator.clipboard.writeText(text).catch(() => {})",
+        description[:3000],
+    )
+    cm.first.click()
+    page.keyboard.press("Control+a")
+    page.keyboard.press("Control+v")
+    page.wait_for_timeout(800)
+    log.info("Description filled.")
+
+    page.get_by_role("button", name="Continue").first.click()
+    page.wait_for_load_state("domcontentloaded", timeout=15000)
+    page.wait_for_timeout(2000)
+    log.info(f"Step 2 (Add Files): {page.url}")
 
 
-def _upload_file(page, zip_path: Path) -> None:
+def _step2_add_files(page, zip_path: Path, resource_type: str = DEFAULT_RESOURCE_TYPE) -> None:
+    with page.expect_file_chooser(timeout=10000) as fc:
+        page.get_by_role("button", name="Upload").first.click()
+    fc.value.set_files(str(zip_path))
     log.info(f"Uploading: {zip_path.name}")
-    try:
-        # Most upload forms have a file input or a button that triggers one
-        file_inputs = page.locator("input[type='file']")
-        if file_inputs.count() > 0:
-            file_inputs.first.set_input_files(str(zip_path))
-            page.wait_for_timeout(3000)
-            log.info("File uploaded via file input.")
-            return
-    except Exception:
-        pass
 
-    # Try clicking an upload button / dropzone
-    for text in ["Upload", "Add file", "Choose file", "Browse"]:
-        try:
-            btn = page.get_by_text(text, exact=False).first
-            if btn.is_visible():
-                with page.expect_file_chooser(timeout=8000) as fc:
-                    btn.click()
-                fc.value.set_files(str(zip_path))
-                page.wait_for_timeout(3000)
-                log.info(f"File uploaded via '{text}' button.")
-                return
-        except Exception:
-            continue
+    # Wait for the upload progress bar to finish before continuing.
+    page.wait_for_timeout(5000)
 
-    raise RuntimeError("Could not find a file upload input on TES upload page.")
+    type_select = page.locator("select").nth(2)
+    type_select.select_option(label=resource_type)
+    log.info(f"Resource type set: {resource_type}")
+    page.wait_for_timeout(500)
+
+    # Cover image upload is deliberately skipped here -- it shares its
+    # file-input discovery with the zip upload in a way that's easy to mix
+    # up (set_input_files on the wrong input would silently replace the
+    # zip with the image instead). "Default preview" (auto-generated from
+    # the uploaded file) is left as-is. Add a real cover image manually,
+    # or revisit this once the cover-image input's selector is confirmed
+    # safe to target independently.
+
+    page.get_by_role("button", name="Continue").last.click()
+    page.wait_for_load_state("domcontentloaded", timeout=15000)
+    page.wait_for_timeout(2000)
+    log.info(f"Step 3 (Categories): {page.url}")
 
 
-def _upload_thumbnail(page, thumbnail_path: Path) -> None:
-    if not thumbnail_path.exists():
-        log.warning(f"Thumbnail not found: {thumbnail_path} — skipping.")
-        return
-    log.info(f"Uploading thumbnail: {thumbnail_path.name}")
-    try:
-        file_inputs = page.locator("input[type='file'][accept*='image'], input[type='file']")
-        if file_inputs.count() > 1:
-            # Second file input is usually the thumbnail
-            file_inputs.nth(1).set_input_files(str(thumbnail_path))
-            page.wait_for_timeout(2000)
-            log.info("Thumbnail uploaded.")
-            return
-    except Exception as e:
-        log.warning(f"Thumbnail upload failed (non-fatal): {e}")
+def _step3_categories(
+    page,
+    age_range: str = DEFAULT_AGE_RANGE,
+    curriculum: str = DEFAULT_CURRICULUM,
+    subject: str = DEFAULT_SUBJECT,
+) -> None:
+    # Select by element id, not position -- an "additional age range"
+    # select sometimes mounts between the visible fields, shifting any
+    # index-based locator and silently selecting the wrong dropdown.
+    page.locator("#main-age-range").select_option(label=age_range)
+    page.wait_for_timeout(400)
+    page.locator("#curriculum").select_option(label=curriculum)
+    page.wait_for_timeout(400)
+    page.locator("#main-subject").select_option(label=subject)
+    page.wait_for_timeout(400)
+    log.info(f"Categories set: age={age_range}, curriculum={curriculum}, subject={subject}")
+
+    page.get_by_role("button", name="Continue").last.click()
+    page.wait_for_load_state("domcontentloaded", timeout=15000)
+    page.wait_for_timeout(2000)
+    log.info(f"Step 4 (Licence): {page.url}")
 
 
-def _set_price(page, price_gbp: float) -> None:
-    selectors = [
-        "input[name*='price' i]",
-        "input[placeholder*='price' i]",
-        "input[id*='price' i]",
-        "input[type='number']",
-    ]
-    for sel in selectors:
-        try:
-            el = page.locator(sel).first
-            if el.count() and el.is_visible():
-                el.click(click_count=3)
-                el.fill(f"{price_gbp:.2f}")
-                log.info(f"Price set: £{price_gbp:.2f}")
-                return
-        except Exception:
-            continue
-    log.warning("Could not find price field — may need manual entry.")
+def _step4_licence(page, price_gbp: float) -> None:
+    # "Sell my resource" is the default-selected tab; just set the price.
+    price_input = page.locator("#spinner")
+    price_input.click(click_count=3)
+    price_input.fill(f"{price_gbp:.2f}")
+    log.info(f"Price set: £{price_gbp:.2f}")
+    page.wait_for_timeout(500)
 
-
-def _submit(page) -> None:
-    for name in ["Publish", "Submit", "Save and publish", "Upload resource"]:
-        try:
-            btn = page.get_by_role("button", name=name, exact=False)
-            if btn.count() and btn.first.is_visible():
-                btn.first.click()
-                page.wait_for_timeout(5000)
-                log.info(f"Submitted via '{name}' button.")
-                return
-        except Exception:
-            continue
-    log.warning("Could not find submit button — resource may need manual publish.")
+    page.get_by_role("button", name="Continue").last.click()
+    page.wait_for_load_state("domcontentloaded", timeout=15000)
+    page.wait_for_timeout(2000)
+    log.info(f"Step 5 (Publish preview): {page.url}")
 
 
 # ---------------------------------------------------------------------------
 # Main publish flow
 # ---------------------------------------------------------------------------
 
-def publish_unit(unit_id: str, price_gbp: float = PRICE_GBP, scout: bool = False) -> None:
+def publish_unit(unit_id: str, price_gbp: float = PRICE_GBP) -> None:
     from cmie.publishing.browser import automation_chrome
 
-    unit_folder    = RELEASES_ROOT / unit_id
-    thumbnail_path = RELEASES_ROOT / "thumbnails" / f"{unit_id}_thumbnail.png"
+    unit_folder = RELEASES_ROOT / unit_id
 
-    candidates = sorted((RELEASES_ROOT / "artifacts").glob(f"{unit_id}*.zip"))
-    candidates = [c for c in candidates if "test" not in c.name.lower()]
-    if not candidates:
-        raise FileNotFoundError(f"No zip found for {unit_id} in releases/artifacts/")
-    zip_path = candidates[-1]
+    # Prefer the cleaned customer-facing "_PUBLIC" bundle zip -- a unit now
+    # has 9 different zips (7 lessons + assessment + bundle), and picking
+    # the alphabetically-last one is not reliable for selecting the bundle.
+    public_candidates = sorted((RELEASES_ROOT / "artifacts").glob(f"{unit_id}_*_PUBLIC.zip"))
+    if public_candidates:
+        zip_path = public_candidates[-1]
+    else:
+        candidates = sorted((RELEASES_ROOT / "artifacts").glob(f"{unit_id}*.zip"))
+        candidates = [c for c in candidates if "test" not in c.name.lower() and "_PUBLIC" not in c.name]
+        if not candidates:
+            raise FileNotFoundError(f"No zip found for {unit_id} in releases/artifacts/")
+        zip_path = candidates[-1]
+        log.warning(f"No cleaned _PUBLIC zip found for {unit_id} -- falling back to {zip_path.name}.")
+
+    email    = os.environ.get("TES_EMAIL", "")
+    password = os.environ.get("TES_PASSWORD", "")
 
     listing = _read_listing(unit_folder)
     log.info(f"Publishing to TES: {listing['title']} @ £{price_gbp:.2f}")
@@ -256,183 +317,34 @@ def publish_unit(unit_id: str, price_gbp: float = PRICE_GBP, scout: bool = False
 
     with automation_chrome() as (context, page):
         try:
-            _navigate_to_upload(page)
-            _take_debug_screenshot(page, f"{unit_id}_upload_page")
+            _navigate_to_upload(page, context, email, password)
+            _step1_description(page, listing["title"], listing["description"])
+            _step2_add_files(page, zip_path)
+            _step3_categories(page)
+            _step4_licence(page, price_gbp)
 
-            if scout:
-                log.info("Scout mode — screenshot taken, stopping here.")
-                try:
-                    context.wait_for_event("close", timeout=0)
-                except Exception:
-                    pass
-                return
-
-            _fill_title(page, listing["title"])
-            _upload_file(page, zip_path)
-            _upload_thumbnail(page, thumbnail_path)
-            _fill_description(page, listing["description"])
-            _set_price(page, price_gbp)
-
-            _take_debug_screenshot(page, f"{unit_id}_before_submit")
-            log.info("Review the browser window, then the script will submit.")
-            page.wait_for_timeout(3000)
-
-            _submit(page)
-            _take_debug_screenshot(page, f"{unit_id}_after_submit")
-            log.info(f"Done: {unit_id} — check TES dashboard to confirm listing is live.")
+            _take_debug_screenshot(page, f"{unit_id}_step5_preview")
+            log.info("")
+            log.info("=" * 60)
+            log.info("FORM FILLED — saved as a draft, NOT published.")
+            log.info("  Review the draft on your TES Author Dashboard, then")
+            log.info("  manually check the copyright box and click 'Publish now'.")
+            log.info(f"  Screenshot: releases/debug_tes_{unit_id}_step5_preview.png")
+            log.info("=" * 60)
 
         except Exception as e:
-            _take_debug_screenshot(page, "error")
+            _take_debug_screenshot(page, f"{unit_id}_error")
+            log.error(f"Error: {e}")
             raise
 
 
-TES_NEW_RESOURCE_URL = "https://www.tes.com/teaching-resource/upload"
-
-
-def scout() -> None:
-    """Step through TES upload flow with screenshots at each stage."""
-    from cmie.publishing.browser import automation_chrome
-
-    log.info("Scout mode: mapping TES upload flow...")
-    with automation_chrome() as (context, page):
-        # Step 1: dashboard confirmation
-        page.goto(TES_UPLOAD_URL, wait_until="domcontentloaded", timeout=20000)
-        page.wait_for_timeout(2000)
-        _take_debug_screenshot(page, "scout_1_dashboard")
-        log.info(f"Step 1: {page.url}")
-
-        if not _check_logged_in(page):
-            log.error("Not logged in to TES. Re-run setup.")
-            return
-
-        # Step 2: navigate directly to upload URL
-        page.goto(TES_NEW_RESOURCE_URL, wait_until="domcontentloaded", timeout=20000)
-        page.wait_for_timeout(3000)
-        _take_debug_screenshot(page, "scout_2_step1_description")
-        log.info(f"Step 2 (description form): {page.url}")
-
-        # Fill title
-        title_input = page.locator("input[placeholder='Title your resource']")
-        title_input.click()
-        title_input.fill("SCOUT TEST — DO NOT PUBLISH")
-
-        # Description uses SimpleMDE — interact with CodeMirror, not the hidden textarea
-        page.evaluate(
-            "(text) => navigator.clipboard.writeText(text).catch(() => {})",
-            "Scout test description. Not a real resource.",
-        )
-        page.locator(".CodeMirror").click()
-        page.keyboard.press("Control+a")
-        page.keyboard.press("Control+v")
-        page.wait_for_timeout(500)
-
-        # Click Continue
-        page.get_by_role("button", name="Continue").click()
-        page.wait_for_load_state("domcontentloaded", timeout=15000)
-        page.wait_for_timeout(2000)
-        _take_debug_screenshot(page, "scout_3_step2_add_files")
-        log.info(f"Step 3 (Add Files): {page.url}")
-
-        # Scroll to see full file upload step
-        page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)")
-        page.wait_for_timeout(500)
-        _take_debug_screenshot(page, "scout_4_step2_scrolled")
-
-        # Upload a real zip to enable Continue
-        zip_path = RELEASES_ROOT / "artifacts" / "year7_ai_data_unit2_v001.zip"
-        thumbnail_path = RELEASES_ROOT / "thumbnails" / "year7_ai_data_unit2_thumbnail.png"
-
-        log.info(f"Uploading zip: {zip_path.name}")
-        try:
-            with page.expect_file_chooser(timeout=10000) as fc:
-                page.get_by_role("button", name="Upload").click()
-            fc.value.set_files(str(zip_path))
-            page.wait_for_timeout(5000)
-            _take_debug_screenshot(page, "scout_5_after_zip_upload")
-            log.info("Zip uploaded.")
-        except Exception as e:
-            log.warning(f"Zip upload failed: {e}")
-
-        # Upload thumbnail
-        if thumbnail_path.exists():
-            log.info(f"Uploading thumbnail: {thumbnail_path.name}")
-            try:
-                with page.expect_file_chooser(timeout=10000) as fc:
-                    page.get_by_role("button", name="Upload image").click()
-                fc.value.set_files(str(thumbnail_path))
-                page.wait_for_timeout(3000)
-                _take_debug_screenshot(page, "scout_6_after_thumbnail")
-                log.info("Thumbnail uploaded.")
-            except Exception as e:
-                log.warning(f"Thumbnail upload failed: {e}")
-
-        # Click Continue to step 3 (Categories)
-        try:
-            page.get_by_role("button", name="Continue").click()
-            page.wait_for_load_state("domcontentloaded", timeout=15000)
-            page.wait_for_timeout(2000)
-            _take_debug_screenshot(page, "scout_7_step3_categories")
-            log.info(f"Step 3 (Categories): {page.url}")
-            page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)")
-            page.wait_for_timeout(500)
-            _take_debug_screenshot(page, "scout_8_categories_scrolled")
-        except Exception as e:
-            log.warning(f"Could not advance to categories: {e}")
-
-        # Click Continue to step 4 (Licence)
-        try:
-            page.get_by_role("button", name="Continue").click()
-            page.wait_for_load_state("domcontentloaded", timeout=15000)
-            page.wait_for_timeout(2000)
-            _take_debug_screenshot(page, "scout_9_step4_licence")
-            log.info(f"Step 4 (Licence): {page.url}")
-        except Exception as e:
-            log.warning(f"Could not advance to licence: {e}")
-
-        # Click Continue to step 5 (Publish / price)
-        try:
-            page.get_by_role("button", name="Continue").click()
-            page.wait_for_load_state("domcontentloaded", timeout=15000)
-            page.wait_for_timeout(2000)
-            _take_debug_screenshot(page, "scout_10_step5_publish")
-            log.info(f"Step 5 (Publish): {page.url}")
-            page.evaluate("window.scrollTo(0, document.body.scrollHeight / 2)")
-            page.wait_for_timeout(500)
-            _take_debug_screenshot(page, "scout_11_publish_scrolled")
-        except Exception as e:
-            log.warning(f"Could not advance to publish: {e}")
-
-        log.info("Full scout complete. Close the browser window when done.")
-        try:
-            context.wait_for_event("close", timeout=0)
-        except Exception:
-            pass
-
-
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Publish units to TES")
-    parser.add_argument("--unit", help="Unit ID, e.g. year7_ai_data_unit1")
-    parser.add_argument("--all", action="store_true", help="Publish all 8 units")
+    parser = argparse.ArgumentParser(description="Publish a unit's bundle to TES")
+    parser.add_argument("--unit", required=True, help="Unit ID, e.g. year7_networks_hardware_unit1")
     parser.add_argument("--price", type=float, default=PRICE_GBP, help="Price in GBP")
-    parser.add_argument("--scout", action="store_true", help="Open upload page and take screenshot only")
     args = parser.parse_args()
 
-    if args.scout:
-        scout()
-        return
-
-    if args.all:
-        units = [f"year7_ai_data_unit{i}" for i in range(1, 9)]
-    elif args.unit:
-        units = [args.unit]
-    else:
-        parser.error("Provide --unit <id>, --all, or --scout")
-
-    for unit_id in units:
-        try:
-            publish_unit(unit_id, args.price)
-        except Exception as e:
-            log.error(f"Failed {unit_id}: {e}")
+    publish_unit(args.unit, args.price)
 
 
 if __name__ == "__main__":

@@ -4,11 +4,24 @@ _Last updated: 2026-06-28_
 
 ---
 
+## ⚠️ Important Discovery — TES Already Has Live Listings From the Shelved Series (2026-06-28)
+
+While building TES publishing for the new units, found that **9 resources from the old AI & Data Literacy series are already live on TES**, dated March 2026 — months before this PROGRESS.md ever mentioned TES, and well before the "Direction Change" pivot. **This was never tracked anywhere in this file.** Specifics:
+
+- 7 distinct AI Ethics + Bias lessons + 1 exact duplicate ("Data Shapes the AI World – Lesson 1" appears twice), all priced at £4.00, licence "TES-PAID", status live (not draft) — confirmed via real view counts (25-33 views each) and "Created: 21/28 Mar 2026" dates.
+- £0.00 earnings / 0 sales on all of them so far.
+- Found under Author Dashboard → Resource Management → My Uploads → "Show all" (not the default filtered view, and not the same place as "My Resources" which only shows purchased/downloaded items).
+- **Not touched** — per the shelved-series policy, left these exactly as found. The duplicate "Data Shapes the AI World" listing is worth deleting at some point, but that's the user's call, not done automatically.
+
+**Action for the user:** worth deciding whether to actively promote/price-check these existing TES listings, since they're real live products nobody has been tracking.
+
+---
+
 ## Direction Change (2026-06-26)
 
-**The original 8-unit "AI & Data Literacy Series" is shelved.** Per user direction: those units were practice/test units, built around a Canva-dependent workflow that's no longer being used. Don't resume work on Units 1-8 (TPT/Gumroad/TES publishing for that series) unless explicitly asked — the user may pick them up personally later. The packaging audit and Gumroad fixes from earlier in this file are still accurate *for that series* but are no longer the active priority.
+**The original 8-unit "AI & Data Literacy Series" is shelved.** Per user direction: those units were practice/test units, built around a Canva-dependent workflow that's no longer being used. Don't resume work on Units 1-8 (TPT/Gumroad/TES publishing for that series) unless explicitly asked — the user may pick them up personally later. The packaging audit and Gumroad fixes from earlier in this file are still accurate *for that series* but are no longer the active priority. **Exception**: TES already has live listings from this series (see discovery note above) — don't delete or modify those without being asked, but they do exist and are worth knowing about.
 
-**New direction: fully automated unit creation, no Canva, lesson-by-lesson + bundle listings on TPT.** First unit under this approach — Networks & Hardware Unit 1 — went live 2026-06-26/27. Second unit — Algorithms & Programming Logic Unit 1 — went live 2026-06-28, noticeably faster than the first since the playbook now actually works end-to-end. See the two unit sections below for details. This is the proven template for future units.
+**New direction: fully automated unit creation, no Canva, lesson-by-lesson + bundle listings on TPT (+ bundle on Gumroad and TES).** First unit — Networks & Hardware Unit 1 — went live 2026-06-26/27. Second unit — Algorithms & Programming Logic Unit 1 — went live 2026-06-28, noticeably faster than the first since the playbook now actually works end-to-end. TES publishing for both units' bundles added 2026-06-28. See the sections below for details. This is the proven template for future units.
 
 ---
 
@@ -34,6 +47,30 @@ _Last updated: 2026-06-28_
 2. **Self-inflicted bug, caught and fixed**: accidentally ran `publish_tpt.py --part lesson02` twice (a `tail` pipe truncated the first run's success output, so it looked like it hadn't completed and got rerun), creating a duplicate "Sequencing, Selection, Repetition" product on TPT. Found TPT's delete mechanism — there's no delete button in the My-Products list itself, it's hidden inside "Quick Edit" → scroll down → "Permanently delete this product" → confirms by re-stating the exact product title before deleting. **Verified the correct duplicate's product ID via an explicit assertion before clicking delete** — got the row index right only on the second attempt, so don't assume `matches.first` is the one you just created. Lesson: **pipe TPT/Gumroad publish output through `grep -E "Submitted|ERROR|WARNING"` instead of `tail`**, so the success line is never accidentally cut off and mistaken for a failure that needs re-running.
 
 No AI-specific language leaked anywhere in this unit's listings/workbook/assessment — confirms the 2026-06-27 generator fixes hold up on a second, unrelated topic.
+
+---
+
+## TES Publishing Built From Scratch (2026-06-28)
+
+**Status: both units' bundles drafted on TES, awaiting manual review and publish.**
+
+- Networks & Hardware bundle: draft saved, resource id `13503376` (plus one earlier duplicate from probe-testing, id `13503371` — attempted to delete it via the "Delete" link under Resource Management, got a "deleted" success toast with an Undo option, but **the duplicate was still present after a fresh reload** — the delete didn't actually persist for reasons not yet understood. Low priority to chase further since duplicate drafts cost nothing and aren't public; revisit if it matters later).
+- Algorithms & Programming Logic bundle: draft saved cleanly, resource id `13503396`, no duplicate this time (more careful testing process).
+
+**`publish_tes.py` was non-functional before today** — it assumed a single-page form, but TES's real upload flow is a 5-step wizard (Description → Add Files → Categories → Licence → Publish) where each step's fields only exist in the DOM once that step loads. Rewrote it entirely:
+
+- **Added automated login** (cookie cache + `TES_EMAIL`/`TES_PASSWORD` form-login fallback, mirroring TPT/Gumroad) — previously TES only supported a fully manual one-time browser login via `cmie/publishing/browser.py::setup()`, with no credentials path at all.
+- **Fixed `_check_logged_in()`**: it checked for `tes.com/login`/`tes.com/register` in the URL, but the real unauthenticated redirect target is `tes.com/authn/sign-in` — neither old string ever matched, so this check would have silently reported "logged in" even when redirected to the sign-in page. Would have caused every previous run to proceed as if authenticated and fail downstream.
+- **Step 1 (Description)**: title + markdown description. Unlike Gumroad/TPT, **TES's editor natively supports raw markdown** (heading/bullet/bold syntax renders correctly) — no HTML conversion needed here, the opposite problem from the other two platforms.
+- **Step 2 (Add Files)**: TES's help text only lists "PDF, Word, Smartboards, JPEG, Powerpoint, Excel, ePub" as supported formats — **zip is not mentioned but is in fact accepted** (verified directly, uploaded fine with the file name showing in "Uploaded files"). Also requires selecting a "resource type" — `"Unit of work"` matches our bundle product. Cover image upload was **deliberately skipped**: its file input shares discovery with the zip's, and a wrong index would silently overwrite the zip upload with the thumbnail (caught this almost happening during testing). Revisit later once a safe selector for the cover-image input specifically is confirmed.
+- **Step 3 (Categories)**: age range / curriculum / subject dropdowns. **Must select by element id (`#main-age-range`, `#curriculum`, `#main-subject`), not position** — a hidden "additional age range" field sometimes mounts between visible fields and shifts any index-based locator, causing a `select_option` to target completely the wrong dropdown. Defaults used: age `11-14`, curriculum `Australian`, subject `Computing` — all good fits for this project's Year 7 Australian Digital Technologies content.
+- **Step 4 (Licence)**: "Sell my resource" is the default tab; price field has id `#spinner`.
+- **Step 5 (Publish)**: stops here deliberately — does **not** check the copyright confirmation box or click "Publish now". The resource is already saved as a draft on the Author Dashboard at this point (confirmed via the "Resource draft has been saved" toast) without needing that final click.
+- **New CLI**: `python publish_tes.py --unit <unit_id> --price <gbp>`. Always publishes the bundle (`_PUBLIC.zip`), same priority as Gumroad — TES has no per-lesson concept built yet.
+
+### Important discovery during this work — see the note at the top of this file
+
+Found 9 already-live TES resources from the shelved AI series (dated March 2026, never tracked in this file before today). Not touched, just documented. See top of this file for detail.
 
 ---
 
@@ -136,7 +173,7 @@ TPT had redesigned several form fields since this script was last used (same pat
 | Platform | Live listings | Revenue to date |
 |----------|--------------|-----------------|
 | TPT      | 19 (1 shelved AI series + 9 Networks & Hardware + 9 Algorithms & Programming Logic) | $0 |
-| TES      | 0            | $0              |
+| TES      | 9 live, shelved AI series (just discovered, untracked until today) + 2 drafts awaiting manual publish (Networks & Hardware bundle, Algorithms bundle, £9.99 each) | $0 confirmed (AI series shows £0.00 earnings so far) |
 | Gumroad  | 1 live (Networks & Hardware bundle, A$12.99) + 1 draft awaiting manual publish (Algorithms bundle, A$12.99) + 1 draft, shelved series (`cqwjlt`, AI Unit 1, not being pursued) | $0 |
 
 **Target:** $200,000 AUD/year
@@ -319,18 +356,24 @@ The items below describe the *shelved* AI & Data Literacy series and are kept fo
 
 ## Next Session — Start Here
 
-**Priority 1: DONE (2026-06-28)** — Algorithms & Programming Logic Unit 1 built and shipped: all 9 TPT products live, Gumroad bundle drafted (`https://gumroad.com/products/bpvevc/edit`, A$12.99) awaiting manual publish review. **Action for the user**: review and click "Publish and continue" on that draft when ready.
+**Priority 1: Review and publish the 4 pending drafts** (all built, none published — all waiting on a human click):
+- Gumroad: Algorithms bundle draft, `https://gumroad.com/products/bpvevc/edit`, A$12.99.
+- TES: Networks & Hardware bundle draft (Author Dashboard → Resource Management → My Uploads), £9.99.
+- TES: Algorithms bundle draft, same location, £9.99.
+- (Networks & Hardware's Gumroad bundle is already live, no action needed there.)
+- Also decide what to do about the duplicate "Networks & Hardware" TES draft (delete attempt didn't persist — see TES section above) and the duplicate "Data Shapes the AI World" resource in the shelved AI series (see discovery note at top of file).
 
-**Priority 2: Commit this session's work to git** — the 2026-06-26/27 work was already committed (commit `11a5518`, 1 commit ahead of `origin/main`, not yet pushed). Today's Algorithms & Programming Logic work (new `data/units/year7_algorithms_unit1.json`, the `markdown_to_docx` nested-bullet fix, `PROGRESS.md` updates) is **not yet committed** — `releases/` stays gitignored as usual (generated content), but the config file and code fix should go in. Consider also pushing the existing local commit to `origin/main` if the user wants it backed up remotely.
+**Priority 2: Decide on the newly-discovered live TES AI-series resources** (see top of file) — they've been live since March with zero tracking. Worth a pricing/promotion review, or at minimum acknowledging they exist in whatever revenue tracking happens outside this file.
 
-**Priority 3: Decide the third unit's topic** and repeat the now-proven playbook (went noticeably faster the second time):
+**Priority 3: Commit and consider pushing today's work** — committed locally as of this session (check `git log` for the latest commit); local branch was ahead of `origin/main` and not yet pushed as of the last check. Ask before pushing.
+
+**Priority 4: Decide the third unit's topic** and repeat the now-proven playbook (gets faster each time):
 1. Write `data/units/<new_unit_id>.json` (title, year_level, subject, 7 topics) — get user sign-off on the lesson sequence first.
 2. Run `python -m cmie.pipeline.full_product_pipeline --unit-config data/units/<new_unit_id>.json` — generates lessons, direct PPTX slides (no Canva), assessment, workbook, roadmap, teacher guide, listings, and packaging in one pass.
-3. Spot-check for AI-leftover language (`grep -rn "\bAI\b" releases/<unit_id>/`) and the nested-bullet artifact (`grep -n '^- - ' releases/<unit_id>/**/*.md`) before packaging — both are now fixed at the generator level but worth a quick confirm on a new topic.
+3. Spot-check for AI-leftover language (`grep -rn "\bAI\b" releases/<unit_id>/`) and the nested-bullet artifact (`grep -n '^- - ' releases/<unit_id>/**/*.md`) before packaging — both are fixed at the generator level but worth a quick confirm on a new topic.
 4. Generate a thumbnail via `cmie/publishing/thumbnail.py::generate_thumbnail()`.
-5. Package per-lesson + assessment + bundle zips — still no reusable script for this exact step (copy `01_Lesson_Slides/*.pptx` into individual zips + `02_Assessment/` into its own zip + the whole public folder minus `06_Listings` into a bundle zip). Worth turning into a real script if a fourth unit happens.
-6. Publish to TPT: `python publish_tpt.py --unit <unit_id> --part lesson01..lesson07,assessment,bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish`. **Pipe through `grep -E "Submitted|ERROR|WARNING"`, never `tail`** — a truncated tail output looking like a failure is exactly what caused an accidental duplicate-product creation today.
+5. Package per-lesson + assessment + bundle zips — still no reusable script for this exact step. Worth turning into a real script if a fourth unit happens.
+6. Publish to TPT: `python publish_tpt.py --unit <unit_id> --part lesson01..lesson07,assessment,bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish`. **Pipe through `grep -E "Submitted|ERROR|WARNING"`, never `tail`**.
 7. Publish the bundle to Gumroad: `python publish_gumroad.py --unit <unit_id> --price 12.99`.
-8. Verify everything against the real `My-Products` / Gumroad product page, not the script's exit code.
-
-**Priority 4: List Networks & Hardware (and now Algorithms) on TES** — not started for either unit. `publish_gumroad.py` still only knows how to publish one zip per unit (the bundle) — fine for Gumroad's bundle-only strategy, but would need `--part` support like `publish_tpt.py` has if per-lesson Gumroad listings are ever wanted.
+8. Publish the bundle to TES: `python publish_tes.py --unit <unit_id> --price 9.99`.
+9. Verify everything against the real dashboards, not script exit codes.
