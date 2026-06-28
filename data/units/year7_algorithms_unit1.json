@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_algorithms_unit1",
+  "title": "Algorithms & Programming Logic: Unit 1 – Thinking Like a Programmer",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "What Is an Algorithm?" },
+    { "title": "Sequencing, Selection, and Repetition" },
+    { "title": "Representing Algorithms with Flowcharts" },
+    { "title": "Writing Pseudocode" },
+    { "title": "Debugging: Finding and Fixing Logic Errors" },
+    { "title": "Efficiency: Comparing Different Algorithms for the Same Problem" },
+    { "title": "Designing an Algorithm for a Real Problem" }
+  ],
+  "lesson_videos": {}
+}

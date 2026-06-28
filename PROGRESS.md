@@ -8,7 +8,32 @@ _Last updated: 2026-06-28_
 
 **The original 8-unit "AI & Data Literacy Series" is shelved.** Per user direction: those units were practice/test units, built around a Canva-dependent workflow that's no longer being used. Don't resume work on Units 1-8 (TPT/Gumroad/TES publishing for that series) unless explicitly asked — the user may pick them up personally later. The packaging audit and Gumroad fixes from earlier in this file are still accurate *for that series* but are no longer the active priority.
 
-**New direction: fully automated unit creation, no Canva, lesson-by-lesson + bundle listings on TPT.** First unit under this approach — Networks & Hardware Unit 1 — is built and live on TPT as of today. See "Networks & Hardware Unit 1 — TPT Launch" below for full details. This is now the template for future units.
+**New direction: fully automated unit creation, no Canva, lesson-by-lesson + bundle listings on TPT.** First unit under this approach — Networks & Hardware Unit 1 — went live 2026-06-26/27. Second unit — Algorithms & Programming Logic Unit 1 — went live 2026-06-28, noticeably faster than the first since the playbook now actually works end-to-end. See the two unit sections below for details. This is the proven template for future units.
+
+---
+
+## Algorithms & Programming Logic Unit 1 — TPT + Gumroad Launch (2026-06-28)
+
+**Status: all 9 TPT products live + Gumroad bundle drafted (awaiting manual publish).**
+
+| Product | Price | Status |
+|---|---|---|
+| Lesson 1: What Is an Algorithm? | $2.50 | ✅ Live on TPT |
+| Lesson 2: Sequencing, Selection, and Repetition | $2.50 | ✅ Live on TPT |
+| Lesson 3: Representing Algorithms with Flowcharts | $2.50 | ✅ Live on TPT |
+| Lesson 4: Writing Pseudocode | $2.50 | ✅ Live on TPT |
+| Lesson 5: Debugging Logic Errors | $2.50 | ✅ Live on TPT |
+| Lesson 6: Efficiency: Comparing Algorithms | $2.50 | ✅ Live on TPT |
+| Lesson 7: Designing an Algorithm | $2.50 | ✅ Live on TPT |
+| Assessment Pack | $3.50 | ✅ Live on TPT |
+| Full Bundle | $12.99 | ✅ Live on TPT, **draft on Gumroad** (`https://gumroad.com/products/bpvevc/edit` — confirmed unpublished, "Publish and continue" still showing pink/unclicked, unlike Networks & Hardware's which turned out already-live) |
+
+**This run validated the fixed pipeline end-to-end with no major surprises** — config → `full_product_pipeline` → thumbnail → package → publish was much faster than Unit 1. Two small things worth noting:
+
+1. **Found and fixed a new AI-output formatting quirk**: the assessment task's raw markdown had nested bullets flattened as `"- - text"` (AI artifact, not a generator bug) which rendered as a literal double-dash in the docx. Generalized the fix in `markdown_to_docx()`'s bullet handling to strip repeated leading `"- "` markers, since this could recur in any future unit's AI-generated content.
+2. **Self-inflicted bug, caught and fixed**: accidentally ran `publish_tpt.py --part lesson02` twice (a `tail` pipe truncated the first run's success output, so it looked like it hadn't completed and got rerun), creating a duplicate "Sequencing, Selection, Repetition" product on TPT. Found TPT's delete mechanism — there's no delete button in the My-Products list itself, it's hidden inside "Quick Edit" → scroll down → "Permanently delete this product" → confirms by re-stating the exact product title before deleting. **Verified the correct duplicate's product ID via an explicit assertion before clicking delete** — got the row index right only on the second attempt, so don't assume `matches.first` is the one you just created. Lesson: **pipe TPT/Gumroad publish output through `grep -E "Submitted|ERROR|WARNING"` instead of `tail`**, so the success line is never accidentally cut off and mistaken for a failure that needs re-running.
+
+No AI-specific language leaked anywhere in this unit's listings/workbook/assessment — confirms the 2026-06-27 generator fixes hold up on a second, unrelated topic.
 
 ---
 
@@ -110,9 +135,9 @@ TPT had redesigned several form fields since this script was last used (same pat
 
 | Platform | Live listings | Revenue to date |
 |----------|--------------|-----------------|
-| TPT      | 10 (1 from shelved AI series + 9 from Networks & Hardware Unit 1) | $0 |
+| TPT      | 19 (1 shelved AI series + 9 Networks & Hardware + 9 Algorithms & Programming Logic) | $0 |
 | TES      | 0            | $0              |
-| Gumroad  | 0 (draft pending review, shelved series) | $0 |
+| Gumroad  | 1 live (Networks & Hardware bundle, A$12.99) + 1 draft awaiting manual publish (Algorithms bundle, A$12.99) + 1 draft, shelved series (`cqwjlt`, AI Unit 1, not being pursued) | $0 |
 
 **Target:** $200,000 AUD/year
 
@@ -294,19 +319,18 @@ The items below describe the *shelved* AI & Data Literacy series and are kept fo
 
 ## Next Session — Start Here
 
-**Priority 1: DONE (2026-06-28)** — corrected bundle + assessment files pushed to both Gumroad and TPT, verified on both. See "Independent QA Pass + Fixes" above for full detail. `cmie/publishing/tpt.py` now has `replace_product_file()` for editing an existing product's attached file, reusable for any future correction.
+**Priority 1: DONE (2026-06-28)** — Algorithms & Programming Logic Unit 1 built and shipped: all 9 TPT products live, Gumroad bundle drafted (`https://gumroad.com/products/bpvevc/edit`, A$12.99) awaiting manual publish review. **Action for the user**: review and click "Publish and continue" on that draft when ready.
 
-**Priority 2: Decide the next unit's topic** and repeat the Networks & Hardware playbook:
-1. Write `data/units/<new_unit_id>.json` (title, year_level, subject, 7 topics).
+**Priority 2: Commit this session's work to git** — the 2026-06-26/27 work was already committed (commit `11a5518`, 1 commit ahead of `origin/main`, not yet pushed). Today's Algorithms & Programming Logic work (new `data/units/year7_algorithms_unit1.json`, the `markdown_to_docx` nested-bullet fix, `PROGRESS.md` updates) is **not yet committed** — `releases/` stays gitignored as usual (generated content), but the config file and code fix should go in. Consider also pushing the existing local commit to `origin/main` if the user wants it backed up remotely.
+
+**Priority 3: Decide the third unit's topic** and repeat the now-proven playbook (went noticeably faster the second time):
+1. Write `data/units/<new_unit_id>.json` (title, year_level, subject, 7 topics) — get user sign-off on the lesson sequence first.
 2. Run `python -m cmie.pipeline.full_product_pipeline --unit-config data/units/<new_unit_id>.json` — generates lessons, direct PPTX slides (no Canva), assessment, workbook, roadmap, teacher guide, listings, and packaging in one pass.
-3. Generate a thumbnail: see the `generate_thumbnail()` call pattern used for Networks & Hardware in this session.
-4. Package per-lesson + assessment + bundle zips (see the `_package_networks_unit.py`-style script used this session — copy individual PPTX files from `releases/public/<unit>_v001/01_Lesson_Slides/` and the assessment docx from `02_Assessment/` into their own zips, plus a full bundle zip of the whole public folder).
-5. Publish each part: `python publish_tpt.py --unit <unit_id> --part lesson01..lesson07,assessment,bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish`. Always verify against the real `My-Products` list afterward, not just the script's log output.
+3. Spot-check for AI-leftover language (`grep -rn "\bAI\b" releases/<unit_id>/`) and the nested-bullet artifact (`grep -n '^- - ' releases/<unit_id>/**/*.md`) before packaging — both are now fixed at the generator level but worth a quick confirm on a new topic.
+4. Generate a thumbnail via `cmie/publishing/thumbnail.py::generate_thumbnail()`.
+5. Package per-lesson + assessment + bundle zips — still no reusable script for this exact step (copy `01_Lesson_Slides/*.pptx` into individual zips + `02_Assessment/` into its own zip + the whole public folder minus `06_Listings` into a bundle zip). Worth turning into a real script if a fourth unit happens.
+6. Publish to TPT: `python publish_tpt.py --unit <unit_id> --part lesson01..lesson07,assessment,bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish`. **Pipe through `grep -E "Submitted|ERROR|WARNING"`, never `tail`** — a truncated tail output looking like a failure is exactly what caused an accidental duplicate-product creation today.
+7. Publish the bundle to Gumroad: `python publish_gumroad.py --unit <unit_id> --price 12.99`.
+8. Verify everything against the real `My-Products` / Gumroad product page, not the script's exit code.
 
-**Priority 3: List the Networks & Hardware unit on TES too** — Gumroad's bundle is already live (see above). TES not started. `publish_gumroad.py` still only knows how to publish one zip per unit (the bundle) — fine for Gumroad's use case, but would need the same kind of `--part` support `publish_tpt.py` has if per-lesson Gumroad listings are ever wanted.
-
-**Priority 4: Commit all untracked work**
-```
-git add cmie/publishing/ webapp/ publish_tpt.py publish_gumroad.py pptx_generator.py PROGRESS.md .env.example start.ps1
-git commit -m "Add publishing automation: TPT Playwright + Gumroad hybrid (API + Playwright)"
-```
+**Priority 4: List Networks & Hardware (and now Algorithms) on TES** — not started for either unit. `publish_gumroad.py` still only knows how to publish one zip per unit (the bundle) — fine for Gumroad's bundle-only strategy, but would need `--part` support like `publish_tpt.py` has if per-lesson Gumroad listings are ever wanted.

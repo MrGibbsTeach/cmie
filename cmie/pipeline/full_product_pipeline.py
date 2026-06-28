@@ -190,8 +190,15 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
             continue
 
         if stripped.startswith("- "):
+            # AI-generated markdown sometimes flattens a nested bullet into
+            # "- - text" instead of proper indentation -- strip repeated
+            # leading bullet markers rather than leaving a literal "- " in
+            # the rendered text.
+            bullet_text = stripped[2:].strip()
+            while bullet_text.startswith("- "):
+                bullet_text = bullet_text[2:].strip()
             p = doc.add_paragraph(style="List Bullet")
-            add_runs_with_bold(p, stripped[2:].strip())
+            add_runs_with_bold(p, bullet_text)
             i += 1
             continue
 
