@@ -13,7 +13,7 @@ from docx.shared import Inches, Pt
 
 from cmie.core.unit_config import UnitConfig
 from cmie.generator import assessment_generator
-from cmie.generator.ai_lesson_engine import slugify
+from cmie.generator.ai_lesson_engine import sanitize_ai_text, slugify
 from cmie.generator.assessment_markdown import render_assessment_markdown
 from cmie.generator.batch_generate import run_batch
 from cmie.generator.canva_csv_generator import export_unit_canva_csv
@@ -62,6 +62,10 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
     """
     logger.info(f"  Converting {md_path.name} -> {docx_path.name}")
     text = md_path.read_text(encoding="utf-8")
+    # Defensive: strip stray control characters (vertical tabs etc.) that
+    # occasionally survive in AI-generated markdown, so they never reach
+    # the rendered DOCX.
+    text = sanitize_ai_text(text)
     lines = text.splitlines()
 
     doc = Document()
@@ -79,18 +83,35 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
             cell = row.cells[0]
             cell.text = ""
 
+    inline_md_re = re.compile(
+        r"(\*\*.+?\*\*"          # **bold**
+        r"|`[^`\n]+`"            # `inline code`
+        r"|(?<!\*)\*[^*\n]+\*(?!\*))"  # *italic* (not part of **)
+    )
+    link_re = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
+
     def add_runs_with_bold(paragraph, text: str) -> None:
-        """Split on **bold** markers and add real bold runs instead of
-        leaving literal asterisks in the output -- markdown_to_docx only
-        handled block-level markdown (headings/bullets), not inline bold,
-        so '**Year level:**' etc rendered as literal asterisks in every
-        generated docx (roadmap, assessment, teacher guide)."""
-        parts = re.split(r"\*\*(.+?)\*\*", text)
-        for i, part in enumerate(parts):
+        """Convert inline markdown into real DOCX runs instead of leaving
+        literal markers in the output. Handles **bold**, *italic*,
+        `inline code` (monospace run), and [text](url) links (rendered as
+        'text (url)'). Previously only block-level markdown was handled,
+        so these markers rendered literally in every generated docx
+        (roadmap, assessment, teacher guide, workbook)."""
+        text = link_re.sub(r"\1 (\2)", text)
+        for part in inline_md_re.split(text):
             if not part:
                 continue
-            run = paragraph.add_run(part)
-            run.bold = bool(i % 2)
+            if part.startswith("**") and part.endswith("**") and len(part) > 4:
+                run = paragraph.add_run(part[2:-2])
+                run.bold = True
+            elif part.startswith("`") and part.endswith("`") and len(part) > 2:
+                run = paragraph.add_run(part[1:-1])
+                run.font.name = "Consolas"
+            elif part.startswith("*") and part.endswith("*") and len(part) > 2:
+                run = paragraph.add_run(part[1:-1])
+                run.italic = True
+            else:
+                paragraph.add_run(part)
 
     def is_table_row(line: str) -> bool:
         return line.strip().startswith("|") and line.strip().endswith("|")
@@ -119,6 +140,19 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
                 if r == 0:
                     for run in cell.paragraphs[0].runs:
                         run.bold = True
+
+    def section_is_empty(heading_idx: int) -> bool:
+        """True when a heading has no content before the next heading,
+        horizontal rule, or end of file. Used to skip rendering headings
+        like 'Extension ideas:' that AI output sometimes leaves without
+        any body."""
+        j = heading_idx + 1
+        while j < len(lines) and not lines[j].strip():
+            j += 1
+        if j >= len(lines):
+            return True
+        nxt = lines[j].strip()
+        return nxt.startswith("#") or nxt == "---"
 
     previous_was_blank = True
     i = 0
@@ -170,9 +204,23 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
             continue
 
         if stripped.startswith("### "):
+            if section_is_empty(i):
+                i += 1
+                continue
             p = doc.add_paragraph(style="Heading 2")
             add_runs_with_bold(p, stripped[4:].strip())
             doc.add_paragraph("")
+            i += 1
+            continue
+
+        if stripped.startswith("#### "):
+            # Previously unhandled: '#### ' headings fell through and were
+            # rendered as literal '#### text' paragraphs.
+            if section_is_empty(i):
+                i += 1
+                continue
+            p = doc.add_paragraph(style="Heading 3")
+            add_runs_with_bold(p, stripped[5:].strip())
             i += 1
             continue
 
@@ -189,18 +237,28 @@ def markdown_to_docx(md_path: Path, docx_path: Path, logger: logging.Logger) -> 
             i += 1
             continue
 
-        if stripped.startswith("- "):
+        bullet_match = re.match(r"[-*+]\s+", stripped)
+        if bullet_match:
             # AI-generated markdown sometimes flattens a nested bullet into
             # "- - text" instead of proper indentation -- strip repeated
             # leading bullet markers rather than leaving a literal "- " in
-            # the rendered text.
-            bullet_text = stripped[2:].strip()
+            # the rendered text. Also accept "*" / "+" bullet markers and
+            # preserve one level of nesting via indentation.
+            bullet_text = stripped[bullet_match.end():].strip()
             while bullet_text.startswith("- "):
                 bullet_text = bullet_text[2:].strip()
-            p = doc.add_paragraph(style="List Bullet")
+            indent = len(raw_line.expandtabs(4)) - len(raw_line.expandtabs(4).lstrip())
+            style_name = "List Bullet 2" if indent >= 2 else "List Bullet"
+            p = doc.add_paragraph(style=style_name)
             add_runs_with_bold(p, bullet_text)
             i += 1
             continue
+
+        # NOTE: numbered lists ("1. step") are deliberately left as plain
+        # paragraphs with their literal marker -- python-docx's "List
+        # Number" style shares one numbering sequence document-wide, so
+        # separate lists would run 1..4 then 5..7. The literal marker
+        # reads correctly and is the safer rendering.
 
         p = doc.add_paragraph()
         add_runs_with_bold(p, stripped)

@@ -85,7 +85,11 @@ def generate_unit_readme(
     lines.append("## Suggested lesson timing")
     lines.append("")
     lines.append("- 45–60 minutes per lesson")
-    lines.append("- 7 lessons in total")
+    # Lesson count is derived from the actual lessons -- this used to be
+    # hardcoded as "7 lessons in total", which was wrong for any unit
+    # that didn't have exactly 7 lessons.
+    if lessons:
+        lines.append(f"- {len(lessons)} lessons in total")
     lines.append("- Assessment: 1–2 lessons")
     lines.append("")
 

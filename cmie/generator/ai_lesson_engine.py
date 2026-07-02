@@ -32,6 +32,34 @@ def ensure_openai_client() -> OpenAI:
     return OpenAI()
 
 
+# Control characters other than \n and \t. \x0b (vertical tab) and \x0c
+# (form feed) get normalised to newlines because models occasionally emit
+# them as line breaks; everything else is stripped. Stray \x0b chars have
+# previously leaked from AI output into published PPTX hook text as box
+# glyphs, so all AI JSON is sanitised at the parse boundary.
+_VT_FF_RE = re.compile("[\x0b\x0c\u2028\u2029]")
+_CTRL_RE = re.compile(r"[\x00-\x08\x0e-\x1f\x7f-\x9f]")
+
+
+def sanitize_ai_text(value: Any) -> Any:
+    """
+    Recursively remove stray control characters from AI-generated JSON.
+
+    Strings get \r\n normalised, vertical-tab/form-feed/unicode line
+    separators converted to \n, and remaining control chars stripped.
+    Dicts/lists are walked; other types pass through unchanged.
+    """
+    if isinstance(value, str):
+        value = value.replace("\r\n", "\n").replace("\r", "\n")
+        value = _VT_FF_RE.sub("\n", value)
+        return _CTRL_RE.sub("", value)
+    if isinstance(value, dict):
+        return {k: sanitize_ai_text(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [sanitize_ai_text(v) for v in value]
+    return value
+
+
 @dataclass
 class LessonConfig:
     micro_unit_name: str
@@ -58,7 +86,11 @@ def build_lesson_architect_prompt(cfg: LessonConfig) -> str:
         f"- Lesson number: {cfg.lesson_number}\n"
         f"- Topic: {cfg.topic_title}\n\n"
 
-        "The lesson is part of an AI and data literacy unit.\n\n"
+        # NOTE: this used to hardcode "part of an AI and data literacy unit",
+        # which leaked AI framing into every non-AI unit (e.g. Networks &
+        # Hardware). Derive the framing from the actual unit name instead.
+        f"The lesson is part of the unit '{cfg.micro_unit_name}'. "
+        "Keep all content, examples, and framing specific to this unit's actual subject matter.\n\n"
 
         "Required lesson structure:\n"
         "- Hook scenario (engaging, relatable)\n"
@@ -269,10 +301,11 @@ def build_lesson_prompt(cfg: LessonConfig) -> str:
         f"- Year level: {cfg.year_level}\n"
         f"- Lesson number: {cfg.lesson_number}\n"
         f"- Topic: {cfg.topic_title}\n\n"
-        "The lesson must support a Lower Secondary AI & data literacy unit.\n"
-        "Students have been working with data, personal data, structured vs "
-        "unstructured data, data quality, bias and fairness, recommendation "
-        "systems, and fair data collection.\n\n"
+        # NOTE (legacy path -- not called by the current 3-stage pipeline):
+        # this used to hardcode an AI & data literacy unit context, which
+        # leaked AI framing into non-AI units. Keep it unit-derived.
+        f"The lesson must support the Lower Secondary unit '{cfg.micro_unit_name}'.\n"
+        "Keep all content, examples, and framing specific to this unit's actual subject matter.\n\n"
         "IMPORTANT: Respond ONLY with valid JSON (no extra text) using this schema:\n"
         "{\n"
         '  "lesson_title": string,\n'
@@ -343,7 +376,7 @@ def _call_openai_for_lesson(cfg: LessonConfig, model: str = "gpt-4.1-mini") -> D
         else:
             raise
 
-    return data
+    return sanitize_ai_text(data)
 
 def _call_openai_json(prompt: str, model: str = "gpt-4.1-mini", system_message: str = "Respond only with strict JSON.") -> Dict[str, Any]:
     client = ensure_openai_client()
@@ -360,12 +393,12 @@ def _call_openai_json(prompt: str, model: str = "gpt-4.1-mini", system_message: 
     raw = resp.choices[0].message.content.strip()
 
     try:
-        return json.loads(raw)
+        return sanitize_ai_text(json.loads(raw))
     except json.JSONDecodeError:
         start = raw.find("{")
         end = raw.rfind("}")
         if start != -1 and end != -1 and end > start:
-            return json.loads(raw[start:end + 1])
+            return sanitize_ai_text(json.loads(raw[start:end + 1]))
         raise
 
 
@@ -542,7 +575,7 @@ def _call_openai_for_presenter_notes(
         else:
             raise
 
-    return data
+    return sanitize_ai_text(data)
 
 
 def enhance_slide_presenter_notes(
@@ -745,7 +778,10 @@ def _build_visual_comparison_slide(cfg: LessonConfig) -> Optional[Dict[str, Any]
                 "Often used in grouped or general ways",
                 "Still needs context to judge risk properly",
             ],
-            "right_example": "Photos, chat messages, or videos",
+            # NOTE: this previously said "Photos, chat messages, or videos"
+            # (copy-pasted from the unstructured-data slide), which are
+            # examples of PERSONAL data -- exactly the wrong side.
+            "right_example": "Average rainfall, class test averages, or total website visits",
             "speaker_notes": (
                 "Use this slide to help students compare identifiable and non-identifiable information. "
                 "Remind them that some data feels harmless at first but can still identify someone when "
@@ -820,6 +856,14 @@ def build_slide_deck(
     """
 
     hook_text = (schema.get("hook_scenario") or "").strip()
+    if not hook_text:
+        # Never render the Hook Scenario slide with an empty body -- fall
+        # back to a topic-derived prompt so the slide is still usable.
+        hook_text = (
+            f"Think about where {cfg.topic_title.strip().rstrip('?.!')} shows up in your everyday life.\n\n"
+            "- What do you already know about it?\n"
+            "- What would you like to find out?"
+        )
     core_sections = schema.get("core_sections") or []
     activity = schema.get("activity") or {}
     reflection_questions = schema.get("reflection_questions") or []
@@ -942,10 +986,13 @@ def build_slide_deck(
     for t in rwe_takeaways:
         rwe_body_lines.append(f"- {t}")
 
+    # Fallback body and default speaker notes must stay topic-neutral --
+    # earlier versions hardcoded data/bias framing here, which leaked
+    # AI-literacy assumptions into every non-AI unit.
     rwe_body = "\n".join(rwe_body_lines).strip() or (
         "Example from the real world.\n\n"
-        "- What data is being used?\n"
-        "- Why does quality or bias matter here?"
+        "- Where does today's topic show up in this example?\n"
+        "- Why does it matter here?"
     )
 
     slides.append(
@@ -954,8 +1001,8 @@ def build_slide_deck(
             "title": f"🌍 {rwe_heading}",
             "body": rwe_body,
             "speaker_notes": (
-                "Discuss this real-world example and ask students what data is being used "
-                "and why quality or bias matters in this case."
+                "Discuss this real-world example and ask students where today's key idea "
+                "shows up in it and why it matters in this case."
             ),
         }
     )

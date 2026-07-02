@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
@@ -16,6 +17,12 @@ def _load_lessons(lessons_dir: Path) -> List[Dict[str, Any]]:
 
     return lessons
 
+def _title_mentions_ai(t: str) -> bool:
+    # Word-boundary match: a bare substring check for "ai" false-positives on
+    # words like "explain", "email", "maintain", "training".
+    return bool(re.search(r"\bai\b|\bartificial intelligence\b|\bmachine learning\b", t))
+
+
 def _lesson_specific_task(title: str) -> List[str]:
     t = title.lower()
 
@@ -31,7 +38,10 @@ def _lesson_specific_task(title: str) -> List[str]:
     if "fair" in t:
         return [
             "### Quick Task: Fair or Unfair?",
-            "- Decide if the AI decision is fair",
+            # Topic-neutral wording: this used to say "the AI decision",
+            # which leaked AI framing into any lesson title containing
+            # "fair" in non-AI units.
+            "- Decide if the decision or system described is fair",
             "- Explain your reasoning",
             "- Suggest one improvement",
             ""
@@ -46,7 +56,7 @@ def _lesson_specific_task(title: str) -> List[str]:
             ""
         ]
 
-    if "design" in t and ("ai" in t or "fair" in t or "bias" in t):
+    if "design" in t and (_title_mentions_ai(t) or "fair" in t or "bias" in t):
         return [
             "### Quick Task: Improve the System",
             "- What is one flaw?",

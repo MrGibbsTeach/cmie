@@ -1,6 +1,82 @@
 # CMIE Project Progress
 
-_Last updated: 2026-06-28_
+_Last updated: 2026-07-03_
+
+---
+
+## Sprint Consolidation — 5-Agent Parallel Audit (2026-07-02/03)
+
+**Status: audit complete. Full detail in `sprint_notes/01–05` (kept alongside this file); this section is the consolidated summary.** Nothing was published, no live listing was edited, nothing was deleted, no money was deliberately spent (one small accidental OpenAI spend — see Incident below).
+
+### Revenue & Monetization (Agent 5 — read this first)
+
+**Verified numbers (2026-07-02):** Gumroad **A$0.00 / 0 lifetime sales** (API, authoritative). TES **£0.00 / 0 purchases — but 264 views and 0 reviews** since 21 Mar (author dashboard, read-only). TPT **$0 corroborated but not dashboard-verified**: `.tpt_session.json` is expired and automated login was deliberately not attempted (prior bot-detection account lock); zero reviews on every CMIE product on the public store. REVENUE.md now carries these real numbers via the repaired `check_revenue.py`.
+
+**The single most important insight: the problem is not price, product, or listing polish — the machine has no acquisition side.** TES proves it with real traffic converting at 0%. And the fastest revenue lever — 4 finished drafts — has sat unpublished since 28 Jun.
+
+**Inventory correction — this file's Revenue table was badly wrong:** the TPT store has **80 live products, not 19**. AI & Data Literacy Units 1–5 are fully broken out live ($4.50 lessons, $25 unit bundles, an $85 4-unit mega bundle, est. live since Mar–Apr) plus 6 pre-CMIE legacy products — none of it tracked here. Gumroad has 3 untracked products, including a **live A$129 construction-SWMS product and an ADHD guide on the same "focuslabdigital" storefront** as the teaching brand. Live-listing quality problems visible today: literal `**markdown**` in both new units' live TPT bundle descriptions, plus AI-series typos ("Unit Radmap", "Designing Fair AI Designing Fair AI", two lessons both titled "What Is AI Bias?").
+
+**Why $0, per platform:**
+- **TPT**: cold-start invisibility in a low-velocity niche (even niche best-sellers have only 1–6 reviews), worsened by AU-English titles ("Lower Secondary", "Digital Technologies") that miss US search terms ("middle school computer science"), generic-only tags (controlled vocabulary — titles carry all SEO weight and ours are thin), a late-June launch at the bottom of the US demand year, and no free lead magnet to start the download→review→rank flywheel. **Pricing is fine** ($2.50/lesson is below the $4.50–$5 norm; $12.99 bundle mid-market) — do not discount further.
+- **TES**: traffic exists, conversion is the problem — £4/lesson from a 0-review author with an incomplete profile and a visible duplicate listing, while the two most sellable products (£9.99 unit bundles) are unpublished drafts. TES's UK/AU curriculum fit is actually better than TPT's; it's the only platform with proven impressions.
+- **Gumroad**: a checkout, not a marketplace — zero organic discovery, zero external traffic pointed at it, so $0 is the expected output. Treat as infrastructure, not a channel.
+
+**Honesty check vs the $200k/yr target:** top-1% TPT sellers earn ~$50–100k/yr after years of catalog and review building. The realistic play is catalog breadth (the pipeline's real strength) × correct keywords × review flywheel × the Aug–Sep back-to-school window, plus at least one owned channel — with the sellable *system* treated as the bigger asset.
+
+**Prioritized moves (full table in `sprint_notes/05_revenue_audit.md` §4):** 1) publish the 4 finished drafts; 2) free lead-magnet Lesson 1 on TPT+TES before August; 3) US-keyword retitles + copy fixes on the 18 new-unit TPT listings; 4) ship 3–5 more units in July for US back-to-school + AU Term 3; 5) TES AI-series relaunch (dedupe, retitle, price test, profile, covers); 6) thumbnails showing real slide pages + preview PDFs; 7) TES elevated to co-primary, Gumroad demoted to link destination; 8) storefront hygiene (off-brand products); 9) TPT session refresh; 10) fix this file's inventory tracking. Explicitly not recommended: further price cuts, paid ads, more per-lesson TES uploads of the shelved series.
+
+### Generator Audit (Agent 1) — 10 new root-cause fixes, all in the working tree
+
+**Headline: `build_lesson_architect_prompt()` in `ai_lesson_engine.py` hardcoded "The lesson is part of an AI and data literacy unit" for EVERY unit** — the upstream root cause of all the AI-framing leaks previously patched one downstream symptom at a time. Both TPT-live units were generated under that prompt (now unit-derived). Regenerate-or-leave is the user's call.
+
+Also fixed (detail + verification in `sprint_notes/01_generator_audit.md`): recursive `sanitize_ai_text()` at every AI-JSON parse boundary plus defensively in `markdown_to_docx()` (root fix for the vertical-tab class); empty ###/#### sections no longer render dangling headings (root fix for blank "Extension ideas:"); `markdown_to_docx()` now handles italics, inline code, links, #### headings, star/plus and nested bullets (numbered lists deliberately left literal — python-docx numbering restart limitation); the previous "design"-branch fix's bare `"ai" in title` substring false-positived on "explain"/"email" — now word-boundary regex, same fix applied to `infer_unit_focus()` whose branches fired on bare "model"/"fair" (an "OSI model" lesson would have gotten an AI-framed assessment); README's hardcoded "7 lessons in total" now dynamic; workbook "fair" branch de-AI'd; **a factually wrong slide example** in `_build_visual_comparison_slide()` — "Photos, chat messages, or videos" listed as NON-personal data — fixed at the generator, but the wrong version is live in the shelved TES series' decks.
+
+### Visual QA (Agent 2) — rendered review, most-broken-first
+
+Method: all 313 slides of the two live units + the live-TPT AI unit exported to PNG via PowerPoint COM and actually reviewed; key docx rendered via Word; everything else structured extraction (limitations noted in `sprint_notes/02_visual_qa.md`).
+
+1. **AI-series units 3–8 (shelved, but 9 TES listings live): BROKEN** — systematic mid-word text truncation on most content slides ("always picks stude", title "AI PERSONALIZES LEARNIN" overlapping body), a literal `{point3}` template variable on unit3 L5 slide 7, identical topic-agnostic filler slides across units, pre-fix `**`/pipe-table leaks in every unit's assessment/roadmap/README docx. **Whether the 9 live TES products contain these decks needs checking — if yes, they're selling broken slides.**
+2. **AI unit 1 "EDITED READY FOR RELEASE" (LIVE on TPT, $29.99): moderate** — `Assessment_Rubric_and_Marking.docx` renders as raw markdown (visually confirmed); "[Presenter Name]" placeholders, a "— Unknown" quote, gibberish AI-generated keyboard image, stray screenshots + zip shipped in the product.
+3. **AI unit 2**: no decks at all (CSV only) — known, listing honest, still unsellable.
+4. **Algorithms (LIVE): ship-quality slides** — no cropped text, no markdown artifacts, zero AI contamination. Minor: L01 has 2 reflection questions vs 3 elsewhere.
+5. **Networks (LIVE): ship-quality/minor** — but **the AI-framing contamination is wider than previously documented: 4 docx, not 1** (roadmap, teacher guide, and rubric all carry "fairness in AI outcomes" language, visually confirmed, in addition to the known assessment task). Also "Wired vs Wireless **Nets**" title, thin README-style teacher guide.
+
+Good news: the long-standing "stray vertical-tab" issue is actually `<a:br/>` line breaks that **render cleanly in real PowerPoint** — python-pptx merely reports them as `\x0b`. Not a visible defect as shipped. Both live units passed their listing-promise checks.
+
+### Automation & Infrastructure (Agent 4)
+
+- **`package_unit.py` (NEW, tested)** — the previously-manual packaging step is now `python package_unit.py --unit <id>`: builds all 10 customer zips with the packaging-audit hygiene rules enforced, validation, a no-overwrite guard, and post-write zip verification. Tested against both live units to scratch dirs: **all 20 zips identical (file lists + sizes) to the hand-built artifacts.**
+- **`produce_unit.py` (NEW)** — one command chaining pipeline → automated QA spot-checks → thumbnail → package → optional TPT/Gumroad/TES **draft** publishing (never `--publish`; gated behind `--draft-publish`; stages skippable/resumable; publish output grep-filtered, never tailed). Tested through packaging only. Now also refuses to regenerate any already-shipped unit without `--allow-regenerate` (see Incident).
+- **TES delete mystery SOLVED (root cause, read-only):** the dashboard's Delete is a client-side deferred delete — the actual `DELETE /api/v2/resources/{id}/draft` fires only in the Undo toast's `onClose` handler. **Reloading to verify before the toast auto-hides is precisely what cancels the delete.** Reliable procedure: delete, stay on the page until the toast closes (watch for the DELETE returning 2xx), then reload to confirm.
+- **TPT auth state:** `.tpt_session.json` (Jun 27) is expired — TPT automation is currently blocked on a session refresh, not bot detection. `--save-session` needs **no admin/DPAPI** (that note referred to the separate browser_cookie3 path). Recommendation: periodic 2-minute manual `--save-session` refresh, CDP-attach to real Chrome as fallback, never automated form login.
+- **`check_revenue.py` repaired (Agents 4+5, complementary fixes):** UTF-8 console crash, float-format crash on missing earnings, falsy-zero displayed as "?", TES flow completely rewritten to the real dashboard URLs, TPT now reports session expiry honestly instead of "layout may have changed", and the risky TPT form-login fallback removed. **Gumroad + TES legs verified working end-to-end; TPT leg blocked on the session refresh** (and its earnings extraction needs one verification pass after that — the old Earnings URL is dead). Auto-refresh proposed, not set up: daily Windows Task Scheduler run now; hybrid (cloud Gumroad-API + weekly local full scrape) later.
+
+### ⚠️ Incident — live Algorithms unit regenerated in place (contained; one decision pending)
+
+While testing `produce_unit.py`'s stage gating, its pipeline stage ran for real against `year7_algorithms_unit1` (output piped through `head` hid the evidence — the same output-truncation trap this file documents for publish scripts). ~7 OpenAI generations ran (small cost, logged for COSTS.md) and the unit's raw sources were regenerated in place; the public-folder rebuild then died on a OneDrive lock, deleting the customer folders mid-rebuild. `releases/` is not git-tracked.
+
+**Contained:** all 10 published customer zips (Jun 28) were never touched — they are the exact bytes customers receive and remain the source of truth. `releases/public/.../01–05` was restored byte-verified from the `_PUBLIC.zip`, and the 5 surviving unit-level listing files restored. **Still on regenerated variants:** the raw lesson/slide/assessment sources and the 7 per-lesson listing .md files. Options: **A (recommended) restore via OneDrive recycle bin/version history** (everything predates 2026-06-28; live TPT pages also hold the as-published listing text verbatim), or B, adopt the regenerated content and accept local-vs-live divergence. Guard added so no shipped unit can be regenerated without `--allow-regenerate` (verified fails fast).
+
+### New unit topics (Agent 3) — proposed, awaiting sign-off
+
+Three candidates in `sprint_notes/03_new_units_PROPOSED.md`, each with a 7-lesson outline, grounded in verified ACARA v9 content descriptions and demand-checked: **Data Representation (binary)** — recommended first (mandatory codes, zero overlap, fragmented competition); **Cyber Security & Digital Footprints** (biggest raw demand; overlap risks vs Networks L5 and the AI series flagged with mitigations); **UX & Interface Design** (clearest whitespace, cross-sells with Algorithms). These align with Agent 5's July build-plan suggestions. **Pipeline not run — topics need approval first.**
+
+### Waiting on you (every decision point from all five agents)
+
+1. **Publish the 4 finished drafts?** TES Networks + Algorithms bundles (£9.99 each), Gumroad Algorithms `bpvevc` (A$12.99). Also keep-or-kill the shelved `cqwjlt` (A$29.99) and the untracked "Personal Data L2" (A$4) Gumroad drafts. Fastest possible revenue action.
+2. **TPT session refresh** — run `python publish_tpt.py --save-session` (2 min, no admin). Unblocks TPT revenue checks and publishing.
+3. **Approve new unit topics** (pick 1–3 of Agent 3's candidates; Agent 5 recommends 3–5 units live before mid-August).
+4. **Algorithms source recovery: Option A (OneDrive restore, recommended) or B (adopt regenerated)** — see Incident.
+5. **Approve live-listing edits** (none touched): US-keyword retitles + `**markdown**`/typo fixes on TPT; TES AI-series relaunch (dedupe, retitle, ~£2.50–£3 or free-L1 price test, profile completion, cover images); thumbnail/preview upgrades.
+6. **Free lead-magnet Lesson 1** of each new unit on TPT + TES — yes/no.
+7. **Deletes (procedures ready, nothing deleted):** TES duplicate draft `13503371` (root cause solved — stay on page until the toast closes); duplicate live "Data Shapes the AI World" TES listing; archive the superseded `year7_ai_data_unit1_v001` original folder.
+8. **Regenerate-or-leave:** the two live units' content was generated under the AI-framed architect prompt (Agent 1 #1); Networks' AI contamination spans 4 docx not 1 (Agent 2); the live-TPT AI unit's raw-markdown rubric docx is a small high-value fix; AI-series 3–8 decks are broken — first check whether the 9 live TES products actually contain them.
+9. **Revenue auto-refresh:** daily local Task Scheduler now vs hybrid cloud/local — pick one.
+10. **Storefront hygiene:** split/hide off-brand products (A$129 SWMS + ADHD on the teaching Gumroad; legacy hobby items on TPT).
+11. **Platform strategy:** TES to co-primary, Gumroad demoted to link destination, scout Teach Starter / direct-to-AU-school for Term 3 — yes/no.
+12. **COSTS.md reconciliation:** OpenAI API spend (pipeline + the incident's ~7 calls) is real but untracked.
+13. **One live test approval:** whether `publish_tpt.py` without `--publish` actually persists a retrievable TPT draft after the browser closes (unverified — determines the orchestrator's TPT stage design).
+14. **Housekeeping:** `releases/` is not git-tracked — consider tracking `releases/public/` or snapshotting before pipeline runs (the incident had no VCS safety net).
 
 ---
 

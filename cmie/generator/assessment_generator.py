@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 
 from openai import OpenAI
 
-from .ai_lesson_engine import BASE_OUTPUT_DIR, slugify
+from .ai_lesson_engine import BASE_OUTPUT_DIR, sanitize_ai_text, slugify
 from .package_micro_unit import PACKAGES_DIR, MICRO_UNIT_NAME, YEAR_LEVEL
 
 DEFAULT_MODEL = "gpt-4.1-mini"
@@ -127,7 +128,17 @@ def infer_unit_focus(unit_name: str, lessons: List[Dict[str, Any]]) -> Dict[str,
     )
     text = base.lower()
 
-    if "ethics" in text or "bias" in text or "fair" in text:
+    # The two branches below inject fully AI-specific framing (scenario,
+    # title, task focus) into the generation prompt, so they must only fire
+    # for units that are explicitly about AI. Bare keyword checks like
+    # "fair"/"model" false-positive on non-AI units ("fair testing",
+    # "OSI model", "network model") and previously fed an AI-framed
+    # assessment into units that had nothing to do with AI.
+    mentions_ai = bool(
+        re.search(r"\bai\b|\bartificial intelligence\b|\bmachine learning\b", text)
+    )
+
+    if mentions_ai and ("ethics" in text or "bias" in text or "fair" in text):
         return {
             "unit_context": (
                 "This is a Lower Secondary AI ethics and bias unit. Students have explored "
@@ -147,7 +158,9 @@ def infer_unit_focus(unit_name: str, lessons: List[Dict[str, Any]]) -> Dict[str,
             ),
         }
 
-    if "model" in text or "prediction" in text or "classification" in text or "recommendation" in text:
+    if mentions_ai and (
+        "model" in text or "prediction" in text or "classification" in text or "recommendation" in text
+    ):
         return {
             "unit_context": (
                 "This is a Lower Secondary AI models unit. Students have explored how AI models "
@@ -344,6 +357,10 @@ def generate_assessment_schema(
             data = json.loads(raw[start : end + 1])
         else:
             raise
+
+    # Strip stray control characters (vertical tabs etc.) before anything
+    # downstream renders this into markdown/docx.
+    data = sanitize_ai_text(data)
 
     unit_slug = manifest.get("unit_slug") or slugify(manifest["micro_unit_name"])
     data["unit_slug"] = unit_slug
