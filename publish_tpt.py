@@ -109,11 +109,53 @@ def _publish_part(unit_id: str, part: str, auto_publish: bool, default_tags: str
     print(f"Price       : ${listing['price']}")
     print()
 
-    upload_unit(
+    return upload_unit(
         unit_folder, zip_path,
         thumbnail_path=thumbnail_path if thumbnail_path.exists() else None,
         auto_publish=auto_publish, listing=listing,
     )
+
+
+ALL_PARTS = [f"lesson{n:02d}" for n in range(1, 8)] + ["assessment", "bundle"]
+
+
+def _publish_part_with_retry(unit_id: str, part: str, auto_publish: bool, default_tags: str = None,
+                              max_retries: int = 1) -> str:
+    """Publish one part, retrying only on a CONFIRMED failure (dashboard
+    checked, product genuinely absent) -- never retries on "uncertain",
+    since a blind retry there is exactly how a duplicate product has
+    happened before in this project."""
+    for attempt in range(max_retries + 1):
+        status = _publish_part(unit_id, part, auto_publish, default_tags=default_tags)
+        if status in ("submitted", "draft"):
+            return status
+        if status == "uncertain":
+            print(f"WARNING: {part} status uncertain — not retrying automatically. Check the dashboard manually.")
+            return status
+        # status == "failed": confirmed absent, safe to retry
+        if attempt < max_retries:
+            print(f"{part}: confirmed not created, retrying ({attempt + 1}/{max_retries})...")
+        else:
+            print(f"ERROR: {part} failed after {max_retries + 1} attempts.")
+    return status
+
+
+def publish_all_parts(unit_id: str, auto_publish: bool, default_tags: str = None) -> dict:
+    """Publish all 9 standard parts (7 lessons + assessment + bundle) for a
+    unit in sequence, with confirmed-failure retry built in. Returns a dict
+    of part -> final status; check for any "failed"/"uncertain" values
+    before assuming the unit is fully live."""
+    results = {}
+    for part in ALL_PARTS:
+        print(f"\n{'=' * 60}\n{part}\n{'=' * 60}")
+        results[part] = _publish_part_with_retry(unit_id, part, auto_publish, default_tags=default_tags)
+    print(f"\n{'=' * 60}\nSummary for {unit_id}\n{'=' * 60}")
+    for part, status in results.items():
+        print(f"  {part:12s} : {status}")
+    failed = [p for p, s in results.items() if s not in ("submitted", "draft")]
+    if failed:
+        print(f"\nNEEDS ATTENTION: {', '.join(failed)} did not confirm success.")
+    return results
 
 
 def main() -> None:
@@ -123,8 +165,13 @@ def main() -> None:
     parser.add_argument(
         "--part",
         help="For multi-part units: lesson01..lesson07, assessment, or bundle. "
-             "Omit to publish the unit-level listing as a single product (legacy behaviour).",
+             "Pass 'all' to publish all 9 parts in sequence with confirmed-failure "
+             "retry built in. Omit to publish the unit-level listing as a single "
+             "product (legacy behaviour).",
     )
+    parser.add_argument("--max-retries", type=int, default=1,
+                         help="Retries per part on a CONFIRMED failure only (default 1). "
+                              "Never retries on an uncertain status.")
     parser.add_argument("--tags", help="Comma-separated tags override (avoids stale defaults for non-AI topics)")
     parser.add_argument("--publish", action="store_true", help="Auto-publish without pausing")
     parser.add_argument("--save-session", action="store_true", help="Manually log in and save session cookies")
@@ -144,8 +191,13 @@ def main() -> None:
         print(f"ERROR: Unit folder not found: {unit_folder}")
         sys.exit(1)
 
+    if args.part == "all":
+        publish_all_parts(unit_id, args.publish, default_tags=args.tags)
+        return
+
     if args.part:
-        _publish_part(unit_id, args.part, args.publish, default_tags=args.tags)
+        _publish_part_with_retry(unit_id, args.part, args.publish, default_tags=args.tags,
+                                  max_retries=args.max_retries)
         return
 
     if args.zip:

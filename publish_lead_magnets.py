@@ -74,7 +74,7 @@ def build_listing(unit_id: str, version: str = "v001") -> dict:
     return {"title": sampler_title, "description": description}
 
 
-def publish_to_tpt(unit_id: str, version: str = "v001") -> None:
+def publish_to_tpt(unit_id: str, version: str = "v001") -> str:
     from cmie.publishing.tpt import upload_unit
 
     zip_path = ARTIFACTS_ROOT / f"{unit_id}_lesson01_FREE_{version}.zip"
@@ -102,7 +102,13 @@ def publish_to_tpt(unit_id: str, version: str = "v001") -> None:
         )
 
     unit_folder = PROJECT_ROOT / "releases" / unit_id
-    upload_unit(unit_folder, zip_path, thumbnail_path=thumbnail_path, auto_publish=True, listing=listing)
+    status = upload_unit(unit_folder, zip_path, thumbnail_path=thumbnail_path, auto_publish=True, listing=listing)
+    if status == "failed":
+        print(f"Confirmed not created — retrying once for {unit_id}...")
+        status = upload_unit(unit_folder, zip_path, thumbnail_path=thumbnail_path, auto_publish=True, listing=listing)
+    if status != "submitted":
+        print(f"WARNING: lead magnet publish for {unit_id} ended with status '{status}' — verify manually.")
+    return status
 
 
 def publish_to_tes(unit_id: str, version: str = "v001") -> None:

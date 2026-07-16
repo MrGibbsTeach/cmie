@@ -626,13 +626,26 @@ def replace_product_file(product_id: str, new_zip_path: Path) -> None:
 # Main entry point
 # ---------------------------------------------------------------------------
 
+def _product_exists_on_dashboard(page, title_keyword: str) -> bool:
+    """Check the real My-Products dashboard for a product whose title
+    contains `title_keyword`. Used to disambiguate TPT's submit-detection
+    false negatives (SPA navigation taking longer than the poll window)
+    from genuine failures, instead of guessing from page state alone --
+    this project has repeatedly found "may have failed" submits that had
+    actually succeeded, and vice versa."""
+    page.goto(DASHBOARD_URL, wait_until="domcontentloaded", timeout=20000)
+    page.wait_for_timeout(3000)
+    body = page.evaluate("() => document.body.innerText")
+    return title_keyword in body
+
+
 def upload_unit(
     unit_folder: Path,
     zip_path: Path,
     thumbnail_path: Optional[Path] = None,
     auto_publish: bool = False,
     listing: Optional[dict] = None,
-) -> None:
+) -> str:
     """
     Open a headed browser, log into TPT, and create a new product listing.
 
@@ -644,6 +657,11 @@ def upload_unit(
     explicit `listing` dict (title/description/price/tags) to publish a
     different item from the same unit -- e.g. a single lesson or the
     assessment, instead of the unit bundle.
+
+    Returns one of: "submitted" (confirmed live), "draft" (auto_publish was
+    False, form left filled), "failed" (confirmed NOT created -- safe to
+    retry), "uncertain" (could not confirm either way -- do not blindly
+    retry, this is how duplicates have happened before).
     """
     from cmie.publishing.listing_reader import read_tpt_listing
 
@@ -687,11 +705,13 @@ def upload_unit(
             page.screenshot(path=str(screenshot_path))
             log.info(f"Screenshot saved: {screenshot_path}")
 
+            status = "draft"
             if auto_publish:
                 log.info("Auto-publish: submitting...")
                 submit = page.locator("#react-submit-section button[type='submit']")
                 if submit.count() == 0:
                     log.warning("Submit button not found — check screenshot.")
+                    status = "uncertain"
                 else:
                     submit.first.scroll_into_view_if_needed(timeout=10000)
                     page.wait_for_timeout(300)
@@ -715,13 +735,37 @@ def upload_unit(
                     # in our own listing copy ("No prep required") and would
                     # falsely flag a successful submit as failed.
                     error_text = page.locator("text=/^Please (select|upload|enter|fix|choose)/i")
+                    ambiguous = False
                     if error_text.count() > 0:
                         log.error(f"Submit appears to have failed — validation message present: {error_text.first.inner_text()[:200]}")
+                        ambiguous = True
                     elif not navigated:
                         log.error(f"Submit may have failed — still on the new-product URL after 10s: {page.url}")
+                        ambiguous = True
                     else:
                         log.info(f"Submitted. Final URL: {page.url}")
+                        status = "submitted"
                     page.screenshot(path=str(Path("releases/debug_screenshot_after_submit.png")))
+
+                    if ambiguous:
+                        # Both directions of false report have happened on
+                        # this platform before (false negatives from
+                        # checking too soon, false positives from an
+                        # overly-broad error match) -- don't trust page
+                        # state alone, check the actual dashboard for the
+                        # title before deciding whether this was real.
+                        title_keyword = listing["title"][:40].strip()
+                        log.info(f"Verifying against dashboard for: {title_keyword!r}")
+                        try:
+                            if _product_exists_on_dashboard(page, title_keyword):
+                                log.info("Dashboard confirms the product exists — treating as submitted despite the ambiguous page state.")
+                                status = "submitted"
+                            else:
+                                log.info("Dashboard confirms the product does NOT exist — safe to retry.")
+                                status = "failed"
+                        except Exception as e:
+                            log.warning(f"Could not verify against dashboard: {e} — status uncertain, do not blindly retry.")
+                            status = "uncertain"
             else:
                 log.info("")
                 log.info("=" * 60)
@@ -731,6 +775,8 @@ def upload_unit(
                 log.info("  3. Review and click Publish manually on TPT when ready")
                 log.info(f"  Screenshot saved to: {screenshot_path}")
                 log.info("=" * 60)
+
+            return status
 
         except Exception as exc:
             screenshot_path = Path("releases/debug_screenshot.png")
