@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_data_representation_unit1",
+  "title": "Data Representation: Unit 1 – Binary and How Computers See the World",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "Why Computers Speak in 1s and 0s" },
+    { "title": "Counting in Binary: Numbers to Bits" },
+    { "title": "Binary Conversions and Simple Binary Addition" },
+    { "title": "Text as Data: ASCII and Unicode" },
+    { "title": "Images as Data: Pixels and Bitmaps" },
+    { "title": "Sound as Data: Sampling" },
+    { "title": "Designing a Data Encoding Scheme for a Real Scenario" }
+  ],
+  "lesson_videos": {}
+}

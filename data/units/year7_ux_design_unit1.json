@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_ux_design_unit1",
+  "title": "UX & Interface Design: Unit 1 – Designing Apps People Love",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "Good Design, Bad Design: What Is UX?" },
+    { "title": "Knowing Your User: Problems and User Stories" },
+    { "title": "Design Criteria: How Will We Know It's Good?" },
+    { "title": "Interface Building Blocks" },
+    { "title": "Wireframing and Paper Prototyping" },
+    { "title": "Accessibility and Inclusive Design" },
+    { "title": "Designing an App Interface for a Real Scenario" }
+  ],
+  "lesson_videos": {}
+}

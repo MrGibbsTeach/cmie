@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_cybersecurity_unit1",
+  "title": "Cyber Security & Digital Footprints: Unit 1 – Protecting Yourself Online",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "The Cyber Threat Landscape" },
+    { "title": "Passwords and Multi-Factor Authentication" },
+    { "title": "Spotting Phishing and Social Engineering" },
+    { "title": "Your Digital Footprint" },
+    { "title": "What Apps Collect About You" },
+    { "title": "Managing and Cleaning Up Your Footprint" },
+    { "title": "Designing a Cyber Security Plan for a Real Scenario" }
+  ],
+  "lesson_videos": {}
+}

@@ -137,70 +137,68 @@ def check_tpt(headless: bool) -> dict:
                     "TPT bot detection and an account lock before)."
                 )
 
-            # Logged in — try the earnings page, fall back to My-Products.
-            log.info("TPT: navigating to seller dashboard...")
+            # Both /Seller-Dashboard/Earnings and /My-Products were dead
+            # ends for real numbers -- /My-Products only shows each
+            # product's listing PRICE, not actual sales/earnings, which
+            # made this silently report list prices as "revenue" before.
+            # /My-Sales is the real sales report page (confirmed live: it
+            # shows "Sales $X.XX Earnings $Y.YY ... Showing 1-N of N
+            # results" as one line for the account's whole lifetime sales
+            # history when no date filter is applied).
+            log.info("TPT: navigating to Sales Reports (My-Sales)...")
             page.goto(
-                "https://www.teacherspayteachers.com/Seller-Dashboard/Earnings",
+                "https://www.teacherspayteachers.com/My-Sales",
                 wait_until="domcontentloaded",
                 timeout=30000,
             )
             page.wait_for_timeout(3000)
             page_text = page.inner_text("body")
-            if "couldn't find the page" in page_text:
-                log.info("TPT: Earnings URL 404s — falling back to My-Products totals.")
-                page.goto(
-                    "https://www.teacherspayteachers.com/My-Products",
-                    wait_until="domcontentloaded",
-                    timeout=30000,
-                )
-                page.wait_for_timeout(4000)
 
-            page_text = page.inner_text("body")
-
-            # Extract dollar amounts — TPT shows figures like "$12.34"
             amounts = re.findall(r'\$[\d,]+\.?\d*', page_text)
             log.info(f"TPT: found dollar amounts on page: {amounts[:10]}")
 
-            # Look for specific labels
             total_earnings = None
-            balance        = None
+            total_sales_amount = None
+            m = re.search(
+                r'Sales\s*\$?([\d,]+\.?\d*)\s*Earnings\s*\$?([\d,]+\.?\d*)',
+                page_text, re.IGNORECASE,
+            )
+            if m:
+                total_sales_amount = float(m.group(1).replace(",", ""))
+                total_earnings = float(m.group(2).replace(",", ""))
 
-            # Try to find "Total Earnings" or "Lifetime Earnings" label + adjacent value
-            for pattern in [
-                r'(?:Total|Lifetime)\s+Earnings?\s*\$?([\d,]+\.?\d*)',
-                r'\$?([\d,]+\.?\d*)\s*(?:Total|Lifetime)\s+Earnings?',
-            ]:
-                m = re.search(pattern, page_text, re.IGNORECASE)
-                if m:
-                    total_earnings = float(m.group(1).replace(",", ""))
-                    break
+            # Balance (unpaid payout) is a separate real page, not the
+            # sales-report figure -- lifetime earnings and current payable
+            # balance are two different numbers (balance can be $0 after a
+            # payout clears even with real lifetime earnings).
+            balance = None
+            page.goto(
+                "https://www.teacherspayteachers.com/Account-Balance",
+                wait_until="domcontentloaded",
+                timeout=30000,
+            )
+            page.wait_for_timeout(2000)
+            balance_text = page.inner_text("body")
+            m = re.search(r'Account Balance\s*\$?([\d,]+\.?\d*)', balance_text, re.IGNORECASE)
+            if m:
+                balance = float(m.group(1).replace(",", ""))
 
-            # Try to find balance / amount due
-            for pattern in [
-                r'(?:Current\s+)?Balance\s*\$?([\d,]+\.?\d*)',
-                r'Amount\s+(?:Due|Available)\s*\$?([\d,]+\.?\d*)',
-                r'\$?([\d,]+\.?\d*)\s*(?:Current\s+)?Balance',
-            ]:
-                m = re.search(pattern, page_text, re.IGNORECASE)
-                if m:
-                    balance = float(m.group(1).replace(",", ""))
-                    break
-
-            # Sales count
+            # Sales count from "Showing 1-N of N results"
             sales_count = None
-            m = re.search(r'([\d,]+)\s+(?:Total\s+)?Sales?', page_text, re.IGNORECASE)
+            m = re.search(r'Showing\s+[\d,]+-[\d,]+\s+of\s+([\d,]+)\s+results', page_text, re.IGNORECASE)
             if m:
                 sales_count = int(m.group(1).replace(",", ""))
 
-            result["total_earnings"] = total_earnings
-            result["balance"]        = balance
-            result["sales_count"]    = sales_count
-            result["raw_amounts"]    = amounts[:10]
+            result["total_earnings"]      = total_earnings
+            result["total_sales_amount"]  = total_sales_amount
+            result["balance"]             = balance
+            result["sales_count"]         = sales_count
+            result["raw_amounts"]         = amounts[:10]
 
-            if total_earnings is None and not amounts:
-                result["error"] = "Could not extract earnings — page layout may have changed. Check manually."
+            if total_earnings is None:
+                result["error"] = "Could not extract earnings from /My-Sales — page layout may have changed. Check manually."
             else:
-                log.info(f"TPT: total_earnings={total_earnings}, balance={balance}, sales={sales_count}")
+                log.info(f"TPT: total_earnings={total_earnings}, total_sales_amount={total_sales_amount}, balance={balance}, sales={sales_count}")
 
         except Exception as e:
             result["error"] = str(e)
@@ -345,48 +343,25 @@ def check_tes(headless: bool) -> dict:
         page = context.new_page()
 
         try:
-            _load_cookies(context, TES_COOKIES_FILE)
+            # Reuse publish_tes.py's own _login() rather than a second,
+            # weaker duplicate here -- this file's own inline login had no
+            # session-refresh retry and was silently failing (zero £
+            # amounts found) right when TES's session had died, which this
+            # project has seen happen within an hour or two more than
+            # once. _login() already handles session-cookie load, the
+            # form-login fallback, and re-saving the refreshed session to
+            # the same .tes_session.json this function reads.
+            sys.path.insert(0, str(PROJECT_ROOT))
+            from publish_tes import _login as _tes_login
 
             log.info("TES: navigating to author dashboard...")
-            # Real author dashboard lives under /teaching-resources/dashboard/*
-            # (/my-resources is the purchased-downloads page and can be very
-            # slow; it also isn't where earnings are shown).
+            _tes_login(page, context, os.getenv("TES_EMAIL", ""), os.getenv("TES_PASSWORD", ""))
             page.goto(
                 "https://www.tes.com/teaching-resources/dashboard/overview",
                 wait_until="domcontentloaded",
                 timeout=45000,
             )
             page.wait_for_timeout(5000)
-
-            # Login if needed
-            if "authn/sign-in" in page.url or "sign-in" in page.url or "login" in page.url:
-                email    = os.getenv("TES_EMAIL", "")
-                password = os.getenv("TES_PASSWORD", "")
-                if not email or not password:
-                    raise RuntimeError(
-                        "Not logged in and no TES_EMAIL/TES_PASSWORD in .env. "
-                        "Run: python publish_tes.py --save-session"
-                    )
-                log.info("TES: logging in with credentials...")
-                # TES's sign-in form has no input[type=email] — match by label
-                # first (same approach as publish_tes.py), then fall back.
-                email_field = page.get_by_label("Email", exact=False)
-                if email_field.count() == 0:
-                    email_field = page.locator(
-                        "input[type='email'], input[name*='email' i], "
-                        "input[placeholder*='email' i], input[name*='username' i]"
-                    )
-                email_field.first.fill(email)
-                page.locator("input[type='password']").first.fill(password)
-                page.locator("input[type='password']").first.press("Enter")
-                page.wait_for_url(lambda u: "sign-in" not in u and "login" not in u, timeout=20000)
-                _save_cookies(context, TES_COOKIES_FILE)
-                page.goto(
-                    "https://www.tes.com/teaching-resources/dashboard/overview",
-                    wait_until="domcontentloaded",
-                    timeout=45000,
-                )
-                page.wait_for_timeout(5000)
 
             # Earnings live on the author dashboard (overview shows balance,
             # resource-management shows per-resource earnings).
@@ -574,6 +549,8 @@ def main() -> None:
             print(f"  ERROR: {r['error']}")
         else:
             te = r.get("total_earnings")
+            tsa = r.get("total_sales_amount")
+            print(f"  Gross sales    : {'$%.2f USD' % tsa if tsa is not None else '?'}")
             print(f"  Total earnings : {'$%.2f USD' % te if te is not None else '? (not found on page)'}")
             print(f"  Balance        : ${r.get('balance') or 0:.2f} USD")
             print(f"  Sales count    : {r.get('sales_count') if r.get('sales_count') is not None else '?'}")

@@ -5,6 +5,9 @@ Usage:
     python publish_gumroad.py --unit year7_ai_data_unit1
     python publish_gumroad.py --all
     python publish_gumroad.py --save-session   # log in once, cache session
+    python publish_gumroad.py --unit <unit_id> --update-existing-slug <slug>
+        # updates title+description of an ALREADY-LIVE product in place
+        # (skips creation, never touches price/zip/thumbnail)
 
 Gumroad credentials: add GUMROAD_EMAIL and GUMROAD_PASSWORD to .env
 OR run --save-session to log in manually and cache cookies.
@@ -180,6 +183,13 @@ def _fill_description(page, description: str) -> None:
         desc_area = page.locator("[contenteditable='true'], [role='textbox']").first
         desc_area.wait_for(state="visible", timeout=8000)
         desc_area.click()
+        # Clear any existing content first -- pasting only inserts at the
+        # cursor position, so on a product that already has a description
+        # (the update-existing-product path) a bare paste mixes old and new
+        # text together instead of replacing it. Harmless no-op when the
+        # field starts empty (new-product path).
+        page.keyboard.press("Control+a")
+        page.keyboard.press("Delete")
         html = _markdown_to_html(description[:3000])
         # Write both HTML and plain-text clipboard entries so the rich-text
         # editor picks up formatting on paste instead of literal markdown.
@@ -317,6 +327,113 @@ def _verify_after_reload(page, edit_url: str, zip_path: Path) -> None:
     log.error(f"VERIFY FAILED: zip still shows 0 byte after retries -- upload did not persist. Check {edit_url} manually.")
 
 
+def _verify_title_and_description_after_reload(page, edit_url: str, expected_title: str, expected_description: str) -> bool:
+    """Reload the edit page fresh (new navigation, not the in-session DOM) and
+    confirm the title + description text actually persisted server-side.
+    This project has been burned twice before by trusting an in-session
+    screenshot as proof of a save -- always re-fetch from a clean load.
+
+    Gumroad's save can lag behind the "204" response Playwright sees (same
+    class of async-finalization issue as the zip upload) -- retry with a
+    growing wait rather than treating the first reload as authoritative."""
+    body_lines = [l.strip() for l in expected_description.splitlines()[1:] if l.strip()]
+    snippet = next((l.lstrip("#- ").strip() for l in body_lines if len(l.lstrip("#- ").strip()) > 15), "")
+
+    for attempt in range(4):
+        page.goto(edit_url, wait_until="domcontentloaded", timeout=20000)
+        page.wait_for_timeout(2000)
+        page.get_by_role("tab", name="Product").click()
+        page.wait_for_timeout(1000)
+
+        try:
+            actual_title = page.get_by_label("Name", exact=False).first.input_value(timeout=5000)
+        except Exception as e:
+            log.error(f"VERIFY FAILED: could not read Name field after reload: {e}")
+            actual_title = None
+
+        try:
+            desc_el = page.locator("[contenteditable='true'], [role='textbox']").first
+            desc_el.wait_for(state="visible", timeout=8000)
+            actual_desc = desc_el.inner_text(timeout=5000)
+        except Exception as e:
+            log.error(f"VERIFY FAILED: could not read description after reload: {e}")
+            actual_desc = None
+
+        title_ok = actual_title is not None and actual_title.strip() == expected_title.strip()
+        desc_ok = actual_desc is not None and snippet and snippet in actual_desc
+
+        if title_ok and desc_ok:
+            log.info(f"VERIFY OK: title persisted after reload: {actual_title[:90]}")
+            log.info(f"VERIFY OK: description snippet found after reload: {snippet[:80]!r}")
+            return True
+
+        log.warning(
+            f"VERIFY attempt {attempt + 1}/4 not yet matching "
+            f"(title_ok={title_ok}, desc_ok={desc_ok}) -- backend may still be "
+            f"finalizing, waiting..."
+        )
+        page.wait_for_timeout(15000)
+
+    if not title_ok:
+        log.error(f"VERIFY FAILED: title mismatch after retries. Expected {expected_title[:90]!r}, got {actual_title[:90]!r}")
+    if not desc_ok:
+        log.error(f"VERIFY FAILED: description snippet not found after retries. Expected snippet {snippet[:80]!r} not in: {(actual_desc or '')[:200]!r}")
+    return False
+
+
+# ---------------------------------------------------------------------------
+# Update an EXISTING product (title + description only)
+# ---------------------------------------------------------------------------
+
+def update_existing_product(unit_id: str, slug: str) -> None:
+    """Update the title + description of an ALREADY-LIVE Gumroad product in
+    place, using the regenerated listing copy for `unit_id`. Skips the API
+    product-creation step entirely (the product already exists) and goes
+    straight to its edit page. Deliberately does NOT touch price, the
+    content zip, or the thumbnail -- reuses the same login/navigation/
+    description-fill/save helpers as publish_unit()."""
+    unit_folder = RELEASES_ROOT / unit_id
+    listing = _read_listing(unit_folder)
+    edit_url = f"https://gumroad.com/products/{slug}/edit"
+    log.info(f"Updating existing product {slug} from listing for {unit_id}")
+    log.info(f"New title: {listing['title']}")
+
+    from cmie.publishing.browser import automation_chrome
+
+    with automation_chrome() as (context, page):
+        try:
+            _login(page, context)
+            _navigate_to_edit(page, context, edit_url)
+            page.get_by_role("tab", name="Product").click()
+            page.wait_for_timeout(1000)
+
+            if not _fill_field(page, "Name", listing["title"]):
+                raise RuntimeError("Could not fill the Name (title) field on the edit page.")
+            log.info("Title filled.")
+
+            _fill_description(page, listing["description"])
+            _save_changes(page)
+            page.wait_for_timeout(8000)  # buffer before first verify -- see docstring on the verify fn
+
+            ok = _verify_title_and_description_after_reload(
+                page, edit_url, listing["title"], listing["description"]
+            )
+
+            screenshot = RELEASES_ROOT / f"debug_gumroad_update_{unit_id}.png"
+            page.screenshot(path=str(screenshot))
+            log.info(f"Screenshot saved: {screenshot}")
+            log.info(f"Product URL: {page.url}")
+            if ok:
+                log.info(f"Done updating: {unit_id} -> {slug} (verified after reload)")
+            else:
+                log.error(f"Update ran but VERIFY FAILED for {unit_id} -> {slug}. Check {edit_url} manually.")
+
+        except Exception as e:
+            page.screenshot(path=str(RELEASES_ROOT / "debug_gumroad_error.png"))
+            log.error(f"Screenshot: {RELEASES_ROOT / 'debug_gumroad_error.png'}")
+            raise
+
+
 # ---------------------------------------------------------------------------
 # Main publish flow
 # ---------------------------------------------------------------------------
@@ -395,10 +512,20 @@ def main() -> None:
     parser.add_argument("--all", action="store_true", help="Publish all 8 units")
     parser.add_argument("--price", type=float, default=PRICE_AUD, help="Price in AUD")
     parser.add_argument("--save-session", action="store_true", help="Log in manually and save session")
+    parser.add_argument("--update-existing-slug", metavar="SLUG",
+                         help="Update title+description of an ALREADY-LIVE product at "
+                              "gumroad.com/products/<SLUG>/edit using the listing for --unit. "
+                              "Skips product creation; never touches price/zip/thumbnail.")
     args = parser.parse_args()
 
     if args.save_session:
         save_session()
+        return
+
+    if args.update_existing_slug:
+        if not args.unit:
+            parser.error("--update-existing-slug requires --unit <id> to know which listing to use")
+        update_existing_product(args.unit, args.update_existing_slug)
         return
 
     if args.all:

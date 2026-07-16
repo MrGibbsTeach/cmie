@@ -288,7 +288,29 @@ def _fill_description(page: Page, description: str) -> None:
 # Set price
 # ---------------------------------------------------------------------------
 
+def _set_free_resource(page: Page) -> bool:
+    """Check TPT's "Free Resource" checkbox. This is the only way to list
+    at $0 -- the plain price field enforces a $0.95 minimum and rejects 0
+    with a validation error. Checking this box also removes the Price,
+    Multiple Licenses, Bundle Discount Price, and Tax Code fields from the
+    form entirely, so none of those need filling afterward."""
+    box = page.locator('label[for="item-free"] button[role="checkbox"]')
+    if box.count() == 0:
+        log.warning("Free Resource checkbox not found — falling back to $0.95.")
+        return False
+    if box.first.get_attribute("aria-checked") != "true":
+        box.first.click()
+        page.wait_for_timeout(800)
+    log.info("Free Resource checkbox checked.")
+    return True
+
+
 def _fill_price(page: Page, price: float) -> None:
+    if price <= 0:
+        if _set_free_resource(page):
+            return
+        price = 0.95  # TPT's enforced minimum if the free checkbox wasn't found
+
     log.info(f"Setting price: ${price}")
     selectors = [
         'input[name="data[Item][price]"]',      # TPT's likely field name
@@ -323,7 +345,21 @@ def _upload_zip(page: Page, zip_path: Path) -> None:
 
     file_inputs.first.set_input_files(str(zip_path))
     log.info("Zip upload triggered, waiting for upload to complete...")
-    time.sleep(6)
+
+    # A fixed 6s sleep here was the same "checked too soon" trap this
+    # project has hit (and fixed) elsewhere — poll for the uploaded
+    # filename to actually show up on the page instead of guessing a
+    # delay, up to 20s, before moving on.
+    stem = zip_path.stem
+    confirmed = False
+    for _ in range(10):
+        page.wait_for_timeout(2000)
+        if page.get_by_text(stem, exact=False).count() > 0 or page.get_by_text(zip_path.name, exact=False).count() > 0:
+            confirmed = True
+            break
+    if not confirmed:
+        log.warning("Could not visually confirm the uploaded filename appeared — proceeding anyway.")
+        page.wait_for_timeout(4000)
 
 
 # ---------------------------------------------------------------------------
@@ -367,7 +403,19 @@ def _set_grades(page: Page) -> None:
         for exact in (True, False):
             cb = page.get_by_label(grade, exact=exact)
             if cb.count() > 0 and not cb.first.is_checked():
-                cb.first.check()
+                # .check() occasionally clicks a checkbox whose React state
+                # doesn't flip on the first attempt (observed reproducibly
+                # on this control, not seen elsewhere in this file) --
+                # retry with a short wait instead of failing the whole
+                # upload on what's ultimately a UI timing race.
+                for attempt in range(3):
+                    try:
+                        cb.first.check(timeout=5000)
+                        break
+                    except Exception:
+                        if attempt == 2:
+                            raise
+                        page.wait_for_timeout(800)
                 log.info(f"Checked grade: {grade}")
                 break
         else:
@@ -425,18 +473,25 @@ def _set_tax_code(page: Page, tax_code: str = "Other Digital Goods - No Physical
         log.warning("Tax code field not found — set manually.")
         return
     tax_box.scroll_into_view_if_needed(timeout=10000)
-    tax_box.click()
-    page.wait_for_timeout(600)
 
-    options = page.locator('[role="option"]')
-    for i in range(options.count()):
-        if tax_code.lower() in options.nth(i).inner_text().strip().lower():
-            options.nth(i).click()
-            log.info(f"Tax code set: {tax_code}")
-            return
+    # The options list occasionally isn't populated yet on the first open
+    # (observed on $0-priced listings, not seen on paid ones) -- retry
+    # opening the dropdown and waiting longer rather than giving up after
+    # one 600ms check.
+    for attempt in range(3):
+        tax_box.click()
+        page.wait_for_timeout(1200 + attempt * 800)
+        options = page.locator('[role="option"]')
+        count = options.count()
+        for i in range(count):
+            if tax_code.lower() in options.nth(i).inner_text().strip().lower():
+                options.nth(i).click()
+                log.info(f"Tax code set: {tax_code}")
+                return
+        page.keyboard.press("Escape")
+        page.wait_for_timeout(400)
 
-    page.keyboard.press("Escape")
-    log.warning(f"Tax code '{tax_code}' not found in dropdown — set manually.")
+    log.warning(f"Tax code '{tax_code}' not found in dropdown after retries — set manually.")
 
 
 def _set_subject(page: Page) -> None:

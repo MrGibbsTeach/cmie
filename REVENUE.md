@@ -1,8 +1,9 @@
 # FocusLab Digital — Revenue Tracker
-_Last updated: 2026-07-02 16:22_
+_Last updated: 2026-07-16 14:34_
 
 ## TPT
-⚠️  TPT session expired (.tpt_session.json no longer valid). Refresh it manually once: python publish_tpt.py --save-session (automated form login is disabled here — it has triggered TPT bot detection and an account lock before).
+**Total revenue:** $13.45 USD
+**Total sales:** 1
 
 ## Gumroad
 **Total revenue:** A$0.00 AUD
@@ -16,7 +17,7 @@ _Last updated: 2026-07-02 16:22_
 ## Summary
 | Platform | Revenue |
 |----------|---------|
-| TPT | $0.00 USD |
+| TPT | $13.45 USD |
 | Gumroad | A$0.00 AUD |
 | TES | £0.00 GBP |
 

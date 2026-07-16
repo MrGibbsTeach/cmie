@@ -124,6 +124,28 @@ def _clean_activity_summary(text: str, max_len: int = 220) -> str:
     return text
 
 
+def _extract_unit_topic_keyword(unit_title: str) -> str:
+    # Unlike extract_unit_short_title() (which keeps the "Unit N - ..."
+    # subtitle after the colon), this keeps the part BEFORE the colon —
+    # e.g. "Networks & Hardware" or "Algorithms & Programming Logic" —
+    # which is the actual searchable subject keyword, not marketing flavor.
+    topic = unit_title.split(":")[0].strip() if ":" in unit_title else unit_title.strip()
+    return topic.lower()
+
+
+def _display_grade_band(year_level: str) -> str:
+    # AU "year level" strings carry no keyword weight for US/UK buyers, who
+    # search "middle school" / "grade 7" / "KS3", not "Lower Secondary".
+    # Add the equivalent terms alongside the AU label rather than replacing
+    # it, so listings stay accurate while actually matching how each
+    # platform's dominant buyer base searches.
+    mapping = {
+        "lower secondary": "Year 7 / Grade 7, Middle School / KS3",
+        "upper secondary": "Year 10 / Grade 10, High School / KS4",
+    }
+    return mapping.get(year_level.strip().lower(), year_level)
+
+
 def _build_unit_overview(title: str, subject: str) -> str:
     base = title.lower()
 
@@ -151,9 +173,10 @@ def _build_unit_overview(title: str, subject: str) -> str:
             "real-world examples, and practical classroom activities."
         )
 
+    topic = _extract_unit_topic_keyword(title)
     return (
-        f"This unit develops student understanding of key concepts in {subject}. "
-        "Lessons are structured around clear explanations, real-world examples, and practical classroom activities."
+        f"This {subject} unit teaches {topic} through structured, easy-to-follow lessons "
+        "with real-world examples and hands-on classroom activities — ready to teach with no extra prep."
     )
 
 
@@ -172,7 +195,8 @@ def _build_hook_line(title: str, subject: str) -> str:
     if "ai" in base:
         return "Help students understand how AI systems use data and influence decisions."
 
-    return f"A ready-to-teach {subject} unit designed for clear understanding and engagement."
+    topic = _extract_unit_topic_keyword(title)
+    return f"A complete, ready-to-teach {subject} unit on {topic} — no prep required."
 
 
 def _build_unit_includes(
@@ -206,7 +230,7 @@ def _build_unit_listing_lines(
     platform_label: str,
 ) -> List[str]:
     lines: List[str] = []
-    lines.append(f"# {title} ({year_level})")
+    lines.append(f"# {title} ({_display_grade_band(year_level)})")
     lines.append("")
     lines.append(_build_hook_line(title, subject))
     lines.append("")
@@ -218,7 +242,10 @@ def _build_unit_listing_lines(
         lines.append("")
 
     if assessment_title:
-        lines.append(f"Summative assessment: **{assessment_title}**")
+        # Plain text, not markdown bold: not every upload path runs this
+        # field through markdown_to_html(), and a raw "**" has shipped to
+        # live listings before (see PROGRESS.md sprint 2026-07-02/03).
+        lines.append(f"Summative assessment: {assessment_title}")
         lines.append("")
 
     if platform_label == "TES":
