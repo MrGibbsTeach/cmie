@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_web_design_unit1",
+  "title": "Websites & Web Design: Unit 1 – Building Your First Website",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "How the Web Works: Browsers, Servers, and Requests" },
+    { "title": "HTML Basics: Structuring a Web Page" },
+    { "title": "Adding Images, Links, and Lists" },
+    { "title": "Introduction to CSS: Styling Your Page" },
+    { "title": "Page Layout: Positioning and Structure" },
+    { "title": "Accessibility and Responsive Design Basics" },
+    { "title": "Designing and Building a Website for a Real Purpose" }
+  ],
+  "lesson_videos": {}
+}

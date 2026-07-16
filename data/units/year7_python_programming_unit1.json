@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_python_programming_unit1",
+  "title": "Introduction to Programming: Unit 1 – Writing Your First Python Programs",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "What Is Programming? From Algorithm to Code" },
+    { "title": "Variables and Data Types: Storing Information" },
+    { "title": "Input and Output: Talking to the User" },
+    { "title": "Making Decisions: If Statements and Conditions" },
+    { "title": "Repeating Actions: Loops in Python" },
+    { "title": "Organizing Code with Functions" },
+    { "title": "Writing a Python Program to Solve a Real Problem" }
+  ],
+  "lesson_videos": {}
+}

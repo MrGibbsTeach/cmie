@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
@@ -124,6 +125,17 @@ def _clean_activity_summary(text: str, max_len: int = 220) -> str:
     return text
 
 
+def _title_mentions_ai(base: str) -> bool:
+    # Word-boundary match, not a bare substring: "systems"/"applications"/
+    # "model"/"ethics"/"bias" are all generic enough to appear in a
+    # non-AI unit title ("Digital Systems", "Business Applications",
+    # "Design Ethics") and would otherwise wrongly trigger the AI-topic
+    # branches below (found live: "Digital Systems: Unit 1 – How
+    # Computers Actually Work" matched "systems" and got AI-framed
+    # listing copy).
+    return bool(re.search(r'\bai\b|artificial intelligence|machine learning', base))
+
+
 def _extract_unit_topic_keyword(unit_title: str) -> str:
     # Unlike extract_unit_short_title() (which keeps the "Unit N - ..."
     # subtitle after the colon), this keeps the part BEFORE the colon —
@@ -148,26 +160,27 @@ def _display_grade_band(year_level: str) -> str:
 
 def _build_unit_overview(title: str, subject: str) -> str:
     base = title.lower()
+    ai_related = _title_mentions_ai(base)
 
-    if "ethics" in base or "bias" in base:
+    if ai_related and ("ethics" in base or "bias" in base):
         return (
             "This unit helps students explore how AI systems can create unfair outcomes, how bias enters "
             "data and decision-making, and how responsibility and accountability matter in real-world AI use."
         )
 
-    if "model" in base or "models" in base:
+    if ai_related and ("model" in base or "models" in base):
         return (
             "This unit introduces students to how AI models use data to learn patterns, make predictions, "
             "and influence decisions. Students explore core ideas through structured lessons and practical activities."
         )
 
-    if "systems" in base or "applications" in base:
+    if ai_related and ("systems" in base or "applications" in base):
         return (
             "This unit helps students understand what AI systems are, how they work in everyday life, "
             "how they make decisions, and what their strengths and limits are in real-world contexts."
         )
 
-    if "ai" in base and "data" in base:
+    if ai_related and "data" in base:
         return (
             "This unit introduces students to key AI and data literacy concepts through structured lessons, "
             "real-world examples, and practical classroom activities."
@@ -182,17 +195,18 @@ def _build_unit_overview(title: str, subject: str) -> str:
 
 def _build_hook_line(title: str, subject: str) -> str:
     base = title.lower()
+    ai_related = _title_mentions_ai(base)
 
-    if "ethics" in base or "bias" in base:
+    if ai_related and ("ethics" in base or "bias" in base):
         return "Help students explore fairness, responsibility, and bias in real-world AI systems."
 
-    if "systems" in base or "applications" in base:
+    if ai_related and ("systems" in base or "applications" in base):
         return "Help students understand how AI systems work, where they appear, and how they influence daily life."
 
-    if "model" in base or "models" in base:
+    if ai_related and ("model" in base or "models" in base):
         return "Help students understand how AI models learn from data and make predictions."
 
-    if "ai" in base:
+    if ai_related:
         return "Help students understand how AI systems use data and influence decisions."
 
     topic = _extract_unit_topic_keyword(title)
@@ -350,17 +364,18 @@ def generate_workbook_listing(unit_title: str, lesson_count: int = 7) -> str:
     lines.append("")
 
     lines.append("🔹 What students will do")
-    if "ethics" in base or "bias" in base:
+    ai_related = _title_mentions_ai(base)
+    if ai_related and ("ethics" in base or "bias" in base):
         lines.append("Explain key AI ethics concepts in their own words")
         lines.append("Apply ideas to real-world scenarios")
         lines.append("Reflect on learning and identify questions")
         lines.append("Explore fairness and bias in AI systems")
-    elif "systems" in base or "applications" in base:
+    elif ai_related and ("systems" in base or "applications" in base):
         lines.append("Explain how AI systems work in everyday contexts")
         lines.append("Apply AI concepts to real-world scenarios")
         lines.append("Identify how AI makes decisions using data")
         lines.append("Evaluate strengths and limitations of AI systems")
-    elif "model" in base or "models" in base:
+    elif ai_related and ("model" in base or "models" in base):
         lines.append("Explain how AI models use data to make decisions")
         lines.append("Apply ideas to real-world scenarios")
         lines.append("Reflect on learning and identify questions")
@@ -401,17 +416,18 @@ def generate_assessment_listing(unit_title: str) -> str:
     lines.append("")
 
     lines.append("🔹 What students will do")
-    if "ethics" in base or "bias" in base:
+    ai_related = _title_mentions_ai(base)
+    if ai_related and ("ethics" in base or "bias" in base):
         lines.append("Evaluate bias and fairness in a real-world AI scenario")
         lines.append("Use evidence to explain ethical concerns and impacts")
         lines.append("Suggest improvements to make AI systems more fair and responsible")
         lines.append("Demonstrate understanding through a structured written task")
-    elif "systems" in base or "applications" in base:
+    elif ai_related and ("systems" in base or "applications" in base):
         lines.append("Apply key AI concepts to a real-world scenario")
         lines.append("Explain how AI systems use data and make decisions")
         lines.append("Evaluate strengths and limitations of AI systems")
         lines.append("Demonstrate understanding through a structured written task")
-    elif "model" in base or "models" in base:
+    elif ai_related and ("model" in base or "models" in base):
         lines.append("Apply key AI model concepts to a real-world scenario")
         lines.append("Explain how data influences predictions and recommendations")
         lines.append("Evaluate model outputs using evidence")

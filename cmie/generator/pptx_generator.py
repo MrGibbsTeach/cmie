@@ -145,8 +145,20 @@ def _split_lines(body, max_lines=None):
         if not raw:
             continue
         if len(raw) > 120:
+            # re.split on ". " consumes the period as part of the
+            # delimiter, so every part except a trailing fragment comes
+            # back with no sentence-ending punctuation at all. Combined
+            # with callers (e.g. _render_hook) joining parts with "\n\n"
+            # into a single paragraph's .text -- which python-pptx does
+            # not reliably render as real line breaks -- the missing
+            # period was the only thing standing between two sentences
+            # visually, so they ran together with no separator at all
+            # (e.g. "...in your house Instead of telling..."). Restore
+            # real sentence punctuation on every part.
             for part in re.split(r"\.\s+", raw):
-                part = part.strip().rstrip(".")
+                part = part.strip()
+                if part and not part[-1] in ".!?":
+                    part += "."
                 if part:
                     lines.append(part)
         else:

@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_spreadsheets_unit1",
+  "title": "Spreadsheets & Data Analysis: Unit 1 – Making Sense of Data with Spreadsheets",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "Why Spreadsheets? Rows, Columns, and Cells" },
+    { "title": "Formulas and Functions: Doing the Math for You" },
+    { "title": "Sorting, Filtering, and Organizing Data" },
+    { "title": "Charts and Graphs: Visualizing Data" },
+    { "title": "Conditional Formatting and Data Validation" },
+    { "title": "Analyzing Real-World Data Sets" },
+    { "title": "Designing a Spreadsheet Solution for a Real Problem" }
+  ],
+  "lesson_videos": {}
+}

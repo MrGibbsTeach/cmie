@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_game_design_unit1",
+  "title": "Game Design: Unit 1 – Designing and Building Your First Game",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "What Makes a Game Fun? Game Design Basics" },
+    { "title": "Game Mechanics: Rules, Goals, and Feedback" },
+    { "title": "Planning Your Game: From Idea to Prototype" },
+    { "title": "Building a Game with Scratch: Sprites and Events" },
+    { "title": "Adding Interactivity: Controls and Scoring" },
+    { "title": "Playtesting and Iterating on Your Design" },
+    { "title": "Designing and Building a Complete Game" }
+  ],
+  "lesson_videos": {}
+}
