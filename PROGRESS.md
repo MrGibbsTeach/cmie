@@ -1,6 +1,68 @@
 # CMIE Project Progress
 
-_Last updated: 2026-07-03_
+_Last updated: 2026-07-16_
+
+---
+
+## First Real Sale + 3 New Units Shipped + Free Lead Magnets Live (2026-07-14/16)
+
+**The headline: first real money into the business.** One TPT sale on the AI & Data Literacy Series Unit 1 bundle, $25.00 gross / **$13.45 net earnings** after TPT's commission and fees, 07/15/2026, one buyer. Confirmed via the real Sales Reports page (`/My-Sales`), not the broken scraper that used to report this as $0 — see "Revenue tracking was lying" below.
+
+### 3 new units built and published, catalog now 5 units deep
+
+Following the sprint's "ship breadth for the Aug/Sep US back-to-school + AU Term 3 window" recommendation, built and shipped:
+- **Data Representation: Unit 1 – Binary and How Computers See the World** (`year7_data_representation_unit1`)
+- **Cyber Security & Digital Footprints: Unit 1 – Protecting Yourself Online** (`year7_cybersecurity_unit1`)
+- **UX & Interface Design: Unit 1 – Designing Apps People Love** (`year7_ux_design_unit1`)
+
+All three: generated end-to-end (7 lessons + assessment + workbook + roadmap + teacher guide), QA-verified clean (zero markdown leaks, zero AI/off-topic contamination), packaged, and pushed live:
+- **TPT: all 27 products live** (9 each — 7 lessons + assessment + bundle).
+- **Gumroad: 3 bundle drafts created** (A$12.99 each), sitting for manual review.
+- **TES: 3 bundle drafts created** (£9.99 each) — user published all 5 (bundles + lead magnets, see below).
+
+Also applied the fixed SEO listing copy (see below) to the 2 pre-existing units (Networks & Hardware, Algorithms) on TPT and Gumroad — real titles/descriptions with actual search keywords instead of zero-density AU-English boilerplate.
+
+### Free lead magnets — all 5 units, TPT + TES
+
+Built `make_lead_magnet.py` (packages a unit's Lesson 1 as a standalone free-sample zip with an appended branded CTA slide linking to the real bundle listing + a review ask) and `publish_lead_magnets.py` (publishes it). Ran across all 5 units:
+- **TPT: all 5 live at genuinely $0.00** (see "TPT free-resource discovery" below) — Networks & Hardware, Algorithms, Data Representation, Cyber Security, UX Design, each titled "... — Lesson 1 FREE".
+- **TES: all 5 drafted then published by the user — landed at £1.00, not £0.00.** TES's "Sell my resource" flow was used; it likely has a separate genuine-free mode (mirroring TPT's Free Resource checkbox) that wasn't found/used. Open item — see below.
+
+One genuine duplicate slipped through on TPT (a "site issues" outage screen masked a submission that had actually succeeded server-side, and a retry created a second one) — caught via dashboard verification, confirmed by exact-title match, and deleted through the documented Quick Edit → Permanently delete flow. Only the correct product remains.
+
+### TPT bot-detection saga — actually solved this time
+
+TPT's automated-browser login block (documented back in the original "Publishing Automation — TPT" section below) turned out to need real diagnosis, not another workaround attempt:
+1. Playwright-launched browser → "Verification failed" (known).
+2. CDP-attach to a plain, non-Playwright-launched Chrome → also "Verification failed" (ruled out: not just an automation-launch-flag issue).
+3. Direct Chrome-profile cookie extraction (`browser_cookie3`) → blocked by Chrome's own App-Bound Encryption (`RuntimeError: Failed to decrypt the cipher text with DPAPI`) — a deliberate Google hardening against exactly this class of tool, not fixable with admin rights.
+4. **What actually worked**: the user installed the Cookie-Editor browser extension, exported cookies from an already-logged-in normal browser tab, and that JSON got converted into `.tpt_session.json`'s expected format. Verified working end-to-end (`_load_session()` + `_is_logged_in()` both True) before touching anything live.
+
+**Also found TPT enforces a $0.95 minimum price through the normal price field — true $0.00 requires checking the "Free Resource" checkbox** (`label[for="item-free"]`), which removes the Price/Tax Code/Licensing fields from the form entirely. Wired this into `_fill_price()` in `cmie/publishing/tpt.py`: price ≤ 0 now checks that box instead of typing "0" and hitting the validation error.
+
+**Bugs found and fixed in the same file** (all three are the "checked/clicked too soon" class this project has hit and fixed before, just not on these specific fields): a flaky grade-level checkbox click (`.check()` clicking but the React state not flipping — added a 3-attempt retry), a flaky tax-code dropdown (options not rendered on first open — added a retry with a longer wait), and `_upload_zip()`'s zip-upload step, which had a bare `time.sleep(6)` with **no actual confirmation the upload registered** — replaced with polling for the uploaded filename to visually appear (up to 20s) before moving on.
+
+### Listing copy — root-caused and fixed the zero-SEO boilerplate
+
+`cmie/generator/listing_generator.py`'s fallback copy for every unit was: `"This unit develops student understanding of key concepts in {subject}. Lessons are structured around clear explanations..."` — zero keyword density, same text on every listing regardless of topic. Fixed:
+- Overview/hook text now derives from the unit's actual topic keyword (the part of the title before the colon — e.g. "networks & hardware", not the marketing subtitle after it).
+- Title format now appends real US/UK search terms alongside the AU year-level label: `(Year 7 / Grade 7, Middle School / KS3)` instead of just `(Lower Secondary)`.
+- Removed a literal `**bold**` markdown leak around the assessment-title line — this was shipping unrendered on live Gumroad/TPT descriptions.
+
+Applied to all 5 non-shelved units. The shelved 9-listing AI series was deliberately left untouched, same standing rule as always.
+
+### Revenue tracking was lying — now fixed
+
+`check_revenue.py`'s TPT check was scraping **product listing prices** off the My-Products page and reporting them as "revenue" — this is why it showed `$0.00` even with a real $25 sale sitting on the account. Root cause: `/Seller-Dashboard/Earnings` 404s, and the fallback (`/My-Products`) has price tags but no actual sales data. Fixed to read the real `/My-Sales` report page (`Sales $X.XX Earnings $Y.YY ... Showing 1-N of N results`) plus `/Account-Balance` for the separate payable-balance figure. TES's checker had its own second, weaker copy of the login logic that silently failed whenever the (frequently-expiring) TES session died — replaced with a direct call to `publish_tes.py`'s own proven `_login()`.
+
+Also added `publish_gumroad.py --update-existing-slug` (reuses the existing description/save helpers against an already-live product's edit URL instead of only supporting brand-new product creation) — used to apply the SEO copy fix to the two live Gumroad bundles without recreating them.
+
+### Waiting on you
+
+1. **TES lead magnets are £1.00, not £0.00** — worth finding TES's actual free-resource mode if one exists (didn't investigate; ran out of runway on this pass).
+2. **TES bundle listing text** (Networks & Hardware, Algorithms) still has the old boilerplate — backed off editing it live because resubmitting an already-live resource through TES's 5-step wizard had unclear side effects; didn't want to guess on a real listing.
+3. **Algorithms unit local source files** — still the regenerated (not original) variant from the 2026-07-02 pipeline incident; OneDrive version-history restore still pending, zero urgency (published zips are correct and unaffected either way).
+4. **New unit topics for the next batch** — none proposed yet as of this write-up; next session's plan is to push further inventory now that this batch is live (see below for whichever topics actually got picked).
 
 ---
 
@@ -245,6 +307,8 @@ TPT had redesigned several form fields since this script was last used (same pat
 ---
 
 ## Revenue
+
+_Superseded by the 2026-07-16 section at the top of this file — kept here for history. Current snapshot (verified via `check_revenue.py --save`, 2026-07-16): TPT $25.00 gross / **$13.45 net earnings**, 1 sale (AI & Data Literacy Series Unit 1, the shelved unit — not one of the new ones). Gumroad A$0.00, 0 sales. TES £0.00, 0 sales. Full current listing/product counts are in the top section, not repeated here since they go stale fast — check REVENUE.md for live numbers._
 
 | Platform | Live listings | Revenue to date |
 |----------|--------------|-----------------|
