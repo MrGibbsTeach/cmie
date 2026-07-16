@@ -97,8 +97,11 @@ def check_product_page(page, url: str) -> dict:
     if content_len < 100:
         findings.append(f"Description looks empty/near-empty ({content_len} chars) -- likely the HTML-escaping corruption bug.")
 
-    if re.search(r"\*\*[^*]|^##\s|\|\s*[\w\s]+\s*\|\s*[\w\s]+\s*\|", desc_text, re.M):
-        findings.append("Literal unrendered markdown found in description (**, ##, or a raw table row).")
+    # Require an actual **word...word** PAIR, not just any isolated "**" --
+    # a bare "\*\*[^*]" false-positived on a Python lesson whose content is
+    # legitimately about printing asterisk patterns ("* ** *** **** *****").
+    if re.search(r"\*\*\w[^*\n]*\*\*|^##\s|\|\s*[\w\s]+\s*\|\s*[\w\s]+\s*\|", desc_text, re.M):
+        findings.append("Literal unrendered markdown found in description (**bold**, ##, or a raw table row).")
 
     if re.search(r"<[a-zA-Z][a-zA-Z0-9]*(\s|>)", desc_text):
         findings.append("Literal HTML tag characters found in description -- may have swallowed real content.")

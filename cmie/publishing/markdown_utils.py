@@ -5,6 +5,21 @@ characters if you paste raw markdown -- convert to HTML first so headings
 and bullet lists actually render."""
 
 import html as _html
+import re
+
+# Matches **bold** pairs, but only when there's at least one letter inside
+# -- deliberately does NOT match content like "* ** *** **** *****" (a
+# Python lesson describing an actual printed asterisk pattern shipped this
+# exact text live). Bold labels always contain real words; pure-asterisk
+# sequences never do.
+_BOLD_RE = re.compile(r"\*\*([^*\n]*[a-zA-Z][^*\n]*)\*\*")
+
+
+def _inline_html(text: str) -> str:
+    escaped = _html.escape(text)
+    # html.escape() doesn't touch "*", so the bold regex still applies fine
+    # to the escaped string.
+    return _BOLD_RE.sub(r"<strong>\1</strong>", escaped)
 
 
 def markdown_to_html(text: str) -> str:
@@ -16,17 +31,17 @@ def markdown_to_html(text: str) -> str:
             if in_list:
                 html_lines.append("</ul>")
                 in_list = False
-            html_lines.append(f"<h2>{_html.escape(line[3:])}</h2>")
+            html_lines.append(f"<h2>{_inline_html(line[3:])}</h2>")
         elif line.startswith("# "):
             if in_list:
                 html_lines.append("</ul>")
                 in_list = False
-            html_lines.append(f"<h1>{_html.escape(line[2:])}</h1>")
+            html_lines.append(f"<h1>{_inline_html(line[2:])}</h1>")
         elif line.startswith("- "):
             if not in_list:
                 html_lines.append("<ul>")
                 in_list = True
-            html_lines.append(f"<li>{_html.escape(line[2:])}</li>")
+            html_lines.append(f"<li>{_inline_html(line[2:])}</li>")
         elif not line:
             if in_list:
                 html_lines.append("</ul>")
@@ -35,7 +50,7 @@ def markdown_to_html(text: str) -> str:
             if in_list:
                 html_lines.append("</ul>")
                 in_list = False
-            html_lines.append(f"<p>{_html.escape(line)}</p>")
+            html_lines.append(f"<p>{_inline_html(line)}</p>")
     if in_list:
         html_lines.append("</ul>")
     return "".join(html_lines)
