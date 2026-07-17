@@ -272,12 +272,21 @@ def _step3_categories(
 
 
 def _step4_licence(page, price_gbp: float) -> None:
-    # "Sell my resource" is the default-selected tab; just set the price.
-    price_input = page.locator("#spinner")
-    price_input.click(click_count=3)
-    price_input.fill(f"{price_gbp:.2f}")
-    log.info(f"Price set: £{price_gbp:.2f}")
-    page.wait_for_timeout(500)
+    if price_gbp <= 0:
+        # "Sell my resource" (the default tab) enforces a £1.00 minimum --
+        # true free requires the separate "Share for free" tab. Found
+        # live: lead magnets built with price=0 were silently landing at
+        # £1.00 because this function always used the Sell tab.
+        page.get_by_text("Share for free", exact=False).first.click()
+        log.info("Selected 'Share for free' tab (price <= 0).")
+        page.wait_for_timeout(500)
+    else:
+        # "Sell my resource" is the default-selected tab; just set the price.
+        price_input = page.locator("#spinner")
+        price_input.click(click_count=3)
+        price_input.fill(f"{price_gbp:.2f}")
+        log.info(f"Price set: £{price_gbp:.2f}")
+        page.wait_for_timeout(500)
 
     page.get_by_role("button", name="Continue").last.click()
     page.wait_for_load_state("domcontentloaded", timeout=15000)
