@@ -14,6 +14,8 @@ api key.txt
 .gumroad_session.json
 .tpt_session.json
 .tes_session.json
+.pinterest_session.json
+.pinterest_scratch/
 
 # Generated outputs
 generated_lessons/
