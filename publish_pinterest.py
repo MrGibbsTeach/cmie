@@ -61,14 +61,27 @@ def _unit_release_dir(unit_id: str) -> Path:
     return matches[-1]
 
 
-def parse_marketing_pins(md_path: Path) -> list[dict]:
+def parse_marketing_pins(md_path: Path, wave: int = 1) -> list[dict]:
     text = md_path.read_text(encoding="utf-8")
-    section_match = re.search(r"## Pinterest pins.*?(?=\n## |\Z)", text, re.DOTALL)
-    if not section_match:
-        raise ValueError(f"No 'Pinterest pins' section found in {md_path}")
-    section = section_match.group(0)
+    # Wave-1 and wave-2 sections both start with "## Pinterest pins" -- pick
+    # the right one by requiring (wave 2) or excluding ("wave 2" absent) that
+    # marker on the heading LINE itself. Find the heading line first with a
+    # non-DOTALL regex (so the lookahead only scans that one line, not the
+    # rest of the document), then capture the section body separately.
+    if wave == 2:
+        heading_re = re.compile(r"^## Pinterest pins.*wave 2.*$", re.MULTILINE)
+    else:
+        heading_re = re.compile(r"^## Pinterest pins(?!.*wave \d).*$", re.MULTILINE)
+    heading_match = heading_re.search(text)
+    if not heading_match:
+        raise ValueError(f"No wave-{wave} 'Pinterest pins' section found in {md_path}")
+    rest = text[heading_match.start():]
+    body_match = re.search(r".*?(?=\n## |\Z)", rest, re.DOTALL)
+    section = body_match.group(0)
 
-    blocks = re.split(r"### Pin \d+\s*\n", section)[1:]
+    # Allow optional trailing text on the header line (e.g. "### Pin 1 (angle
+    # description)") -- content generators reliably add these annotations.
+    blocks = re.split(r"### Pin \d+.*\n", section)[1:]
     pins = []
     for block in blocks:
         title_m = re.search(r"\*\*Title\*\*[^:]*:\s*(.+)", block)
@@ -159,10 +172,10 @@ def create_pin(page, image_path: Path, title: str, description: str, link: str,
     return {"status": "submitted", "title": title}
 
 
-def publish_unit(page, unit_id: str, products: list[dict], dry_run: bool) -> list[dict]:
+def publish_unit(page, unit_id: str, products: list[dict], dry_run: bool, wave: int = 1) -> list[dict]:
     release_dir = _unit_release_dir(unit_id)
     md_path = release_dir / "07_Marketing" / "marketing_content.md"
-    pins = parse_marketing_pins(md_path)
+    pins = parse_marketing_pins(md_path, wave=wave)
 
     keyword = _unit_keyword(unit_id)
     thumb_url = match_thumbnail(products, keyword)
@@ -185,6 +198,7 @@ def main() -> None:
     group.add_argument("--unit", help="Single unit_id to publish pins for")
     group.add_argument("--all", action="store_true", help="Publish pins for all units with marketing content")
     parser.add_argument("--dry-run", action="store_true", help="Fill pin forms but do not click Publish")
+    parser.add_argument("--wave", type=int, default=1, choices=[1, 2], help="Which pin wave to post (default 1)")
     args = parser.parse_args()
 
     if not COOKIES_FILE.exists():
@@ -214,7 +228,7 @@ def main() -> None:
         for unit_id in unit_ids:
             log.info(f"--- {unit_id} ---")
             try:
-                results = publish_unit(page, unit_id, products, args.dry_run)
+                results = publish_unit(page, unit_id, products, args.dry_run, wave=args.wave)
                 all_results[unit_id] = results
             except Exception as e:
                 log.error(f"Failed to publish pins for {unit_id}: {e}")
