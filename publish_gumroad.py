@@ -225,6 +225,30 @@ def _save_changes(page) -> None:
         log.warning(f"Save click failed (non-fatal, verify manually): {e}")
 
 
+def _publish_product(page) -> bool:
+    """A newly API-created product stays "Unpublished" (not for sale) even
+    after content/thumbnail/description are all filled and saved -- Gumroad
+    requires an explicit publish action, and it only lives on the Content
+    tab's "Publish and continue" button (the Product tab's button is labelled
+    "Save and continue" and does NOT publish, despite looking equivalent).
+    Discovered the hard way: a product can sit fully-configured and still
+    report published=false via the API indefinitely without this click."""
+    try:
+        page.get_by_role("tab", name="Content").click()
+        page.wait_for_timeout(1500)
+        btn = page.get_by_role("button", name="Publish and continue")
+        if btn.count() == 0:
+            log.info("No 'Publish and continue' button found -- likely already published.")
+            return True
+        btn.click()
+        page.wait_for_timeout(3000)
+        log.info("Clicked 'Publish and continue'.")
+        return True
+    except Exception as e:
+        log.warning(f"Publish click failed (non-fatal, verify manually): {e}")
+        return False
+
+
 def _upload_content_zip(page, zip_path: Path) -> None:
     # Gumroad's edit page now has a separate "Content" tab for the sellable
     # file -- it's no longer in the Product tab's Cover section.
@@ -476,6 +500,7 @@ def publish_unit(unit_id: str, price_aud: float = PRICE_AUD) -> None:
             _upload_thumbnail_on_product_tab(page, thumbnail_path)
             _fill_description(page, listing["description"])
             _save_changes(page)
+            _publish_product(page)
             _verify_after_reload(page, edit_url, zip_path)
 
             screenshot = RELEASES_ROOT / f"debug_gumroad_{unit_id}.png"

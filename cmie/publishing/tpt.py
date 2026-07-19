@@ -433,12 +433,21 @@ def _select_react_select_option(page: Page, input_selector: str, search_term: st
     headers, which also render with role="option" in this implementation).
     Type the term, wait for the dropdown, and click the option whose text
     exactly matches (case-insensitive) -- not just the first/last result,
-    since group headers and unrelated leaf options are mixed into the list."""
+    since group headers and unrelated leaf options are mixed into the list.
+
+    IMPORTANT: do NOT call field.fill("") here even though the search text
+    should already be empty on a fresh focus -- confirmed by direct DOM
+    inspection that .fill("") on this control wipes ALL existing selected
+    chips (not just the search text), silently discarding any tags already
+    saved on the listing. This was a real, previously-undiscovered bug:
+    every prior call in a loop (e.g. _fill_tags adding multiple tags, or
+    editing an already-tagged live listing) clobbered every selection made
+    before it, leaving only the last one to survive submission. Click and
+    type only -- no fill()."""
     field = page.locator(input_selector)
     if field.count() == 0:
         return False
     field.click()
-    field.fill("")
     field.type(search_term, delay=50)
     page.wait_for_timeout(700)
 

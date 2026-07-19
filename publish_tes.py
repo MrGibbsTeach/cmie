@@ -194,11 +194,22 @@ def _navigate_to_upload(page, context, email: str, password: str) -> None:
     log.info(f"Upload form (step 1, Description): {page.url}")
 
 
+def _truncate_at_word_boundary(text: str, max_len: int) -> str:
+    """A hard text[:max_len] slice cuts mid-word (e.g. "...Getting Started f"),
+    which reads as broken to a real shopper. Cut at the last space instead."""
+    if len(text) <= max_len:
+        return text
+    cut = text[:max_len]
+    last_space = cut.rfind(" ")
+    return cut[:last_space] if last_space > 0 else cut
+
+
 def _step1_description(page, title: str, description: str) -> None:
+    title_trimmed = _truncate_at_word_boundary(title, 60)
     title_input = page.locator("input[placeholder*='Title' i], input#title, input[name='title']")
     title_input.first.click()
-    title_input.first.fill(title[:60])
-    log.info(f"Title filled: {title[:60]}")
+    title_input.first.fill(title_trimmed)
+    log.info(f"Title filled: {title_trimmed}")
 
     # TES uses a markdown editor (CodeMirror) -- raw markdown (headings,
     # bullets, **bold**) is supported and rendered, so no HTML conversion

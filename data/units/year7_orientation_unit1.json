@@ -1,0 +1,31 @@
+{
+  "unit_id": "year7_orientation_unit1",
+  "title": "Digital Technologies Orientation: Unit 1 – Getting Started for the Year",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    {
+      "title": "Welcome to Digital Technologies: Course Overview and Expectations"
+    },
+    {
+      "title": "Digital Citizenship: Being Safe, Responsible, and Respectful Online"
+    },
+    {
+      "title": "Setting Up for Success: Organising Files, Folders, and Your Digital Workspace"
+    },
+    {
+      "title": "Passwords, Privacy, and Protecting Your Information"
+    },
+    {
+      "title": "Netiquette: Communicating Effectively and Respectfully Online"
+    },
+    {
+      "title": "Getting to Know You: A Digital Skills and Interests Check-In"
+    },
+    {
+      "title": "Setting Goals: What Will I Learn in Digital Technologies This Year?"
+    }
+  ],
+  "lesson_videos": {}
+}
