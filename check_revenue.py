@@ -55,10 +55,15 @@ TES_COOKIES_FILE     = PROJECT_ROOT / ".tes_session.json"
 # ── Playwright browser helper ─────────────────────────────────────────────────
 
 def _make_context(pw, headless: bool):
+    # Deliberately no channel="chrome" -- that requires a real Google Chrome
+    # binary, which isn't present in fresh/cloud containers (only Playwright's
+    # bundled Chromium is). Every real read-only automation this project has
+    # done successfully used bundled Chromium + session cookies; the browser
+    # channel was never actually load-bearing for TPT's bot detection, which
+    # cares about session cookie validity, not which Chromium build runs it.
     browser = pw.chromium.launch(
         headless=headless,
         slow_mo=50,
-        channel="chrome",
     )
     context = browser.new_context(
         user_agent=(
