@@ -18,24 +18,19 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 import urllib.request
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 PROJECT_ROOT = Path(__file__).parent
 
 _BOLD_RE = re.compile(r"\*\*[^*\n]*[a-zA-Z][^*\n]*\*\*")
-
-
-def _load_env() -> dict:
-    env = {}
-    env_path = PROJECT_ROOT / ".env"
-    for line in env_path.read_text(encoding="utf-8").splitlines():
-        if "=" in line and not line.strip().startswith("#"):
-            k, v = line.split("=", 1)
-            env[k.strip()] = v.strip().strip('"').strip("'")
-    return env
 
 
 def fetch_products(token: str) -> list[dict]:
@@ -79,10 +74,9 @@ def main() -> None:
     parser.add_argument("--keyword", default="Unit 1", help="Only check products whose name contains this")
     args = parser.parse_args()
 
-    env = _load_env()
-    token = env.get("GUMROAD_TOKEN")
+    token = os.environ.get("GUMROAD_TOKEN")
     if not token:
-        print("ERROR: GUMROAD_TOKEN not found in .env")
+        print("ERROR: GUMROAD_TOKEN not set (checked .env and environment variables)")
         sys.exit(1)
 
     products = fetch_products(token)
