@@ -55,16 +55,26 @@ def cloud_launch_kwargs() -> dict:
     Extra kwargs to merge into any chromium.launch()/launch_persistent_context()
     call so it works behind a proxied sandbox that does TLS-terminating
     interception (its own root CA Chromium doesn't trust out of the box).
-    `--ignore-certificate-errors` is the pragmatic fix -- avoids needing to
-    import the sandbox's CA into Chromium's NSS store, which is fragile and
-    environment-specific. No-op locally (no proxy => nothing changes).
+    `--ignore-certificate-errors` is the pragmatic cert-trust fix -- avoids
+    needing to import the sandbox's CA into Chromium's NSS store, which is
+    fragile and environment-specific.
+
+    `--ssl-version-max=tls1.2` is a second, separate fix for a distinct
+    failure mode found by a live diagnostic run in the Claude Code cloud
+    sandbox (2026-07-31): the reset happens BEFORE any certificate is ever
+    exchanged -- the proxy resets the connection right after Chromium's own
+    TLS 1.3 ClientHello, so --ignore-certificate-errors alone never even gets
+    a chance to matter. Capping Chromium to TLS 1.2 avoids whatever about
+    Chromium 141's TLS 1.3 ClientHello (tested: not just the PQ/Kyber key
+    share) the sandbox's proxy can't handle. No-op locally (no proxy =>
+    nothing changes).
     """
     proxy = cloud_proxy_config()
     if not proxy:
         return {}
     return {
         "proxy": proxy,
-        "args": ["--ignore-certificate-errors"],
+        "args": ["--ignore-certificate-errors", "--ssl-version-max=tls1.2"],
     }
 
 
