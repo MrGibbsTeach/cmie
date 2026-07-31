@@ -68,12 +68,28 @@ def cloud_launch_kwargs() -> dict:
     Chromium 141's TLS 1.3 ClientHello (tested: not just the PQ/Kyber key
     share) the sandbox's proxy can't handle. No-op locally (no proxy =>
     nothing changes).
+
+    `channel="chromium"` is a THIRD fix, found the same day after the above
+    two turned out unreliable on their own: Playwright silently substitutes
+    a completely different binary (chrome-headless-shell, not full Chromium)
+    whenever launch(headless=True) is called with no explicit channel or
+    executable_path -- which is every verify_*.py script and anything else
+    that launches headless. That shell binary ignores --ssl-version-max
+    entirely (packet-capture confirmed: still sends a full TLS 1.3
+    ClientHello with key_share/ECH) and hits the identical
+    ERR_CONNECTION_RESET. Pinning channel="chromium" forces the real
+    Chromium binary even in headless mode, where the flag is honored
+    (packet-capture-verified, twice, against a real teacherspayteachers.com
+    load). This is why the fix "worked once" (automation_chrome(), which is
+    always headless=False and never hit the substitution) and "failed later"
+    (a headless=True verify script, which did).
     """
     proxy = cloud_proxy_config()
     if not proxy:
         return {}
     return {
         "proxy": proxy,
+        "channel": "chromium",
         "args": ["--ignore-certificate-errors", "--ssl-version-max=tls1.2"],
     }
 
