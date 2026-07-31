@@ -1,28 +1,22 @@
-# Business Review — 2026-07-31 02:13 UTC
+# Business Review — 2026-07-31 03:13 UTC
 
 ## Revenue
-- **TPT**: ERROR — Page.goto: net::ERR_CONNECTION_RESET at https://www.teacherspayteachers.com/My-Products
-Call log:
-  - navigating to "https://www.teacherspayteachers.com/My-Products", waiting until "domcontentloaded"
-
+- **TPT**: ERROR — TPT session expired (.tpt_session.json no longer valid). Refresh it manually once: python publish_tpt.py --save-session (automated form login is disabled here — it has triggered TPT bot detection and an account lock before).
 - **Gumroad**: AUD 0 net, 0 sale(s)
-- **TES**: ERROR — Page.goto: net::ERR_CONNECTION_RESET at https://www.tes.com/authn/sign-in
-Call log:
-  - navigating to "https://www.tes.com/authn/sign-in", waiting until "domcontentloaded"
-
-- **Combined (not currency-converted)**: AUD0
+- **TES**: GBP 0.3 net, 1 sale(s)
+- **Combined (not currency-converted)**: AUD0 + GBP0.3
 
 ## Catalog — 0 live unit(s)
 
 ## Recent activity (last 8 commits)
+- 2026-07-31 Force channel="chromium" in cloud_launch_kwargs() -- fixes silent headless_shell substitution
+- 2026-07-31 Log scheduled business review: Gumroad clean, TPT/TES blocked by browser TLS reset
 - 2026-07-31 Add push test entry to AUTONOMOUS_LOG.md
 - 2026-07-31 Log today's cloud-automation diagnostic findings to AUTONOMOUS_LOG.md
 - 2026-07-31 Cap Chromium to TLS 1.2 in cloud sandbox -- proxy can't handle TLS 1.3 ClientHello
 - 2026-07-31 Fix Chromium hardcoded channel + missing proxy passthrough for cloud automation
 - 2026-07-22 Fix verify_gumroad_listings.py reading a literal .env instead of environment variables
 - 2026-07-20 Remove hardcoded Chrome channel from check_revenue.py
-- 2026-07-20 Stage queue files and run log for 3-week autonomous scheduled jobs
-- 2026-07-19 Fix Unit 1 AI-series cosmetic bugs on TPT; support Pinterest pin waves; add business_review.py
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).

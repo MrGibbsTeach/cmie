@@ -21,6 +21,86 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-07-31 (later run) — Scheduled business review + integrity checks: Gumroad clean, TES verified logged-in but blocked by cookie banner, TPT blocked by missing session
+
+Ran the standard routine: `python business_review.py --save`, then the three
+post-publish integrity checkers. Report-only run — nothing found below was
+touched, edited, or deleted.
+
+**Environment note**: this session's clone had no Python dependencies
+installed at all (`dotenv`, `playwright` missing) and the pip-installed
+`playwright` defaulted to the latest release (1.61.0), which expects
+Chromium revision 1228 while the sandbox's pre-installed browser is
+revision 1194 — every browser-based check failed with "Executable doesn't
+exist at /opt/pw-browsers/chromium-1228/..." until `playwright` was pinned
+to 1.56.0 (the version that matches revision 1194) as an environment-level
+fix, no project code touched. Worth carrying into `requirements.txt` as a
+`playwright==1.56.0` pin so future sessions don't hit this cold — logging
+it here rather than doing it unilaterally since it's a dependency-pin
+decision, not a bug fix.
+
+**Revenue snapshot** (see `BUSINESS_REVIEW.md`, timestamp 2026-07-31 03:13 UTC):
+- **TPT**: could not check — see TPT blocker below.
+- **Gumroad**: A$0.00 net, 0 sales (via API, `GUMROAD_TOKEN`).
+- **TES**: £0.30 GBP net, 1 sale — checked successfully this run (browser
+  fix above got TES working again; login via saved-then-refreshed session
+  succeeded and the earnings page loaded cleanly).
+- Last confirmed full snapshot (all 3 platforms) remains 2026-07-19: TPT
+  $13.45 USD / 1 sale, Gumroad A$0 / 0 sales, TES £0.30 GBP / 1 sale.
+
+**Catalog size**: `business_review.py` again reports **0 live units** —
+same known artifact as every prior fresh-clone session: it derives catalog
+size from `releases/public/*_v001/` on local disk, which this session's
+clone doesn't have (build artifacts, gitignored). Last real count: 11
+units (2026-07-19 snapshot).
+
+**Integrity checkers**:
+- `verify_gumroad_listings.py` — **ran clean.** All 10 Gumroad products
+  matching "Unit 1" checked; no empty/near-empty descriptions, no
+  unrendered markdown, no HTML leakage, no 0-byte zips. All "(published)".
+  URLs unchanged from prior runs (`focuslabdigital.gumroad.com/l/` +
+  `yyrcw`, `psbzqv`, `hmntzx`, `caqcw`, `dvjrck`, `yqnok`, `ivmbkk`,
+  `llfnfx`, `kezhjt`, `bpvevc`).
+- `verify_tpt_listings.py` — **could not run a real check.** Tried
+  `--unit year7_algorithms_unit1`. It launched and reached TPT fine (the
+  browser fix worked), but `.tpt_session.json` does not exist in this
+  session's clone (gitignored, and automated form login is deliberately
+  disabled — it has triggered TPT bot detection and an account lock
+  before per `cmie/publishing/tpt.py`). The Chrome-cookie fallback also
+  failed (`browser_cookie3` not installed / no real Chrome profile in this
+  container). Net effect: the script found 0 products and printed "All
+  checked listings look clean" — **that message is misleading here**, it
+  did not actually check anything, it just found nothing because it
+  wasn't logged in. Flagging this as a script gap worth a human look: it
+  should distinguish "0 products because not logged in" from "0 products,
+  genuinely nothing to check." Needs `python publish_tpt.py --save-session`
+  run once by a human with a real browser to refresh the session file.
+- `verify_tes_listings.py --keyword "Unit 1"` — **login succeeded** (used
+  the session file `business_review.py` had just refreshed earlier in this
+  same run), but the check itself failed: clicking the dashboard's "Show
+  all" button timed out after 30s because TES's OneTrust cookie-consent
+  banner (`#onetrust-consent-sdk`) kept intercepting the click — full
+  traceback ends in `playwright._impl._errors.TimeoutError:
+  Locator.click: Timeout 30000ms exceeded` on
+  `page.get_by_text("Show all", exact=False).first.click()` in
+  `find_resource_ids()`. This is a fresh failure mode (not the TLS-reset
+  issue from earlier today) — worth a human look at whether the script
+  should dismiss/accept the cookie banner before clicking. No resource
+  data was read, so no findings to report either way this run.
+
+**Open items carried forward unresolved** (see `BUSINESS_REVIEW.md` for
+the full current list — unchanged this run): TES presenter-placeholder
+cosmetic bug on Unit 1 (AI series), TES duplicate resource pair
+(13432831 / 13432796), TES resource 13445828 permanently broken, off-brand
+Gumroad products still on the storefront, shelved AI-series Units 3-8 still
+live on TES. None of these were touched.
+
+The prior 2026-07-31 entry below (commit `a136294`) already made it to
+`main` before this run started, so no stranded-branch work needed porting
+forward this time.
+
+---
+
 ## 2026-07-31 — Scheduled business review + integrity checks: Gumroad clean, TPT/TES blocked again by browser TLS reset
 
 Ran the standard routine: `python business_review.py --save`, then the three
