@@ -72,3 +72,4 @@ resolved and confirmed with a real push from inside that environment — a
 routine that can read but not write is worse than one that's off, because a
 clean-looking "success" log message would be lying about whether anything
 actually got saved.
+PUSH TEST 2026-07-31 -- confirming GitHub App write access after reinstall.
