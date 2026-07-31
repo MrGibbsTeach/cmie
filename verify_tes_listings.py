@@ -83,12 +83,13 @@ def main() -> None:
     import sys as _sys
     _sys.path.insert(0, str(PROJECT_ROOT))
     from publish_tes import _login
+    from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs
     from dotenv import load_dotenv
     load_dotenv()
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True)
-        context = browser.new_context()
+        browser = pw.chromium.launch(headless=True, **cloud_launch_kwargs())
+        context = browser.new_context(**cloud_context_kwargs())
         page = context.new_page()
         _login(page, context, os.getenv("TES_EMAIL", ""), os.getenv("TES_PASSWORD", ""))
 

@@ -218,10 +218,11 @@ def main() -> None:
     cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
 
     from playwright.sync_api import sync_playwright
+    from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs
     all_results = {}
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True)
-        context = browser.new_context(viewport={"width": 1400, "height": 1000})
+        browser = pw.chromium.launch(headless=True, **cloud_launch_kwargs())
+        context = browser.new_context(viewport={"width": 1400, "height": 1000}, **cloud_context_kwargs())
         context.add_cookies(cookies)
         page = context.new_page()
 

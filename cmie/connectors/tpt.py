@@ -6,6 +6,7 @@ from playwright.sync_api import sync_playwright
 
 from .base import BaseConnector
 from ..config import USER_AGENT
+from ..publishing.browser import cloud_launch_kwargs, cloud_context_kwargs
 
 
 class TPTConnector(BaseConnector):
@@ -17,8 +18,8 @@ class TPTConnector(BaseConnector):
         Use Playwright to render the JS page and return full HTML.
         """
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            page = browser.new_page(user_agent=USER_AGENT)
+            browser = p.chromium.launch(headless=True, **cloud_launch_kwargs())
+            page = browser.new_page(user_agent=USER_AGENT, **cloud_context_kwargs())
             page.goto(url, wait_until="networkidle")
             html = page.content()
             browser.close()

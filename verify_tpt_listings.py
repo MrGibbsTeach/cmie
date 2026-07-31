@@ -117,13 +117,14 @@ def main() -> None:
 
     from playwright.sync_api import sync_playwright
     from cmie.publishing.tpt import _load_session, _is_logged_in
+    from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs
 
     keyword = args.keyword or _unit_topic_keyword(args.unit)
     print(f"Searching dashboard for products matching: {keyword!r}")
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True)
-        context = browser.new_context()
+        browser = pw.chromium.launch(headless=True, **cloud_launch_kwargs())
+        context = browser.new_context(**cloud_context_kwargs())
         _load_session(context)
         page = context.new_page()
         _is_logged_in(page)

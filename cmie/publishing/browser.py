@@ -31,6 +31,50 @@ AUTOMATION_PROFILE = Path(os.environ.get(
 ))
 
 
+def cloud_proxy_config() -> dict | None:
+    """
+    Explicit proxy server for Playwright, read from the standard env vars.
+
+    Playwright/Chromium does NOT auto-respect HTTP_PROXY/HTTPS_PROXY the way
+    curl/urllib/requests do -- it has to be passed explicitly at launch, or
+    outbound connections from a proxied sandbox (e.g. the Claude Code cloud
+    environment) get reset. No-op on a machine with no proxy configured
+    (i.e. every local run), so safe to apply unconditionally.
+    """
+    server = (
+        os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
+        or os.environ.get("HTTP_PROXY") or os.environ.get("http_proxy")
+    )
+    if not server:
+        return None
+    return {"server": server}
+
+
+def cloud_launch_kwargs() -> dict:
+    """
+    Extra kwargs to merge into any chromium.launch()/launch_persistent_context()
+    call so it works behind a proxied sandbox that does TLS-terminating
+    interception (its own root CA Chromium doesn't trust out of the box).
+    `--ignore-certificate-errors` is the pragmatic fix -- avoids needing to
+    import the sandbox's CA into Chromium's NSS store, which is fragile and
+    environment-specific. No-op locally (no proxy => nothing changes).
+    """
+    proxy = cloud_proxy_config()
+    if not proxy:
+        return {}
+    return {
+        "proxy": proxy,
+        "args": ["--ignore-certificate-errors"],
+    }
+
+
+def cloud_context_kwargs() -> dict:
+    """Context-level counterpart to cloud_launch_kwargs() -- pass as **kwargs
+    to new_context() (or merge into launch_persistent_context(), which takes
+    both launch- and context-level args together)."""
+    return {"ignore_https_errors": True} if cloud_proxy_config() else {}
+
+
 @contextmanager
 def automation_chrome(headless: bool = False, slow_mo: int = 200):
     """
@@ -41,14 +85,20 @@ def automation_chrome(headless: bool = False, slow_mo: int = 200):
 
     AUTOMATION_PROFILE.mkdir(parents=True, exist_ok=True)
 
+    extra_args = ["--disable-blink-features=AutomationControlled"]
+    cloud_kwargs = cloud_launch_kwargs()
+    if "args" in cloud_kwargs:
+        extra_args += cloud_kwargs.pop("args")
+
     with sync_playwright() as pw:
         context = pw.chromium.launch_persistent_context(
             user_data_dir=str(AUTOMATION_PROFILE),
-            channel="chrome",
             headless=headless,
             slow_mo=slow_mo,
-            args=["--disable-blink-features=AutomationControlled"],
+            args=extra_args,
             ignore_default_args=["--enable-automation"],
+            **cloud_kwargs,
+            **cloud_context_kwargs(),
         )
         page = context.new_page()
         try:

@@ -35,6 +35,8 @@ for _stream in (sys.stdout, sys.stderr):
 
 from dotenv import load_dotenv
 
+from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs
+
 load_dotenv()
 
 logging.basicConfig(
@@ -64,13 +66,15 @@ def _make_context(pw, headless: bool):
     browser = pw.chromium.launch(
         headless=headless,
         slow_mo=50,
+        **cloud_launch_kwargs(),
     )
     context = browser.new_context(
         user_agent=(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
             "AppleWebKit/537.36 (KHTML, like Gecko) "
             "Chrome/136.0.0.0 Safari/537.36"
-        )
+        ),
+        **cloud_context_kwargs(),
     )
     context.add_init_script(
         "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"

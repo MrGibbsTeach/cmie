@@ -28,6 +28,8 @@ from typing import Optional
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, Page, expect
 
+from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs
+
 load_dotenv()
 log = logging.getLogger(__name__)
 
@@ -574,9 +576,10 @@ def replace_product_file(product_id: str, new_zip_path: Path) -> None:
     edit_url = f"https://www.teacherspayteachers.com/itemsDigital/editNext/{product_id}"
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=False, slow_mo=80, channel="chrome")
+        browser = pw.chromium.launch(headless=False, slow_mo=80, **cloud_launch_kwargs())
         context = browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+            **cloud_context_kwargs(),
         )
         context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         page = context.new_page()
@@ -687,9 +690,10 @@ def upload_unit(
         raise FileNotFoundError(f"Zip not found: {zip_path}")
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=False, slow_mo=80, channel="chrome")
+        browser = pw.chromium.launch(headless=False, slow_mo=80, **cloud_launch_kwargs())
         context = browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+            **cloud_context_kwargs(),
         )
         # Hide the webdriver flag that TPT uses to detect automation
         context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
