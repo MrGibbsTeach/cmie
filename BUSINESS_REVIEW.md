@@ -1,4 +1,4 @@
-# Business Review — 2026-07-31 03:13 UTC
+# Business Review — 2026-07-31 03:28 UTC
 
 ## Revenue
 - **TPT**: ERROR — TPT session expired (.tpt_session.json no longer valid). Refresh it manually once: python publish_tpt.py --save-session (automated form login is disabled here — it has triggered TPT bot detection and an account lock before).
@@ -9,14 +9,14 @@
 ## Catalog — 0 live unit(s)
 
 ## Recent activity (last 8 commits)
+- 2026-07-31 Fix TPT false-negative integrity check and TES cookie-banner timeout; add TPT_SESSION_JSON env fallback
+- 2026-07-31 Log scheduled business review: TES verified working again, Gumroad clean, TPT still blocked by missing session
 - 2026-07-31 Force channel="chromium" in cloud_launch_kwargs() -- fixes silent headless_shell substitution
 - 2026-07-31 Log scheduled business review: Gumroad clean, TPT/TES blocked by browser TLS reset
 - 2026-07-31 Add push test entry to AUTONOMOUS_LOG.md
 - 2026-07-31 Log today's cloud-automation diagnostic findings to AUTONOMOUS_LOG.md
 - 2026-07-31 Cap Chromium to TLS 1.2 in cloud sandbox -- proxy can't handle TLS 1.3 ClientHello
 - 2026-07-31 Fix Chromium hardcoded channel + missing proxy passthrough for cloud automation
-- 2026-07-22 Fix verify_gumroad_listings.py reading a literal .env instead of environment variables
-- 2026-07-20 Remove hardcoded Chrome channel from check_revenue.py
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).

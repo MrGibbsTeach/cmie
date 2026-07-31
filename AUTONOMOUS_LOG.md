@@ -21,6 +21,86 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-07-31 (third run) — Scheduled business review + integrity checks: Gumroad clean, TES clean (cookie-banner fix confirmed working), TPT still blocked by missing session
+
+Ran the standard routine: `python business_review.py --save`, then the three
+post-publish integrity checkers (`verify_tpt_listings.py` per live unit,
+`verify_gumroad_listings.py`, `verify_tes_listings.py`). Report-only run —
+nothing found below was touched, edited, or deleted.
+
+**Environment note**: same as every prior fresh-clone session, this
+container had no Python dependencies installed (`dotenv`, `playwright`,
+`browser_cookie3` all missing) — installed `python-dotenv`,
+`playwright==1.56.0` (pinned to match the sandbox's pre-installed Chromium
+revision 1194, per the pin recommended in the previous log entry — still
+not actually added to `requirements.txt`, so future sessions will keep
+hitting this cold until someone does), and `browser_cookie3`.
+
+**Revenue snapshot** (see `BUSINESS_REVIEW.md`, timestamp 2026-07-31 03:28 UTC):
+- **TPT**: could not check — session expired, see TPT blocker below.
+- **Gumroad**: A$0.00 net, 0 sales (via API, `GUMROAD_TOKEN`).
+- **TES**: £0.30 GBP net, 1 sale — checked successfully (form login
+  succeeded, session re-saved to `.tes_session.json`).
+- Last confirmed full snapshot (all 3 platforms) remains 2026-07-19: TPT
+  $13.45 USD / 1 sale, Gumroad A$0 / 0 sales, TES £0.30 GBP / 1 sale.
+
+**Catalog size**: `business_review.py` again reports **0 live units** —
+same known artifact as every prior fresh-clone session (derives catalog
+size from the gitignored `releases/public/*_v001/` build-output directory,
+which doesn't exist in a fresh clone). Last real count: 11 units
+(2026-07-19 snapshot): year7_algorithms_unit1, year7_cybersecurity_unit1,
+year7_data_representation_unit1, year7_digital_systems_unit1,
+year7_game_design_unit1, year7_networks_hardware_unit1,
+year7_orientation_unit1, year7_python_programming_unit1,
+year7_spreadsheets_unit1, year7_ux_design_unit1, year7_web_design_unit1.
+
+**Integrity checkers**:
+- `verify_tpt_listings.py --unit <unit_id>` — ran against all 11 known live
+  units above. Every single one failed identically with the (now-fixed,
+  no-longer-misleading) explicit error: "not logged in to TPT (no valid
+  session found) -- cannot check listings" (exit code 2). No
+  `TPT_SESSION_JSON` env var is set in this container and no
+  `.tpt_session.json` file exists in this fresh clone (gitignored); the
+  Chrome-cookie fallback also failed (`Could not extract Chrome cookies:
+  'DBUS_SESSION_BUS_ADDRESS'` — no real Chrome profile in this sandbox).
+  Root cause is login/session-level, not per-unit, so all 11 failures are
+  the same issue, not 11 separate ones. Still needs a human to run
+  `python publish_tpt.py --save-session` once with a real browser (or set
+  `TPT_SESSION_JSON`) to unblock future automated checks.
+- `verify_gumroad_listings.py` — **ran clean.** All 10 Gumroad products
+  matching "Unit 1" checked; no empty/near-empty descriptions, no
+  unrendered markdown, no HTML leakage. All "(published)". Same 10 URLs as
+  every prior run (`focuslabdigital.gumroad.com/l/` + `yyrcw`, `psbzqv`,
+  `hmntzx`, `caqcw`, `dvjrck`, `yqnok`, `ivmbkk`, `llfnfx`, `kezhjt`,
+  `bpvevc`).
+- `verify_tes_listings.py` — **ran clean, and the cookie-banner fix from
+  commit `deda456` is confirmed working**: login via saved session
+  succeeded, the OneTrust consent banner no longer blocked the "Show all"
+  click, and the check completed end-to-end (previous run's blocker is
+  resolved). Found 30 resources total on the dashboard, 21 matching
+  "Unit 1" (the other 9 are the known shelved AI-series Units 2–8
+  resources, which don't carry a literal "Unit 1" string in their titles).
+  All 21 checked clean — no empty descriptions, no literal HTML tags. Two
+  resource IDs matched most topic titles (e.g. Networks & Hardware:
+  13517745 and 13517664); read as separate per-lesson resources sharing
+  the "Unit 1" title prefix, not new duplicates — distinct from the
+  already-logged genuine duplicate pair below, which was flagged because
+  the two IDs share the *exact same* title, not just a shared prefix.
+
+**Open items carried forward unresolved** (see `BUSINESS_REVIEW.md` for
+the full current list — unchanged this run): TES presenter-placeholder
+cosmetic bug on Unit 1 (AI series), TES duplicate resource pair
+(13432831 / 13432796), TES resource 13445828 permanently broken, off-brand
+Gumroad products still on the storefront, shelved AI-series Units 3-8 still
+live on TES. None of these were touched.
+
+No code changes this run beyond the environment-level dependency installs
+(not committed — ephemeral to this container) and the `BUSINESS_REVIEW.md`
+regeneration. Working branch (`claude/practical-ride-bbgxt7`) was already
+even with `main` at the start of this run, so nothing needed re-applying.
+
+---
+
 ## 2026-07-31 (later run) — Scheduled business review + integrity checks: Gumroad clean, TES verified logged-in but blocked by cookie banner, TPT blocked by missing session
 
 Ran the standard routine: `python business_review.py --save`, then the three
