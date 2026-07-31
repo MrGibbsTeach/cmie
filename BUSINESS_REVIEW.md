@@ -1,33 +1,28 @@
-# Business Review — 2026-07-19 12:57 UTC
+# Business Review — 2026-07-31 02:13 UTC
 
 ## Revenue
-- **TPT**: USD 13.45 net, 1 sale(s)
-- **Gumroad**: AUD 0 net, 0 sale(s)
-- **TES**: GBP 0.3 net, 1 sale(s)
-- **Combined (not currency-converted)**: USD13.45 + AUD0 + GBP0.3
+- **TPT**: ERROR — Page.goto: net::ERR_CONNECTION_RESET at https://www.teacherspayteachers.com/My-Products
+Call log:
+  - navigating to "https://www.teacherspayteachers.com/My-Products", waiting until "domcontentloaded"
 
-## Catalog — 11 live unit(s)
-- year7_algorithms_unit1
-- year7_cybersecurity_unit1
-- year7_data_representation_unit1
-- year7_digital_systems_unit1
-- year7_game_design_unit1
-- year7_networks_hardware_unit1
-- year7_orientation_unit1
-- year7_python_programming_unit1
-- year7_spreadsheets_unit1
-- year7_ux_design_unit1
-- year7_web_design_unit1
+- **Gumroad**: AUD 0 net, 0 sale(s)
+- **TES**: ERROR — Page.goto: net::ERR_CONNECTION_RESET at https://www.tes.com/authn/sign-in
+Call log:
+  - navigating to "https://www.tes.com/authn/sign-in", waiting until "domcontentloaded"
+
+- **Combined (not currency-converted)**: AUD0
+
+## Catalog — 0 live unit(s)
 
 ## Recent activity (last 8 commits)
-- 2026-07-19 Ship Back-to-School orientation unit; fix 3 dormant catalog-wide bugs
-- 2026-07-18 Add Pinterest as a marketing channel (pipeline stage 5, second platform)
-- 2026-07-17 Fix TES free-listing pricing bug, extend integrity checks to Gumroad + TES
-- 2026-07-17 Add marketing content generator (pipeline stage 5) â€” first pass at the real gap
-- 2026-07-17 Fix long-standing **bold** markdown bug on live listings, tighten checker
-- 2026-07-17 Add self-verifying publish + post-publish integrity checker (pipeline stages 3-4)
-- 2026-07-16 Update PROGRESS.md: catalog doubled to 10 units, 3 more root-cause bugs fixed
-- 2026-07-16 Ship 5 more units (waves 2+3), fix HTML-escaping/keyword-collision/punctuation bugs
+- 2026-07-31 Add push test entry to AUTONOMOUS_LOG.md
+- 2026-07-31 Log today's cloud-automation diagnostic findings to AUTONOMOUS_LOG.md
+- 2026-07-31 Cap Chromium to TLS 1.2 in cloud sandbox -- proxy can't handle TLS 1.3 ClientHello
+- 2026-07-31 Fix Chromium hardcoded channel + missing proxy passthrough for cloud automation
+- 2026-07-22 Fix verify_gumroad_listings.py reading a literal .env instead of environment variables
+- 2026-07-20 Remove hardcoded Chrome channel from check_revenue.py
+- 2026-07-20 Stage queue files and run log for 3-week autonomous scheduled jobs
+- 2026-07-19 Fix Unit 1 AI-series cosmetic bugs on TPT; support Pinterest pin waves; add business_review.py
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).

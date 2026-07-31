@@ -21,6 +21,80 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-07-31 — Scheduled business review + integrity checks: Gumroad clean, TPT/TES blocked again by browser TLS reset
+
+Ran the standard routine: `python business_review.py --save`, then the three
+post-publish integrity checkers. Report-only run — nothing found below was
+touched, edited, or deleted.
+
+**Revenue snapshot** (see `BUSINESS_REVIEW.md`, timestamp 2026-07-31 02:13 UTC):
+- **TPT**: could not check — see browser blocker below.
+- **Gumroad**: A$0.00 net, 0 sales (via API, `GUMROAD_TOKEN` — reliable).
+- **TES**: could not check — see browser blocker below.
+- Last confirmed full snapshot remains 2026-07-19: TPT $13.45 USD / 1 sale,
+  Gumroad A$0 / 0 sales, TES £0.30 GBP / 1 sale.
+
+**Catalog size**: `business_review.py` reports **0 live units** this run —
+this is an artifact of the fresh checkout, not a real catalog change. It
+derives catalog size from `releases/public/*_v001/` on local disk, which
+does not exist in this session's clone (build artifacts, not committed to
+git). The last real count was 11 units (2026-07-19 snapshot, still the best
+available reference — see that entry in `BUSINESS_REVIEW.md`'s git history
+or the list below).
+
+**Integrity checkers**:
+- `verify_gumroad_listings.py` — **ran clean.** Checked all 10 Gumroad
+  products matching "Unit 1"; no empty/near-empty descriptions, no
+  unrendered markdown, no HTML leakage, no 0-byte zips. All show status
+  "(published)". Product URLs (all OK): `focuslabdigital.gumroad.com/l/`
+  `yyrcw`, `psbzqv`, `hmntzx`, `caqcw`, `dvjrck`, `yqnok`, `ivmbkk`,
+  `llfnfx`, `kezhjt`, `bpvevc`.
+- `verify_tpt_listings.py` — **could not run.** Tried
+  `--unit year7_algorithms_unit1` as a representative check; failed before
+  it even reached the dashboard (fails on the initial login-state check,
+  `https://www.teacherspayteachers.com/` → `net::ERR_CONNECTION_RESET`).
+  Since the failure is at browser/network level, not unit-specific, did not
+  repeat it across the other 10 known units (year7_cybersecurity_unit1,
+  year7_data_representation_unit1, year7_digital_systems_unit1,
+  year7_game_design_unit1, year7_networks_hardware_unit1,
+  year7_orientation_unit1, year7_python_programming_unit1,
+  year7_spreadsheets_unit1, year7_ux_design_unit1,
+  year7_web_design_unit1) — same root cause would apply to all.
+- `verify_tes_listings.py` — **could not run**, same failure
+  (`https://www.tes.com/authn/sign-in` → `net::ERR_CONNECTION_RESET`).
+
+**Browser blocker — status update on the 2026-07-31-earlier TLS fix**: the
+TLS-1.2-cap fix from earlier today (`cloud_launch_kwargs()` in
+`cmie/publishing/browser.py`, commit `12b07a7`) did **not** resolve the
+issue in this session — same `ERR_CONNECTION_RESET` on every HTTPS
+navigation through the proxy (reproduced even on `https://example.com`, not
+just the target sites). Netlog capture (`--log-net-log`) shows the CONNECT
+tunnel itself succeeds (`200 Connection Established`), then the reset
+happens immediately after Chromium sends its TLS ClientHello — `net_error
+-101` / `os_error 104` (ECONNRESET), before any server response.
+`--ssl-version-max=tls1.2` is very likely a no-op on this Chromium build
+(141.0.7390.37) — Chrome removed that flag's effect years ago — which would
+explain why the earlier fix appeared to work in one diagnostic session but
+not here. `plain curl` through the same proxy to the same hosts (TLS 1.3,
+HTTP/2) succeeds every time, so this looks Chromium-client-specific, not a
+blanket proxy outage. Not fixed here (out of scope for a report-only run,
+and the proxy README says client-specific TLS failures need
+administrator/Anthropic-support attention, not a code workaround). Also
+separately note: this session's `pip install -r requirements.txt` pulled
+Playwright 1.61.0, whose bundled Chromium build (revision 1228) doesn't
+match what's pre-installed in this container (revision 1194) — had to pin
+`playwright==1.56.0` locally in this session just to get Chromium to launch
+at all (a session-local pip choice, not a repo change; every fresh
+container will hit this same mismatch until `requirements.txt` pins a
+compatible version — a decision for a human, not made here).
+
+**No integrity issues found on anything that could actually be checked.**
+Open items list unchanged from 2026-07-19 (see below in this file's
+history / `BUSINESS_REVIEW.md`) — still waiting on human decisions for the
+TES cosmetic bug, the TES duplicate pair (13432831 / 13432796), the
+permanently-broken TES resource 13445828, the off-brand Gumroad products,
+and real unattended scheduling.
+
 ## 2026-07-31 — Cloud Chromium/proxy fix landed and verified; git push permission still blocking
 
 Session goal: get the 4 paused routines (Business Review, New Unit Production,
