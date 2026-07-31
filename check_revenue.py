@@ -82,17 +82,30 @@ def _make_context(pw, headless: bool):
     return browser, context
 
 
-def _load_cookies(context, path: Path) -> bool:
-    if not path.exists():
-        return False
-    try:
-        cookies = json.loads(path.read_text(encoding="utf-8"))
-        context.add_cookies(cookies)
-        log.info(f"Session loaded from {path.name}")
-        return True
-    except Exception as e:
-        log.warning(f"Could not load session {path.name}: {e}")
-        return False
+def _load_cookies(context, path: Path, env_var: str | None = None) -> bool:
+    if path.exists():
+        try:
+            cookies = json.loads(path.read_text(encoding="utf-8"))
+            context.add_cookies(cookies)
+            log.info(f"Session loaded from {path.name}")
+            return True
+        except Exception as e:
+            log.warning(f"Could not load session {path.name}: {e}")
+
+    # Cloud sandboxes don't have this gitignored file -- fall back to the
+    # same cookies set by hand as an env var in the Claude Code environment.
+    if env_var:
+        raw = os.environ.get(env_var)
+        if raw:
+            try:
+                cookies = json.loads(raw)
+                context.add_cookies(cookies)
+                log.info(f"Session loaded from {env_var} env var")
+                return True
+            except Exception as e:
+                log.warning(f"Could not parse {env_var}: {e}")
+
+    return False
 
 
 def _save_cookies(context, path: Path) -> None:
@@ -119,7 +132,7 @@ def check_tpt(headless: bool) -> dict:
         page = context.new_page()
 
         try:
-            _load_cookies(context, TPT_COOKIES_FILE)
+            _load_cookies(context, TPT_COOKIES_FILE, env_var="TPT_SESSION_JSON")
 
             # Login check first: /My-Products is a known-good authenticated
             # page (used by the publish flow). An expired session redirects

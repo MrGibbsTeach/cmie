@@ -89,16 +89,33 @@ def _load_session(context) -> bool:
         log.warning(f"Could not extract Chrome cookies: {e}")
 
     # Fall back to saved session file
-    if not COOKIES_FILE.exists():
-        return False
-    try:
-        cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
-        context.add_cookies(cookies)
-        log.info("Session cookies loaded from file.")
-        return True
-    except Exception as e:
-        log.warning(f"Could not load session file: {e}")
-        return False
+    if COOKIES_FILE.exists():
+        try:
+            cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
+            context.add_cookies(cookies)
+            log.info("Session cookies loaded from file.")
+            return True
+        except Exception as e:
+            log.warning(f"Could not load session file: {e}")
+
+    # Cloud sandboxes have neither a real Chrome profile nor this gitignored
+    # file, and automated form login is deliberately disabled here (it has
+    # triggered TPT bot detection and an account lock before -- see _login()
+    # below). Accept the same cookies via an env var instead: set
+    # TPT_SESSION_JSON in the Claude Code environment's settings to the raw
+    # contents of a real .tpt_session.json produced by
+    # `python publish_tpt.py --save-session` on a real machine.
+    raw = os.environ.get("TPT_SESSION_JSON")
+    if raw:
+        try:
+            cookies = json.loads(raw)
+            context.add_cookies(cookies)
+            log.info("Session cookies loaded from TPT_SESSION_JSON env var.")
+            return True
+        except Exception as e:
+            log.warning(f"Could not parse TPT_SESSION_JSON: {e}")
+
+    return False
 
 
 def _is_logged_in(page) -> bool:

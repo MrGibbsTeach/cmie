@@ -31,6 +31,16 @@ def find_resource_ids(page, keyword: str) -> list[dict]:
         wait_until="domcontentloaded", timeout=20000,
     )
     page.wait_for_timeout(3000)
+    # TES's OneTrust cookie-consent banner sits on top of the dashboard on a
+    # fresh session (no prior consent cookie) and intercepts the "Show all"
+    # click, timing it out even though the button itself is visible.
+    accept_btn = page.locator("#onetrust-accept-btn-handler")
+    if accept_btn.count() > 0:
+        try:
+            accept_btn.first.click(timeout=5000)
+            page.wait_for_timeout(1000)
+        except Exception:
+            pass
     if page.get_by_text("Show all", exact=False).count() > 0:
         page.get_by_text("Show all", exact=False).first.click()
         page.wait_for_timeout(2500)

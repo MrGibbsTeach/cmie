@@ -127,7 +127,13 @@ def main() -> None:
         context = browser.new_context(**cloud_context_kwargs())
         _load_session(context)
         page = context.new_page()
-        _is_logged_in(page)
+        if not _is_logged_in(page):
+            browser.close()
+            print("ERROR: not logged in to TPT (no valid session found) -- cannot check listings.")
+            print("This is NOT the same as \"0 products, nothing to check\". Run "
+                  "`python publish_tpt.py --save-session` with a real browser to refresh "
+                  ".tpt_session.json, or copy a valid session into this environment.")
+            sys.exit(2)
 
         products = find_unit_product_urls(page, keyword)
         print(f"Found {len(products)} product(s).\n")
