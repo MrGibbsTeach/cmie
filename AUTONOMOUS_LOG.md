@@ -21,6 +21,84 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-07-31 (fourth run) — Scheduled business review + integrity checks: all three platforms blocked, no credentials or sessions available in this container
+
+Ran the standard routine: `python business_review.py --save`, then the
+three post-publish integrity checkers (`verify_tpt_listings.py` per live
+unit, `verify_gumroad_listings.py`, `verify_tes_listings.py`). Report-only
+run — nothing found below was touched, edited, or deleted.
+
+**Environment note**: fresh clone again had no Python dependencies
+installed (`dotenv`, `playwright`, `browser_cookie3` all missing).
+Installed `python-dotenv`, `playwright==1.56.0` (pinned to match the
+sandbox's pre-installed Chromium revision 1194 — same fix logged in prior
+runs; still not pinned in `requirements.txt`, so this keeps recurring),
+and `browser_cookie3`. Unlike every prior run, this container has **no
+`.env` file at all** (only `.env.example`), no `GUMROAD_TOKEN` env var, no
+`.tpt_session.json`, no `.tes_session.json`, and no real Chrome profile
+for the cookie fallback (`DBUS_SESSION_BUS_ADDRESS` missing). Net effect:
+every one of the three platforms failed to authenticate this run — worse
+than prior sessions, where at least Gumroad (via API token) and/or TES
+(via saved session) usually worked.
+
+**Revenue snapshot** (see `BUSINESS_REVIEW.md`, timestamp 2026-07-31 06:16
+UTC):
+- **TPT**: ERROR — session expired / no `.tpt_session.json` found.
+- **Gumroad**: ERROR — not logged in, no `GUMROAD_TOKEN` in `.env` or
+  environment.
+- **TES**: ERROR — no `TES_EMAIL`/`TES_PASSWORD` in `.env` and no saved
+  session.
+- **No revenue figures obtained this run on any platform.** Last confirmed
+  full snapshot (all 3 platforms) remains 2026-07-19: TPT $13.45 USD / 1
+  sale, Gumroad A$0 / 0 sales, TES £0.30 GBP / 1 sale. Most recent partial
+  snapshot (2026-07-31, third run): Gumroad A$0.00 / 0 sales, TES £0.30
+  GBP / 1 sale (TPT still blocked that run too).
+
+**Catalog size**: `business_review.py` again reports **0 live units** —
+same known artifact as every prior fresh-clone session (derives catalog
+size from the gitignored `releases/public/*_v001/` build-output
+directory, absent in a fresh clone). Last real count: 11 units
+(2026-07-19 snapshot): year7_algorithms_unit1, year7_cybersecurity_unit1,
+year7_data_representation_unit1, year7_digital_systems_unit1,
+year7_game_design_unit1, year7_networks_hardware_unit1,
+year7_orientation_unit1, year7_python_programming_unit1,
+year7_spreadsheets_unit1, year7_ux_design_unit1, year7_web_design_unit1.
+
+**Integrity checkers**:
+- `verify_tpt_listings.py --unit <unit_id>` — ran against all 11 known
+  live units above. Every single one failed identically: "not logged in
+  to TPT (no valid session found) -- cannot check listings" (Chrome-cookie
+  fallback also failed: `Could not extract Chrome cookies:
+  'DBUS_SESSION_BUS_ADDRESS'`). Same root cause as prior runs — no
+  session/login available in this container, not a per-unit issue.
+- `verify_gumroad_listings.py` — **could not run**: `ERROR: GUMROAD_TOKEN
+  not set (checked .env and environment variables)`. No listings were
+  actually checked this run (differs from the third run's "ran clean"
+  result — that run had `GUMROAD_TOKEN` available via the environment,
+  this one does not).
+- `verify_tes_listings.py` — **could not run**: raised `RuntimeError: No
+  TES_EMAIL/TES_PASSWORD in .env and no saved session.` No listings were
+  actually checked this run (differs from the third run's "ran clean,
+  cookie-banner fix confirmed working" result — that run had a saved
+  session, this one does not).
+
+**Nothing was verified this run.** No confidence statement can be made
+about Gumroad or TES listing integrity today — the last clean checks for
+both remain the third run's (2026-07-31, earlier today).
+
+**Open items carried forward unresolved** (see `BUSINESS_REVIEW.md` for
+the full current list — unchanged this run): TES presenter-placeholder
+cosmetic bug on Unit 1 (AI series), TES duplicate resource pair
+(13432831 / 13432796), TES resource 13445828 permanently broken, off-brand
+Gumroad products still on the storefront, shelved AI-series Units 3-8
+still live on TES. None of these were touched.
+
+No code changes this run beyond the environment-level dependency installs
+(not committed — ephemeral to this container) and the `BUSINESS_REVIEW.md`
+regeneration.
+
+---
+
 ## 2026-07-31 (third run) — Scheduled business review + integrity checks: Gumroad clean, TES clean (cookie-banner fix confirmed working), TPT still blocked by missing session
 
 Ran the standard routine: `python business_review.py --save`, then the three
