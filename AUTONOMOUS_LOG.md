@@ -21,6 +21,80 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-08-03 — Scheduled business review + integrity checks: all three platforms blocked again, no credentials or sessions available in this container
+
+Ran the standard routine: `python business_review.py --save`, then the
+three post-publish integrity checkers (`verify_tpt_listings.py` per known
+live unit, `verify_gumroad_listings.py`, `verify_tes_listings.py`).
+Report-only run — nothing found below was touched, edited, or deleted.
+
+**Environment note**: same as every prior fresh-clone session, this
+container had no Python dependencies installed (`dotenv`, `playwright`,
+`browser_cookie3` all missing) — installed `python-dotenv`,
+`playwright==1.56.0`, and `browser_cookie3` for this run only (not
+committed, ephemeral to this container; `requirements.txt` still doesn't
+pin these, so this keeps recurring every fresh session). This container
+again has **no `.env` file** (only `.env.example`), no `GUMROAD_TOKEN` env
+var, no `.tpt_session.json`, no `.tes_session.json`, and no real Chrome
+profile for the cookie fallback (`DBUS_SESSION_BUS_ADDRESS` missing).
+
+**Revenue snapshot** (see `BUSINESS_REVIEW.md`, timestamp 2026-08-03 01:05
+UTC):
+- **TPT**: ERROR — "TPT session expired (.tpt_session.json no longer
+  valid)."
+- **Gumroad**: ERROR — "Not logged in and no Gumroad credentials in
+  .env."
+- **TES**: ERROR — "No TES_EMAIL/TES_PASSWORD in .env and no saved
+  session."
+- **No revenue figures obtained this run on any platform.** Last confirmed
+  full snapshot (all 3 platforms) remains 2026-07-19: TPT $13.45 USD / 1
+  sale, Gumroad A$0 / 0 sales, TES £0.30 GBP / 1 sale.
+
+**Catalog size**: `business_review.py` again reports **0 live units** —
+same known artifact as every prior fresh-clone session (derives catalog
+size from the gitignored `releases/public/*_v001/` build-output
+directory, absent in a fresh clone). Last real count: 11 units
+(2026-07-19 snapshot): year7_algorithms_unit1, year7_cybersecurity_unit1,
+year7_data_representation_unit1, year7_digital_systems_unit1,
+year7_game_design_unit1, year7_networks_hardware_unit1,
+year7_orientation_unit1, year7_python_programming_unit1,
+year7_spreadsheets_unit1, year7_ux_design_unit1, year7_web_design_unit1.
+
+**Integrity checkers**:
+- `verify_tpt_listings.py --unit <unit_id>` — ran against all 11 known
+  live units above. Every single one failed identically: "ERROR: not
+  logged in to TPT (no valid session found) -- cannot check listings."
+  (Chrome-cookie fallback also failed: `Could not extract Chrome cookies:
+  'DBUS_SESSION_BUS_ADDRESS'`.) Same root cause as prior runs — no
+  session/login available in this container, not a per-unit issue. Still
+  needs a human to run `python publish_tpt.py --save-session` once with a
+  real browser (or set `TPT_SESSION_JSON`) to unblock future automated
+  checks.
+- `verify_gumroad_listings.py` — **could not run**: `ERROR:
+  GUMROAD_TOKEN not set (checked .env and environment variables)`. No
+  listings were actually checked this run.
+- `verify_tes_listings.py` — **could not run**: raised `RuntimeError: No
+  TES_EMAIL/TES_PASSWORD in .env and no saved session.` No listings were
+  actually checked this run.
+
+**Nothing was verified this run.** No confidence statement can be made
+about TPT, Gumroad, or TES listing integrity today — the last clean
+checks remain the 2026-07-31 (third run) entry above (Gumroad clean, TES
+clean).
+
+**Open items carried forward unresolved** (see `BUSINESS_REVIEW.md` for
+the full current list — unchanged this run): TES presenter-placeholder
+cosmetic bug on Unit 1 (AI series), TES duplicate resource pair
+(13432831 / 13432796), TES resource 13445828 permanently broken, off-brand
+Gumroad products still on the storefront, shelved AI-series Units 3-8
+still live on TES. None of these were touched.
+
+No code changes this run beyond the environment-level dependency installs
+(not committed — ephemeral to this container) and the `BUSINESS_REVIEW.md`
+regeneration.
+
+---
+
 ## 2026-07-31 (fourth run) — Scheduled business review + integrity checks: all three platforms blocked, no credentials or sessions available in this container
 
 Ran the standard routine: `python business_review.py --save`, then the
