@@ -101,6 +101,52 @@ def cloud_context_kwargs() -> dict:
     return {"ignore_https_errors": True} if cloud_proxy_config() else {}
 
 
+_SAME_SITE_MAP = {
+    "no_restriction": "None",
+    "lax": "Lax",
+    "strict": "Strict",
+    "unspecified": "Lax",
+    "none": "None",
+}
+
+
+def normalize_cookies(raw_cookies: list[dict]) -> list[dict]:
+    """
+    Convert a raw browser-extension cookie export (e.g. Cookie-Editor) into
+    the exact shape Playwright's BrowserContext.add_cookies() requires.
+    Already-correct Playwright-format cookies pass through unchanged.
+
+    Cookie-Editor exports use `expirationDate` (unix seconds) instead of
+    Playwright's `expires`, and lowercase/differently-named `sameSite` values
+    ("no_restriction", "lax", "strict", "unspecified") instead of Playwright's
+    exact "None"/"Lax"/"Strict" -- add_cookies() raises if sameSite isn't one
+    of those three exact strings. First hit as a live failure on TPT_SESSION_JSON
+    in the Claude Code cloud environment (2026-08-19); applied everywhere cookies
+    get loaded from a file or env var so it can't recur on Gumroad/TES/Pinterest.
+    """
+    normalized = []
+    for c in raw_cookies:
+        same_site = c.get("sameSite", "Lax")
+        if same_site not in ("Strict", "Lax", "None"):
+            same_site = _SAME_SITE_MAP.get(str(same_site).lower(), "Lax")
+        cookie = {
+            "name": c["name"],
+            "value": c["value"],
+            "domain": c["domain"],
+            "path": c.get("path", "/"),
+            "httpOnly": bool(c.get("httpOnly", False)),
+            "secure": bool(c.get("secure", False)),
+            "sameSite": same_site,
+        }
+        if c.get("session"):
+            cookie["expires"] = -1
+        else:
+            expires = c.get("expires", c.get("expirationDate", -1))
+            cookie["expires"] = expires if expires is not None else -1
+        normalized.append(cookie)
+    return normalized
+
+
 @contextmanager
 def automation_chrome(headless: bool = False, slow_mo: int = 200):
     """

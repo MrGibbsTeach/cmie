@@ -28,7 +28,7 @@ from typing import Optional
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, Page, expect
 
-from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs
+from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies
 
 load_dotenv()
 log = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ def _load_session(context) -> bool:
     try:
         cookies = _extract_chrome_cookies()
         if cookies:
-            context.add_cookies(cookies)
+            context.add_cookies(normalize_cookies(cookies))
             log.info(f"Loaded {len(cookies)} TPT cookies from Chrome.")
             return True
     except Exception as e:
@@ -92,7 +92,7 @@ def _load_session(context) -> bool:
     if COOKIES_FILE.exists():
         try:
             cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
-            context.add_cookies(cookies)
+            context.add_cookies(normalize_cookies(cookies))
             log.info("Session cookies loaded from file.")
             return True
         except Exception as e:
@@ -109,7 +109,7 @@ def _load_session(context) -> bool:
     if raw:
         try:
             cookies = json.loads(raw)
-            context.add_cookies(cookies)
+            context.add_cookies(normalize_cookies(cookies))
             log.info("Session cookies loaded from TPT_SESSION_JSON env var.")
             return True
         except Exception as e:

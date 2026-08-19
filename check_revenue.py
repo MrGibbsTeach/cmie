@@ -35,7 +35,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 from dotenv import load_dotenv
 
-from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs
+from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies
 
 load_dotenv()
 
@@ -86,7 +86,7 @@ def _load_cookies(context, path: Path, env_var: str | None = None) -> bool:
     if path.exists():
         try:
             cookies = json.loads(path.read_text(encoding="utf-8"))
-            context.add_cookies(cookies)
+            context.add_cookies(normalize_cookies(cookies))
             log.info(f"Session loaded from {path.name}")
             return True
         except Exception as e:
@@ -99,7 +99,7 @@ def _load_cookies(context, path: Path, env_var: str | None = None) -> bool:
         if raw:
             try:
                 cookies = json.loads(raw)
-                context.add_cookies(cookies)
+                context.add_cookies(normalize_cookies(cookies))
                 log.info(f"Session loaded from {env_var} env var")
                 return True
             except Exception as e:

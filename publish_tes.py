@@ -24,6 +24,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from cmie.publishing.browser import normalize_cookies
+
 load_dotenv()
 
 logging.basicConfig(
@@ -70,7 +72,7 @@ def _load_session(context) -> bool:
         return False
     try:
         cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
-        context.add_cookies(cookies)
+        context.add_cookies(normalize_cookies(cookies))
         log.info("TES session cookies loaded from file.")
         return True
     except Exception as e:

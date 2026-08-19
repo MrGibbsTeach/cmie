@@ -44,13 +44,13 @@ def main() -> None:
         sys.exit(1)
 
     from playwright.sync_api import sync_playwright
-    from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs
+    from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies
     cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True, **cloud_launch_kwargs())
         context = browser.new_context(viewport={"width": 1400, "height": 1000}, **cloud_context_kwargs())
-        context.add_cookies(cookies)
+        context.add_cookies(normalize_cookies(cookies))
         page = context.new_page()
         page.goto(f"https://www.pinterest.com/{PROFILE_USERNAME}/_created/",
                    wait_until="domcontentloaded", timeout=25000)

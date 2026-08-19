@@ -16,6 +16,8 @@ api key.txt
 .tes_session.json
 .pinterest_session.json
 .pinterest_scratch/
+cookies.json
+*_cookies.json
 
 # Generated outputs
 generated_lessons/
