@@ -21,6 +21,53 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-08-19 (later run) — Marketing push blocked: no Pinterest credentials in this container, and no local release artifacts to read wave history from
+
+Task: check each live unit's `07_Marketing/marketing_content.md` for its
+highest existing Pinterest wave number, pick 2-3 units most due for a fresh
+wave, draft 3 new distinct-angle pins each, and post via
+`publish_pinterest.py --unit <id> --wave N`. Did not get past the
+pre-flight checks — nothing was drafted or posted.
+
+**Blocker 1 — no local release artifacts to read.** `releases/` is
+gitignored (build output, never committed) and does not exist at all in
+this fresh clone, same as every prior session's finding for the
+`business_review.py` catalog count. That means no unit's
+`07_Marketing/marketing_content.md` is present locally, so there is no way
+to read prior wave numbers or prior pin angles for any unit. Regenerating
+that file with `generate_marketing_content.py` would only ever produce a
+fresh "wave 1" section (it has no memory of what waves were posted in past
+sessions) — using that to decide "genuinely distinct from prior waves"
+would be guessing, not checking, so I did not generate or post anything on
+that basis.
+
+**Blocker 2 — no Pinterest credentials at all, independent of blocker 1.**
+Checked this container's full environment (`env`) and the repo root: no
+`.pinterest_session.json` (the cookies file `publish_pinterest.py` requires
+and exits immediately without — `COOKIES_FILE.exists()` is the very first
+check in `main()`), and no `PINTEREST_*` variable of any kind. This is
+unlike today's earlier business-review run in this same log, which found
+`GUMROAD_TOKEN`, `TES_EMAIL`/`TES_PASSWORD`, and `TPT_SESSION_JSON` all
+newly present as container env vars — Pinterest has no equivalent, here or
+in any prior logged run I can find. `publish_pinterest.py` has no
+env-var fallback for its cookies (unlike `publish_tpt.py`'s
+`TPT_SESSION_JSON` pattern), so even if one existed it wouldn't currently
+be picked up — not changed here since there's no secret to wire up and
+this is a report-only run.
+
+**Net effect**: even with real Gumroad-thumbnail and unit-config access,
+there is currently no path in this cloud environment from "draft new
+Pinterest pins" to "actually post them" — the credential this specific job
+needs has never been provisioned, in contrast to the other three
+platforms which now have working (if sometimes broken) credentials. Worth
+a human decision: either add a `.pinterest_session.json` /
+`PINTEREST_SESSION_JSON`-style secret to this environment (mirroring how
+`TPT_SESSION_JSON` was set up), or accept that the Marketing Push job
+cannot run unattended until that exists.
+
+No files changed, no pins drafted, nothing posted, nothing deleted. Only
+change this run is this log entry.
+
 ## 2026-08-19 — Scheduled business review + integrity checks: credentials present for the first time, but TPT and TES both fail for new reasons; Gumroad verified clean
 
 Ran the standard routine: `python business_review.py --save`, then the
