@@ -38,6 +38,32 @@ PROJECT_ROOT = Path(__file__).parent
 ARTIFACTS_ROOT = PROJECT_ROOT / "releases" / "artifacts"
 PUBLIC_ROOT = PROJECT_ROOT / "releases" / "public"
 
+# See make_lead_magnet.py's TRACKED_SOURCE_ROOT comment: releases/ is
+# gitignored, so in a fresh clone (e.g. the cloud sandbox) only the subset
+# of units the Resource Drop queue actually needs has been separately
+# committed here, mirroring releases/public's sub-path layout.
+TRACKED_SOURCE_ROOT = PROJECT_ROOT / "data" / "units" / "lead_magnet_source"
+TRACKED_THUMBNAILS = TRACKED_SOURCE_ROOT / "thumbnails"
+
+
+def _unit_root(unit_id: str, version: str) -> Path:
+    local = PUBLIC_ROOT / f"{unit_id}_{version}"
+    if local.exists():
+        return local
+    tracked = TRACKED_SOURCE_ROOT / f"{unit_id}_{version}"
+    if tracked.exists():
+        return tracked
+    raise FileNotFoundError(
+        f"No source folder for {unit_id}_{version} in either {local} or {tracked}"
+    )
+
+
+def _thumbnail_path(unit_id: str) -> Path:
+    local = PROJECT_ROOT / "releases" / "thumbnails" / f"{unit_id}_thumbnail.png"
+    if local.exists():
+        return local
+    return TRACKED_THUMBNAILS / f"{unit_id}_thumbnail.png"
+
 
 def _short_topic(unit_title: str) -> str:
     topic = unit_title.split(":")[0].strip() if ":" in unit_title else unit_title.strip()
@@ -45,7 +71,7 @@ def _short_topic(unit_title: str) -> str:
 
 
 def _read_unit_title(unit_id: str, version: str = "v001") -> str:
-    listing = PUBLIC_ROOT / f"{unit_id}_{version}" / "06_Listings" / "unit" / "tpt_listing.md"
+    listing = _unit_root(unit_id, version) / "06_Listings" / "unit" / "tpt_listing.md"
     first_line = listing.read_text(encoding="utf-8").splitlines()[0]
     title = first_line.lstrip("#").strip()
     # Drop the grade-band suffix in parentheses for the sampler's own title —
@@ -94,11 +120,12 @@ def publish_to_tpt(unit_id: str, version: str = "v001") -> str:
                  "Critical Thinking and Problem Solving"],
     }
 
-    thumbnail_path = PROJECT_ROOT / "releases" / "thumbnails" / f"{unit_id}_thumbnail.png"
+    thumbnail_path = _thumbnail_path(unit_id)
     if not thumbnail_path.exists():
         raise FileNotFoundError(
-            f"No thumbnail found at {thumbnail_path} — TPT requires one "
-            "(auto-generation fails for zip/pptx uploads)."
+            f"No thumbnail found for {unit_id} in releases/thumbnails/ or "
+            f"{TRACKED_THUMBNAILS} — TPT requires one (auto-generation "
+            "fails for zip/pptx uploads)."
         )
 
     unit_folder = PROJECT_ROOT / "releases" / unit_id

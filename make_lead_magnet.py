@@ -29,6 +29,34 @@ PROJECT_ROOT = Path(__file__).parent
 PUBLIC_ROOT = PROJECT_ROOT / "releases" / "public"
 ARTIFACTS_ROOT = PROJECT_ROOT / "releases" / "artifacts"
 
+# releases/ is gitignored (it's a large, working-copy tree with content for
+# every unit ever built) so it doesn't exist in a fresh clone -- e.g. the
+# cloud sandbox the scheduled Routines run in. For the small subset of units
+# the Resource Drop queue actually needs lead magnets from, the specific
+# source files (Lesson 1 pptx + unit listing title) are additionally
+# committed under data/units/lead_magnet_source/, mirroring the same
+# sub-path layout as releases/public/. Local runs on this machine still
+# prefer the full releases/ tree (which has every unit, not just the
+# tracked subset); the tracked copy is the fresh-clone fallback.
+TRACKED_SOURCE_ROOT = PROJECT_ROOT / "data" / "units" / "lead_magnet_source"
+TRACKED_THUMBNAILS = TRACKED_SOURCE_ROOT / "thumbnails"
+
+
+def _unit_root(unit_id: str, version: str) -> Path:
+    """Prefer the full local releases/public tree; fall back to the
+    tracked, git-committed subset for units the queue needs in a fresh
+    clone (see TRACKED_SOURCE_ROOT above)."""
+    local = PUBLIC_ROOT / f"{unit_id}_{version}"
+    if local.exists():
+        return local
+    tracked = TRACKED_SOURCE_ROOT / f"{unit_id}_{version}"
+    if tracked.exists():
+        return tracked
+    raise FileNotFoundError(
+        f"No source folder for {unit_id}_{version} in either {local} or {tracked}"
+    )
+
+
 SW = Inches(13.333)
 SH = Inches(7.5)
 
@@ -45,7 +73,7 @@ STORE_NAME = "FocusLab Digital"
 
 
 def _find_lesson01_pptx(unit_id: str, version: str) -> Path:
-    slides_dir = PUBLIC_ROOT / f"{unit_id}_{version}" / "01_Lesson_Slides"
+    slides_dir = _unit_root(unit_id, version) / "01_Lesson_Slides"
     if not slides_dir.exists():
         raise FileNotFoundError(f"No slides folder for {unit_id}: {slides_dir}")
     matches = sorted(slides_dir.glob("01-*.pptx"))
@@ -55,7 +83,7 @@ def _find_lesson01_pptx(unit_id: str, version: str) -> Path:
 
 
 def _read_unit_title(unit_id: str, version: str) -> str:
-    listing = PUBLIC_ROOT / f"{unit_id}_{version}" / "06_Listings" / "unit" / "tpt_listing.md"
+    listing = _unit_root(unit_id, version) / "06_Listings" / "unit" / "tpt_listing.md"
     if listing.exists():
         first_line = listing.read_text(encoding="utf-8").splitlines()[0]
         return first_line.lstrip("#").strip()
