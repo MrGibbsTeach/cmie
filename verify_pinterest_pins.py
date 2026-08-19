@@ -21,12 +21,13 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent
 COOKIES_FILE = PROJECT_ROOT / ".pinterest_session.json"
+MARKETING_DIR = PROJECT_ROOT / "data" / "units" / "marketing"
 PROFILE_USERNAME = "focuslabdigitalteach"
 EXPECTED_PINS_PER_UNIT = 3
 
 
 def _all_unit_marketing_files() -> list[Path]:
-    return sorted((PROJECT_ROOT / "releases" / "public").glob("*/07_Marketing/marketing_content.md"))
+    return sorted(MARKETING_DIR.glob("*_marketing_content.md"))
 
 
 def _expected_links() -> set[str]:

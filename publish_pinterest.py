@@ -1,7 +1,10 @@
 """
 publish_pinterest.py — posts pins to Pinterest for FocusLab Digital from
-each unit's 07_Marketing/marketing_content.md (3 pins per unit: bundle
-promo, lesson-pack promo, free-sample promo).
+each unit's data/units/marketing/<unit>_marketing_content.md (3 pins per
+unit: bundle promo, lesson-pack promo, free-sample promo). That file lives
+under data/units/ (tracked in git, unlike releases/) specifically so it —
+and its accumulated wave history — survives a fresh clone in the cloud
+sandbox; see generate_marketing_content.py's docstring for why.
 
 No dedicated marketing images exist anywhere in the pipeline yet, so this
 reuses each unit's live Gumroad product thumbnail as the pin image (same
@@ -31,6 +34,7 @@ log = logging.getLogger(__name__)
 PROJECT_ROOT = Path(__file__).parent
 COOKIES_FILE = PROJECT_ROOT / ".pinterest_session.json"
 SCRATCH_DIR = PROJECT_ROOT / ".pinterest_scratch"
+MARKETING_DIR = PROJECT_ROOT / "data" / "units" / "marketing"
 
 BOARD_PAID = "Digital Technologies Lessons"
 BOARD_FREE = "Free Teacher Resources"
@@ -49,16 +53,16 @@ def _load_env() -> dict:
 
 def _all_unit_ids() -> list[str]:
     ids = []
-    for md_path in sorted((PROJECT_ROOT / "releases" / "public").glob("*/07_Marketing/marketing_content.md")):
-        ids.append(md_path.parent.parent.name.replace("_v001", ""))
+    for md_path in sorted(MARKETING_DIR.glob("*_marketing_content.md")):
+        ids.append(md_path.stem.removesuffix("_marketing_content"))
     return ids
 
 
-def _unit_release_dir(unit_id: str) -> Path:
-    matches = sorted((PROJECT_ROOT / "releases" / "public").glob(f"{unit_id}_v*"))
-    if not matches:
-        raise FileNotFoundError(f"No release directory found for {unit_id}")
-    return matches[-1]
+def _unit_marketing_file(unit_id: str) -> Path:
+    md_path = MARKETING_DIR / f"{unit_id}_marketing_content.md"
+    if not md_path.exists():
+        raise FileNotFoundError(f"No marketing content found for {unit_id}: {md_path}")
+    return md_path
 
 
 def parse_marketing_pins(md_path: Path, wave: int = 1) -> list[dict]:
@@ -173,8 +177,7 @@ def create_pin(page, image_path: Path, title: str, description: str, link: str,
 
 
 def publish_unit(page, unit_id: str, products: list[dict], dry_run: bool, wave: int = 1) -> list[dict]:
-    release_dir = _unit_release_dir(unit_id)
-    md_path = release_dir / "07_Marketing" / "marketing_content.md"
+    md_path = _unit_marketing_file(unit_id)
     pins = parse_marketing_pins(md_path, wave=wave)
 
     keyword = _unit_keyword(unit_id)

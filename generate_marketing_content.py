@@ -9,9 +9,16 @@ Uses the same topic-keyword extraction as the listing generator so the
 tone/wording stays consistent with what's already on the live listings.
 
 Output is a single markdown file per unit under
-releases/public/<unit>_v001/07_Marketing/marketing_content.md -- text only,
-nothing is posted anywhere. Posting is a human decision, same as
-publishing.
+data/units/marketing/<unit>_marketing_content.md -- text only, nothing is
+posted anywhere. Posting is a human decision, same as publishing.
+
+This lives under data/units/ (tracked in git) rather than releases/
+(gitignored) deliberately: releases/ never exists in a fresh clone (e.g.
+the cloud sandbox scheduled Routines run in), but this file accumulates
+real wave-by-wave history (see "## Pinterest pins -- wave N" headings)
+that publish_pinterest.py depends on to avoid repeating itself. Losing
+that history by regenerating fresh in the cloud every run would silently
+reset every unit back to "wave 1" forever.
 
 Usage:
     python generate_marketing_content.py --unit year7_web_design_unit1
@@ -25,7 +32,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent
 DATA_UNITS = PROJECT_ROOT / "data" / "units"
-RELEASES_PUBLIC = PROJECT_ROOT / "releases" / "public"
+MARKETING_DIR = DATA_UNITS / "marketing"
 BUNDLE_URLS_FILE = DATA_UNITS / "bundle_urls.json"
 
 STORE_NAME = "FocusLab Digital"
@@ -185,9 +192,8 @@ def generate_for_unit(unit_id: str, version: str = "v001") -> Path:
     lines.append("")
     lines.append(follower_note)
 
-    out_dir = RELEASES_PUBLIC / f"{unit_id}_{version}" / "07_Marketing"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / "marketing_content.md"
+    MARKETING_DIR.mkdir(parents=True, exist_ok=True)
+    out_path = MARKETING_DIR / f"{unit_id}_marketing_content.md"
     out_path.write_text("\n".join(lines), encoding="utf-8")
     return out_path
 

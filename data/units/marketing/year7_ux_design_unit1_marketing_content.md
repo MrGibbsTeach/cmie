@@ -1,0 +1,92 @@
+# Marketing content — UX & Interface Design: Unit 1 – Designing Apps People Love
+
+Bundle URL: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+## Pinterest pins (make 3 separate pins, one image each — reuse the thumbnail or a slide screenshot)
+
+### Pin 1
+**Title** (68 chars): UX & Interface Design Unit for Year 7 — No-Prep Digital Technologies
+
+**Description**: Teach ux & interface design with zero prep! A complete 7-lesson unit including editable slides, student workbook, assessment + rubric, and unit roadmap. Perfect for Year 7 / Grade 7 / Middle School / KS3 Digital Technologies / Computer Science teachers. #teacherspayteachers #digitaltechnologies #middleschoolcs #uxinterfacedesign #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+### Pin 2
+**Title** (62 chars): 7 Ready-to-Teach UX & Interface Design Lessons — Editable PPTX
+
+**Description**: Stop building ux & interface design lessons from scratch. This bundle has everything: 7 fully planned lessons, a real-world applied project, and a full assessment pack. Grab the free sample lesson first to see the quality before you buy the bundle. #tptseller #computersciencelessons #digitaltech
+
+**Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+### Pin 3
+**Title** (61 chars): FREE UX & Interface Design Lesson Sample (Try Before You Buy)
+
+**Description**: Try Lesson 1 of our UX & Interface Design unit completely free — a full, ready-to-teach PowerPoint deck, no prep required. If it's useful, the complete 7-lesson unit (with workbook, roadmap, and assessment pack) is linked in the resource. #freeteacherresource #tpt #digitaltechnologies
+
+**Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+## Social captions (Instagram / Facebook page / Twitter-X)
+
+1. New resource alert 📚 A complete, no-prep UX & Interface Design unit is live — full lesson decks, student workbook, and an assessment pack ready to go. Link in bio / https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+2. Teaching ux & interface design this term? Save yourself the lesson-planning weekend — grab the free Lesson 1 sample and see if it's a fit for your class. https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+3. Just published: UX & Interface Design 🖥️ — FocusLab Digital on TPT. Built for real classrooms, no fluff. https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+## Facebook teacher-group post (longer, conversational — check each group's self-promo rules first)
+
+Hi all! Sharing a resource in case it's useful for anyone teaching UX & Interface Design this term.
+
+I put together a complete 7-lesson unit — "UX & Interface Design: Unit 1 – Designing Apps People Love" — with fully editable PowerPoint decks, a student workbook, unit roadmap, and a summative assessment pack with rubric. No prep needed, just teach.
+
+Lessons cover:
+  1. Good Design, Bad Design: What Is UX?
+  2. Knowing Your User: Problems and User Stories
+  3. Design Criteria: How Will We Know It's Good?
+  4. Interface Building Blocks
+  5. Wireframing and Paper Prototyping
+  6. Accessibility and Inclusive Design
+  7. Designing an App Interface for a Real Scenario
+
+There's a free sample of Lesson 1 if you want to check the quality before committing to the full bundle: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+Would love any feedback if you try it out — genuinely happy to tweak things based on what actually works in your classroom. Thanks for reading!
+
+## TPT "Note to Followers" draft (post via Inbox > Sent on TPT — free, reaches existing followers)
+
+Subject: New unit just published — UX & Interface Design
+
+Hi everyone,
+
+Just published a new complete unit: "UX & Interface Design: Unit 1 – Designing Apps People Love". It includes 7 fully planned lessons, editable slide decks, a student workbook, unit roadmap, and a full assessment pack with rubric.
+
+There's also a free Lesson 1 sample if you'd like to try before buying the bundle.
+
+Check it out here: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+Thanks for following the store — more units on the way!
+
+## Pinterest pins — wave 2 (queued, not yet posted)
+
+New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins. Review before posting; not yet live.
+
+### Pin 1 (standout lesson — paper prototyping)
+**Title** (63 chars): Paper Prototyping: The UX Lesson Students Love (Ready to Teach)
+
+**Description**: Hands-on and genuinely fun — students sketch and test wireframes on paper before touching a screen. Ready-to-teach lesson from a complete 7-lesson UX & Interface Design unit ending in a real app-interface design project. #uxdesign #digitaltechnologies #teacherspayteachers #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+### Pin 2 (value stack — what's included)
+**Title** (60 chars): UX Design Bundle: 7 Lessons + Workbook + Assessment + Rubric
+
+**Description**: A complete UX & Interface Design unit in one download: 7 lesson decks from 'what is UX?' through wireframing and accessibility, a student workbook, unit roadmap, and full assessment pack with rubric. #uxdesign #digitaltechnologies #appdesign
+
+**Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+### Pin 3 (pain point)
+**Title** (50 chars): Teach UX Design Without Building the Unit Yourself
+
+**Description**: User stories, design criteria, wireframing, accessibility — a real UX design progression, already planned. This 7-lesson unit has the slides, workbook, and assessment pack ready to go. #uxdesign #teacherspayteachers #digitaltech
+
+**Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
