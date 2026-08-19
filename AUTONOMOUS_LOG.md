@@ -68,6 +68,98 @@ cannot run unattended until that exists.
 No files changed, no pins drafted, nothing posted, nothing deleted. Only
 change this run is this log entry.
 
+## 2026-08-19 (second run) — Scheduled business review + integrity checks: cookie-normalization fix landed, TPT now fully working (revenue + all 11 units verified clean); TES still blocked; one unit's product count looks anomalous
+
+Ran the standard routine: `python business_review.py --save`, then the
+three post-publish integrity checkers (`verify_tpt_listings.py` per known
+live unit, `verify_gumroad_listings.py`, `verify_tes_listings.py`).
+Report-only run — nothing found below was touched, edited, or deleted.
+
+**Environment note**: same recurring pattern as every prior fresh-clone
+session — no Python dependencies pre-installed (`dotenv`, `playwright`,
+`browser_cookie3`, etc. all missing) — installed via `requirements.txt`
+plus `playwright==1.56.0` pinned over the pip-latest 1.62.0 (which again
+does not match this container's pre-installed Chromium build 1194), same
+workaround as every prior run. Ephemeral to this container only —
+`requirements.txt` still doesn't pin the playwright version.
+
+**This is the second business-review run today.** The `Normalize raw
+Cookie-Editor exports before Playwright add_cookies()` commit that landed
+between the first run (11:03 UTC) and this one fixed the exact `sameSite`
+parse error that broke `TPT_SESSION_JSON` in that run — TPT authentication
+now works end-to-end here, both for revenue and for the integrity
+checkers.
+
+**Revenue snapshot** (see `BUSINESS_REVIEW.md`, timestamp 2026-08-19 11:14
+UTC):
+- **TPT**: USD 7.91 net, 2 sale(s) — real figures, first successful TPT
+  revenue check in several runs.
+- **Gumroad**: AUD 0 net, 0 sale(s) — via `GUMROAD_TOKEN` API, unchanged.
+- **TES**: ERROR — still "TES login failed. Check TES_EMAIL/TES_PASSWORD in
+  .env, or the login form's selectors may have changed -- check
+  releases/debug_tes_login_error.png." `TES_EMAIL`/`TES_PASSWORD` are set
+  in the environment, so this remains a genuine login failure (wrong/stale
+  credentials, a CAPTCHA, or a changed selector), unchanged from the first
+  run today. The referenced debug screenshot is still never written on
+  this failure path (same dead troubleshooting pointer noted in the first
+  run's entry — tool bug, not touched, report only). No `releases/`
+  directory exists in this fresh clone at all.
+
+**Catalog size**: `business_review.py` again reports **0 live units** —
+same known artifact as every prior fresh-clone session (derives catalog
+size from the gitignored `releases/public/*_v001/` build-output
+directory, absent here). Real catalog (from `data/units/*.json`, excluding
+the AI-series and bundle config files) is the same 11 units used for the
+integrity checks below: year7_algorithms_unit1, year7_cybersecurity_unit1,
+year7_data_representation_unit1, year7_digital_systems_unit1,
+year7_game_design_unit1, year7_networks_hardware_unit1,
+year7_orientation_unit1, year7_python_programming_unit1,
+year7_spreadsheets_unit1, year7_ux_design_unit1, year7_web_design_unit1.
+
+**Integrity checkers**:
+- `verify_tpt_listings.py --unit <unit_id>` — ran successfully against all
+  11 live units (session now valid, per the fix above). 10 of 11 units
+  returned a product count consistent with prior runs (5-11 products
+  each — bundle, assessment pack, and individual lessons) and every single
+  listing on every unit came back `[OK]` — no empty/near-empty
+  descriptions, no unrendered markdown, no stray HTML, no title/product
+  mismatches.
+  - **Flagging for review, not touched**: `year7_networks_hardware_unit1`
+    returned only **1 product** this run — `Networks & Hardware: Unit 1 –
+    Building and Securing a Network — Lesson 1 FREE...`
+    (https://www.teacherspayteachers.com/Product/Networks-Hardware-Unit-1-Building-and-Securing-a-Network-Lesson-1-FREE-17033469),
+    itself `[OK]` with no corruption signals. Per `PROGRESS.md`'s build
+    history this unit should have ~9 TPT products (7 lessons + assessment
+    pack + bundle), and every other unit checked this run returned 5-11.
+    This unit already has a documented history of a live-listing
+    corruption incident (2026-07-19, licence step edit turned a paid
+    listing FREE — see the boundary note at the top of this log). Whether
+    the other ~8 products are deactivated, retitled (so the keyword search
+    no longer matches them), or something else is unknown from this
+    read-only check alone — flagging for a human look, not investigated
+    further and nothing changed.
+- `verify_gumroad_listings.py` — **ran clean.** Checked 10 product(s)
+  matching "Unit 1" (of 10 total in the store): all 10 `[OK] (published)`,
+  no corruption signals. Same 10 URLs as prior runs
+  (`focuslabdigital.gumroad.com/l/` + `yyrcw`, `psbzqv`, `hmntzx`, `caqcw`,
+  `dvjrck`, `yqnok`, `ivmbkk`, `llfnfx`, `kezhjt`, `bpvevc`).
+- `verify_tes_listings.py` — could not run; failed at the same TES login
+  step as the revenue check above (`TES_EMAIL`/`TES_PASSWORD` are set but
+  login still fails). No TES listings checked this run.
+
+**Open items** (unchanged from `BUSINESS_REVIEW.md`'s maintained list,
+none actioned): TES Unit 1 AI-series presenter-placeholder cosmetic bug,
+TES duplicate resource pair (13432831 / 13432796), TES resource 13445828
+permanently broken, off-brand Gumroad products still on the storefront,
+shelved AI-series Units 3-8 still live on TES. Plus the new
+`year7_networks_hardware_unit1` product-count anomaly flagged above.
+
+No code changes this run beyond the environment-level dependency installs
+(not committed — ephemeral to this container) and the `BUSINESS_REVIEW.md`
+regeneration.
+
+---
+
 ## 2026-08-19 — Scheduled business review + integrity checks: credentials present for the first time, but TPT and TES both fail for new reasons; Gumroad verified clean
 
 Ran the standard routine: `python business_review.py --save`, then the
