@@ -1,14 +1,15 @@
-# Business Review — 2026-08-17 01:10 UTC
+# Business Review — 2026-08-19 11:03 UTC
 
 ## Revenue
 - **TPT**: ERROR — TPT session expired (.tpt_session.json no longer valid). Refresh it manually once: python publish_tpt.py --save-session (automated form login is disabled here — it has triggered TPT bot detection and an account lock before).
-- **Gumroad**: ERROR — Not logged in and no Gumroad credentials in .env.
-- **TES**: ERROR — No TES_EMAIL/TES_PASSWORD in .env and no saved session. Either set those in .env, or run: python -c "from cmie.publishing.browser import setup; setup()" to log in manually once.
-- **Combined (not currency-converted)**: 
+- **Gumroad**: AUD 0 net, 0 sale(s)
+- **TES**: ERROR — TES login failed. Check TES_EMAIL/TES_PASSWORD in .env, or the login form's selectors may have changed -- check releases/debug_tes_login_error.png.
+- **Combined (not currency-converted)**: AUD0
 
 ## Catalog — 0 live unit(s)
 
 ## Recent activity (last 8 commits)
+- 2026-08-17 Log scheduled business review + integrity checks: all platforms blocked again, no credentials/sessions in this container
 - 2026-08-10 Log scheduled business review + integrity checks: all platforms blocked again, no credentials/sessions in this container
 - 2026-08-03 Log scheduled business review + integrity checks: all platforms blocked again, no credentials/sessions in this container
 - 2026-07-31 Log scheduled business review + integrity checks: all platforms blocked, no credentials/sessions in this container
@@ -16,7 +17,6 @@
 - 2026-07-31 Fix TPT false-negative integrity check and TES cookie-banner timeout; add TPT_SESSION_JSON env fallback
 - 2026-07-31 Log scheduled business review: TES verified working again, Gumroad clean, TPT still blocked by missing session
 - 2026-07-31 Force channel="chromium" in cloud_launch_kwargs() -- fixes silent headless_shell substitution
-- 2026-07-31 Log scheduled business review: Gumroad clean, TPT/TES blocked by browser TLS reset
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).

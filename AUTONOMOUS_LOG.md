@@ -21,6 +21,136 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-08-19 — Scheduled business review + integrity checks: credentials present for the first time, but TPT and TES both fail for new reasons; Gumroad verified clean
+
+Ran the standard routine: `python business_review.py --save`, then the
+three post-publish integrity checkers (`verify_tpt_listings.py` per known
+live unit, `verify_gumroad_listings.py`, `verify_tes_listings.py`).
+Report-only run — nothing found below was touched, edited, or deleted.
+
+**Environment note**: same recurring pattern as every prior fresh-clone
+session — no Python dependencies pre-installed (`dotenv`, `playwright`,
+`browser_cookie3` all missing) — installed `python-dotenv`, `playwright`,
+and `browser_cookie3` for this run only (not committed, ephemeral to this
+container; `requirements.txt` still doesn't pin these). One new wrinkle
+this run: the pip-latest `playwright` (1.62.0) does not match the
+pre-installed Chromium binary in this container (build 1194 on disk vs.
+build 1234 expected) and fails with "Executable doesn't exist" — pinned
+`playwright==1.56.0` (the version whose bundled `browsers.json` targets
+build 1194) to work around it, ephemeral to this container only.
+
+**Unlike every prior logged run, this container DOES have credentials**:
+`GUMROAD_TOKEN`, `TES_EMAIL`/`TES_PASSWORD`, and `TPT_SESSION_JSON` are all
+set in the environment (no `.env` file, but the env vars are populated
+directly). This is new — worth flagging since it means the recurring
+"no credentials in this container" blocker from every prior entry
+(2026-07-31 through 2026-08-17) is no longer the root cause of the TPT/TES
+failures below; there are now two distinct, more specific problems.
+
+**Revenue snapshot** (see `BUSINESS_REVIEW.md`, timestamp 2026-08-19 11:03
+UTC):
+- **TPT**: ERROR — "TPT session expired (.tpt_session.json no longer
+  valid)." Root cause is more specific than "no session" this time: the
+  `TPT_SESSION_JSON` env var IS set, but fails to parse before the
+  fallback: `Could not parse TPT_SESSION_JSON: BrowserContext.add_cookies:
+  cookies[0].sameSite: expected one of (Strict|Lax|None)` — the first
+  cookie's `sameSite` value in that secret is not one of Playwright's
+  accepted casings (Playwright requires exactly `Strict`/`Lax`/`None`,
+  title-cased). The Chrome-cookie fallback also isn't usable (no real
+  Chrome profile / `DBUS_SESSION_BUS_ADDRESS` in this container).
+- **Gumroad**: AUD 0 net, 0 sale(s) — real check via `GUMROAD_TOKEN`
+  against the Gumroad API (not a credentials error this time).
+- **TES**: ERROR — "TES login failed. Check TES_EMAIL/TES_PASSWORD in
+  .env, or the login form's selectors may have changed -- check
+  releases/debug_tes_login_error.png." `TES_EMAIL`/`TES_PASSWORD` ARE set,
+  so this is a genuine login failure (wrong/stale credentials, a CAPTCHA,
+  or a changed selector), not a missing-credentials case. Note: the
+  referenced debug screenshot is never actually written on this failure
+  path — `publish_tes.py`'s `_login()` raises `RuntimeError` directly with
+  no `_take_debug_screenshot()` call before it, so the error message's own
+  troubleshooting pointer is currently dead; nothing to check at that
+  path. (Tool bug, not touched — report only.)
+- **No revenue figures obtained this run for TPT or TES.** Last confirmed
+  full snapshot (all 3 platforms) remains 2026-07-19: TPT $13.45 USD / 1
+  sale, Gumroad A$0 / 0 sales, TES £0.30 GBP / 1 sale.
+
+**Catalog size**: `business_review.py` again reports **0 live units** —
+same known artifact as every prior fresh-clone session (derives catalog
+size from the gitignored `releases/public/*_v001/` build-output
+directory, absent in a fresh clone). Real catalog (from `data/units/*.json`,
+excluding the AI-series and bundle config files) is still the same 11
+units used for the integrity checks below: year7_algorithms_unit1,
+year7_cybersecurity_unit1, year7_data_representation_unit1,
+year7_digital_systems_unit1, year7_game_design_unit1,
+year7_networks_hardware_unit1, year7_orientation_unit1,
+year7_python_programming_unit1, year7_spreadsheets_unit1,
+year7_ux_design_unit1, year7_web_design_unit1.
+
+**Integrity checkers**:
+- `verify_tpt_listings.py --unit <unit_id>` — ran against all 11 known
+  live units above. Every single one failed identically with the same
+  `TPT_SESSION_JSON` sameSite parse error described above (plus
+  `browser_cookie3`'s Chrome-cookie fallback failing separately). No
+  listings were actually checked this run — same practical outcome as
+  prior runs, different root cause.
+- `verify_gumroad_listings.py` — **ran successfully, all clean.** Checked
+  10 product(s) matching "Unit 1" (of 10 total in the store): all 10
+  showed `[OK] (published)` with no corruption signals (empty
+  description, unrendered markdown, stray HTML, title/product mismatch).
+  Listed products/URLs: Digital Technologies Orientation Unit 1
+  (https://focuslabdigital.gumroad.com/l/yyrcw), Game Design Unit 1
+  (https://focuslabdigital.gumroad.com/l/psbzqv), Introduction to
+  Programming Unit 1 (https://focuslabdigital.gumroad.com/l/hmntzx),
+  Digital Systems Unit 1 (https://focuslabdigital.gumroad.com/l/caqcw),
+  Websites & Web Design Unit 1
+  (https://focuslabdigital.gumroad.com/l/dvjrck), Spreadsheets & Data
+  Analysis Unit 1 (https://focuslabdigital.gumroad.com/l/yqnok), UX &
+  Interface Design Unit 1 (https://focuslabdigital.gumroad.com/l/ivmbkk),
+  Cyber Security & Digital Footprints Unit 1
+  (https://focuslabdigital.gumroad.com/l/llfnfx), Data Representation
+  Unit 1 (https://focuslabdigital.gumroad.com/l/kezhjt), Algorithms &
+  Programming Logic Unit 1 (https://focuslabdigital.gumroad.com/l/bpvevc).
+  This is the first run in this log with a genuine, credentialed Gumroad
+  listing check (not just a revenue-API check) — all clean.
+- `verify_tes_listings.py` — **could not run**: same `RuntimeError: TES
+  login failed...` as the business-review TES check above. No listings
+  were actually checked this run.
+
+**Nothing was verified this run for TPT or TES.** No confidence statement
+can be made about TPT or TES listing integrity today. Gumroad listings are
+newly confirmed clean as of this run. The last clean TES check remains the
+2026-07-31 (third run) entry below.
+
+**New open items from this run** (in addition to the carried-forward list
+in `BUSINESS_REVIEW.md`, unchanged below):
+- `TPT_SESSION_JSON` (as currently set in this container's environment)
+  has a malformed cookie — `sameSite` value isn't `Strict`/`Lax`/`None` —
+  so it fails to parse and TPT falls back to "not logged in" even though a
+  session secret is present. Needs the secret regenerated/reformatted, or
+  `publish_tpt.py --save-session` re-run with a real browser.
+- TES login is failing with real `TES_EMAIL`/`TES_PASSWORD` credentials
+  present (not a missing-credentials case) — cause not diagnosed further
+  (report-only; no fix or retry with different logic attempted). Worth a
+  human checking those credentials are current and TES hasn't added a
+  CAPTCHA/2FA step.
+- `publish_tes.py`'s login-failure error message references a debug
+  screenshot (`releases/debug_tes_login_error.png`) that is never actually
+  written on that code path — the message is misleading for anyone
+  debugging this. Not fixed (report only).
+
+**Open items / decisions carried forward unresolved** (see
+`BUSINESS_REVIEW.md` for the full current list): TES presenter-placeholder
+cosmetic bug on Unit 1 (AI series), TES duplicate resource pair
+(13432831 / 13432796), TES resource 13445828 permanently broken, off-brand
+Gumroad products still on the storefront, shelved AI-series Units 3-8
+still live on TES. None of these were touched.
+
+No code changes this run beyond the environment-level dependency installs
+(not committed — ephemeral to this container) and the `BUSINESS_REVIEW.md`
+regeneration.
+
+---
+
 ## 2026-08-17 — Scheduled business review + integrity checks: all three platforms blocked again, no credentials or sessions available in this container
 
 Ran the standard routine: `python business_review.py --save`, then the
