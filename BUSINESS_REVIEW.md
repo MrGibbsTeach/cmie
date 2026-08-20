@@ -1,22 +1,22 @@
-# Business Review — 2026-08-19 11:24 UTC
+# Business Review — 2026-08-20 05:41 UTC
 
 ## Revenue
-- **TPT**: USD 7.91 net, 2 sale(s)
+- **TPT**: USD 8.98 net, 3 sale(s)
 - **Gumroad**: AUD 0 net, 0 sale(s)
-- **TES**: ERROR — TES login failed. Check TES_EMAIL/TES_PASSWORD in .env, or the login form's selectors may have changed -- check releases/debug_tes_login_error.png.
-- **Combined (not currency-converted)**: USD7.91 + AUD0
+- **TES**: GBP 0.3 net, 1 sale(s)
+- **Combined (not currency-converted)**: USD8.98 + AUD0 + GBP0.3
 
 ## Catalog — 0 live unit(s)
 
 ## Recent activity (last 8 commits)
+- 2026-08-20 Fix verify_tpt_listings.py: handle My-Products dashboard pagination
+- 2026-08-20 Commit lead-magnet source content for Routine 4's next queue units (fresh-clone fallback)
+- 2026-08-20 Move marketing content out of gitignored releases/ so Routine 3 works in fresh clones
+- 2026-08-19 Log scheduled business review + integrity checks: TPT fully working again (cookie fix confirmed), TES still blocked, flag networks_hardware_unit1 product-count anomaly
 - 2026-08-19 Log Marketing Push blocker: no Pinterest credentials or local release artifacts in this container
 - 2026-08-19 Normalize raw Cookie-Editor exports before Playwright add_cookies()
 - 2026-08-19 Log scheduled business review + integrity checks: credentials present for the first time, TPT/TES fail on new specific errors, Gumroad verified clean
 - 2026-08-17 Log scheduled business review + integrity checks: all platforms blocked again, no credentials/sessions in this container
-- 2026-08-10 Log scheduled business review + integrity checks: all platforms blocked again, no credentials/sessions in this container
-- 2026-08-03 Log scheduled business review + integrity checks: all platforms blocked again, no credentials/sessions in this container
-- 2026-07-31 Log scheduled business review + integrity checks: all platforms blocked, no credentials/sessions in this container
-- 2026-07-31 Log scheduled business review + integrity checks: Gumroad and TES clean, TPT still blocked by missing session
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).

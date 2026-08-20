@@ -21,6 +21,88 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-08-20 — Scheduled business review + integrity checks: all three platforms fully working, all catalogs clean, prior networks_hardware_unit1 anomaly resolved
+
+Ran the standard routine: `python business_review.py --save`, then the
+three post-publish integrity checkers (`verify_tpt_listings.py` per known
+live unit, `verify_gumroad_listings.py`, `verify_tes_listings.py`).
+Report-only run — nothing found below was touched, edited, or deleted.
+
+**Environment note**: same recurring pattern as every prior fresh-clone
+session — no Python dependencies pre-installed. Installed
+`python-dotenv`, `browser_cookie3`, `openai`, `python-pptx`,
+`python-docx`, `yt-dlp` from `requirements.txt`, plus `playwright==1.56.0`
+pinned over pip-latest to match this container's pre-installed Chromium
+build 1194 at `/opt/pw-browsers` — same workaround as every prior run.
+Ephemeral to this container only; `requirements.txt` still doesn't pin
+the playwright version.
+
+**Revenue snapshot** (see `BUSINESS_REVIEW.md`, timestamp 2026-08-20 05:41
+UTC):
+- **TPT**: USD 8.98 net, 3 sale(s) — real figures via `TPT_SESSION_JSON`
+  env var, login/session worked cleanly this run.
+- **Gumroad**: AUD 0 net, 0 sale(s) — via `GUMROAD_TOKEN` API.
+- **TES**: GBP 0.30 net, 1 sale(s) — real figures; `TES_EMAIL`/
+  `TES_PASSWORD` form login succeeded and saved a fresh session
+  (`.tes_session.json`), unlike several recent runs where TES login
+  failed outright.
+- **All three platforms returned genuine, credentialed figures this
+  run** — first time in a while all three have worked in the same run.
+
+**Catalog size**: `business_review.py` again reports **0 live unit(s)** —
+same known artifact as every prior fresh-clone session (derives catalog
+size from the gitignored `releases/public/*_v001/` build-output
+directory, absent here). Real catalog (from `data/units/*.json`, excluding
+the AI-series and bundle config files) is the same 11 units as every
+recent run: year7_algorithms_unit1, year7_cybersecurity_unit1,
+year7_data_representation_unit1, year7_digital_systems_unit1,
+year7_game_design_unit1, year7_networks_hardware_unit1,
+year7_orientation_unit1, year7_python_programming_unit1,
+year7_spreadsheets_unit1, year7_ux_design_unit1, year7_web_design_unit1.
+
+**Integrity checkers**:
+- `verify_tpt_listings.py --unit <unit_id>` — ran against all 11 live
+  units, session valid throughout. **All 11 units came back fully clean**,
+  every listing `[OK]` — no empty/near-empty descriptions, no unrendered
+  markdown, no stray HTML, no title/product mismatches.
+  - Notably, **`year7_networks_hardware_unit1` is back to 9 products**
+    (bundle, assessment pack, 7 lessons), all `[OK]`. The prior run
+    (2026-08-19 later run) flagged this unit as returning only 1 product
+    against an expected ~9 — that anomaly did not reproduce this run;
+    whatever caused it (a transient dashboard search/pagination glitch,
+    most likely, given the same-day commit "Fix verify_tpt_listings.py:
+    handle My-Products dashboard pagination") appears resolved. Logging
+    for the record, not treating as fully explained from a read-only
+    check alone.
+- `verify_gumroad_listings.py` — **ran clean.** Checked 10 product(s)
+  matching "Unit 1" (of 10 total in the store): all 10 `[OK] (published)`,
+  no corruption signals. Same 10 URLs as every prior run
+  (`focuslabdigital.gumroad.com/l/` + `yyrcw`, `psbzqv`, `hmntzx`,
+  `caqcw`, `dvjrck`, `yqnok`, `ivmbkk`, `llfnfx`, `kezhjt`, `bpvevc`).
+- `verify_tes_listings.py` — **ran clean.** Logged in via saved TES
+  session cookies. Found 30 resource(s) total on the dashboard; 21
+  matched "Unit 1" (the other 9 are the shelved AI-series Unit 1
+  resources, out of this checker's filter scope, consistent with the
+  documented "9 resources, Unit 1 only" open item below). All 21 checked
+  `[OK]` — no corruption signals. This checker does not cover the known
+  TES duplicate pair or the permanently-broken resource noted below,
+  since neither matches "Unit 1" text filtering; not re-verified this
+  run.
+
+**Open items** (unchanged from `BUSINESS_REVIEW.md`'s maintained list,
+none actioned; the networks_hardware_unit1 anomaly above appears resolved
+but is not being removed from tracking without another clean run to
+confirm): TES Unit 1 AI-series presenter-placeholder cosmetic bug, TES
+duplicate resource pair (13432831 / 13432796), TES resource 13445828
+permanently broken, off-brand Gumroad products still on the storefront,
+shelved AI-series Units 3-8 still live on TES.
+
+No code changes this run beyond the environment-level dependency installs
+(not committed — ephemeral to this container) and the `BUSINESS_REVIEW.md`
+regeneration.
+
+---
+
 ## 2026-08-19 (later run) — Marketing push blocked: no Pinterest credentials in this container, and no local release artifacts to read wave history from
 
 Task: check each live unit's `07_Marketing/marketing_content.md` for its
