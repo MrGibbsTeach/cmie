@@ -21,6 +21,86 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-08-20 — Resource Drop: Lesson 5 lead magnet for year7_algorithms_unit1 (TES draft live, TPT blocked by session expiry)
+
+Ran the Resource Drop queue job (`data/units/RESOURCE_DROP_QUEUE.md`). First
+unchecked item: a Lesson 5 lead magnet for `year7_algorithms_unit1`
+("Debugging: Finding and Fixing Logic Errors").
+
+**Environment setup**: same recurring pattern as every prior fresh-clone
+session — installed `python-dotenv`, `browser_cookie3`, `openai`,
+`python-pptx`, `python-docx`, `yt-dlp` from `requirements.txt`, plus
+`playwright==1.56.0` pinned over pip-latest to match this container's
+pre-installed Chromium build 1194 at `/opt/pw-browsers`. Also had to wrap
+both Playwright browser launches in `xvfb-run -a` — the headed Chrome
+launch failed outright with "Missing X server or $DISPLAY" otherwise. Both
+are ephemeral shell/container setup, not code changes.
+
+**Build**: `python make_lead_magnet.py --unit year7_algorithms_unit1
+--lesson 5 --bundle-url <TPT unit URL from data/units/bundle_urls.json>`
+ran cleanly, using the tracked `data/units/lead_magnet_source/` fallback
+(no local `releases/public/` in this fresh clone). Output zip
+`year7_algorithms_unit1_lesson05_FREE_v001.zip` — verified with
+`zipfile.testzip()` (no corrupt entries) and a manual listing check (single
+`.pptx` entry, 57,859 bytes, as expected).
+
+**Bug found + fixed (small, targeted)**: `publish_lead_magnets.py --platform
+tes` failed every attempt at the Title-field click on TES's upload form —
+`onetrust-pc-dark-filter` (the cookie-consent banner) was intercepting
+pointer events, timing out after 30s. This is the exact same issue already
+documented and worked around in `verify_tes_listings.py`'s
+`find_resource_ids()` for the dashboard's "Show all" button, just not
+applied to the upload flow in `publish_tes.py`. Added the same
+`#onetrust-accept-btn-handler` dismissal right after
+`_navigate_to_upload()` reaches the upload form, before any field
+interaction. This is a narrow robustness fix mirroring an existing pattern
+in the same codebase, not a strategic or pricing change. Commit will include
+this fix to `publish_tes.py`.
+
+**TES result**: succeeded after the fix. `python publish_lead_magnets.py
+--unit year7_algorithms_unit1 --lesson 5 --platform tes` filled and saved
+resource **13545171** as a draft (title, description, zip upload,
+categories, and "Share for free" licence all confirmed via screenshot at
+`releases/debug_tes_year7_algorithms_unit1_lead_magnet_l05_step5_preview.png`).
+Per this project's standing TES rule, it stops at draft — a human still
+needs to tick the copyright box and click "Publish now" on the TES Author
+Dashboard. Separately re-checked the Author Dashboard's "My uploads" list
+(sorted by date): only the one new draft appears, correctly titled — no
+stray/empty duplicate drafts left behind from the earlier failed attempts
+(those failed before any TES field was filled or submitted).
+
+**TPT result**: blocked, not attempted. `TPT_EMAIL`/`TPT_PASSWORD` are not
+set in this environment (only `TPT_SESSION_JSON`), and
+`cmie/publishing/tpt.py`'s `upload_unit()` hard-requires both before it will
+even open a browser — this looks like a deliberate safety guard, not a bug,
+since the alternative (falling through to real form-login with placeholder
+credentials) is exactly the path that caused a documented bot-detection /
+account-lock incident on this store before. Confirmed the session really is
+stale rather than just untested: (1) the cookies in `TPT_SESSION_JSON` carry
+`expirationDate` timestamps of ~2026-08-20 10:20-12:20 UTC, and this run
+started at 10:47 UTC — already past; (2) a **read-only** check,
+`python verify_tpt_listings.py --unit year7_algorithms_unit1`, independently
+confirmed "not logged in to TPT (no valid session found)". Notably, this
+same day's earlier business-review run (see the entry directly below,
+timestamp 05:41 UTC) had a working TPT session — so this is session-freshness
+timing (cookies good for a few hours), not a permanently broken pipeline. Did
+not attempt any workaround. **Needs a human** to run `python publish_tpt.py
+--save-session` with a real browser (or otherwise refresh
+`TPT_SESSION_JSON`), then run `python publish_lead_magnets.py --unit
+year7_algorithms_unit1 --lesson 5 --platform tpt` to finish the TPT half.
+
+**Queue update**: marked `year7_algorithms_unit1 — Lesson 5` `[x]` in
+`data/units/RESOURCE_DROP_QUEUE.md` with today's date (the automatable half
+— build + TES draft — is done, and re-running it next cycle would just
+create a second duplicate TES draft), and added a note in that file's own
+Log section with the exact commands needed to finish the TPT half.
+
+**Nothing was deleted, no off-brand products were touched, no pricing or
+strategic changes were made.** Files changed: `publish_tes.py` (the
+cookie-banner fix above), `data/units/RESOURCE_DROP_QUEUE.md` (item checked
+off + log note), this file. `releases/artifacts/*` and `releases/debug_*.png`
+are gitignored working files, not committed.
+
 ## 2026-08-20 — Scheduled business review + integrity checks: all three platforms fully working, all catalogs clean, prior networks_hardware_unit1 anomaly resolved
 
 Ran the standard routine: `python business_review.py --save`, then the

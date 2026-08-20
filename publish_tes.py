@@ -193,6 +193,20 @@ def _navigate_to_upload(page, context, email: str, password: str) -> None:
     # duplicate exists elsewhere in the page), so clicking it is flaky.
     page.goto(TES_UPLOAD_FORM_URL, wait_until="domcontentloaded", timeout=20000)
     page.wait_for_timeout(2000)
+
+    # TES's OneTrust cookie-consent banner sits on top of the form on a
+    # fresh session (no prior consent cookie) and intercepts clicks on the
+    # form fields below it, timing them out even though the fields
+    # themselves are visible. Same fix as verify_tes_listings.py's
+    # find_resource_ids().
+    accept_btn = page.locator("#onetrust-accept-btn-handler")
+    if accept_btn.count() > 0:
+        try:
+            accept_btn.first.click(timeout=5000)
+            page.wait_for_timeout(1000)
+        except Exception:
+            pass
+
     log.info(f"Upload form (step 1, Description): {page.url}")
 
 
