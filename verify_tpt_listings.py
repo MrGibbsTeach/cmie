@@ -15,7 +15,8 @@ Pass --lead-magnet-lesson N to additionally check the unit's free lead
 magnet specifically (the "FREE Sample" product among this unit's results):
 title mentions "Lesson N", no leftover AI-generation artifact language in
 the description (the \bAI\b pattern produce_unit.py's QA stage already
-uses), and the product actually shows as free/$0.00 on the live page.
+uses), and the product's price-display area actually shows "FREE" on the
+live page.
 
 This does not fix anything -- it only reports. Read the findings and decide
 whether a listing needs a manual or scripted fix (see the "completing a
@@ -33,6 +34,28 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent
+
+
+def _lesson_topic_keyword(unit_id: str, lesson: int) -> str | None:
+    """Keyword for finding a lesson>1 lead magnet specifically. Its title
+    leads with the lesson's own topic, not the unit keyword (a deliberate
+    truncation-avoidance choice in publish_lead_magnets.py -- see its
+    build_listing() docstring) -- confirmed live on year7_algorithms_unit1
+    lesson 5 (product 17435023): the unit keyword "Unit 1 - Thinking Like
+    a Programmer" gets truncated off the stored title entirely by TPT's
+    ~80-char limit, so the normal _unit_topic_keyword() search silently
+    finds nothing for these. Use the lesson's own topic instead, which is
+    guaranteed to survive truncation since it's first in the title."""
+    import json
+    cfg_path = PROJECT_ROOT / "data" / "units" / f"{unit_id}.json"
+    if not cfg_path.exists():
+        return None
+    cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+    topics = cfg.get("topics", [])
+    if lesson < 1 or lesson > len(topics):
+        return None
+    title = topics[lesson - 1].get("title", "")
+    return title.split(":", 1)[0].strip() if ":" in title else title.strip()
 
 
 def _unit_topic_keyword(unit_id: str) -> str:
@@ -119,7 +142,7 @@ def find_unit_product_urls(page, keyword: str) -> list[dict]:
     return unique
 
 
-def _lead_magnet_findings(title: str, desc_text: str, body: str, lesson: int) -> list[str]:
+def _lead_magnet_findings(title: str, desc_text: str, body: str, lesson: int, price_area: str = "") -> list[str]:
     """Checks specific to a lead-magnet (free lesson sampler) listing --
     only run against the product that looks like the lead magnet itself
     (title contains "free"), so these never false-positive against a
@@ -134,16 +157,19 @@ def _lead_magnet_findings(title: str, desc_text: str, body: str, lesson: int) ->
     # series, so a literal "AI" mention in a lead magnet is a real leak.
     if re.search(r"\bAI\b", desc_text):
         findings.append("AI-leftover language found in lead magnet description (matched \\bAI\\b).")
-    # Deliberately not checking for the word "FREE" as a positive signal --
-    # the sampler's own marketing description always says "for FREE!"
-    # regardless of what actually got submitted, so that word is present in
-    # `body` either way and can't distinguish a real $0.00 listing from a
-    # mispriced one. "$0.00" is numeric and specific, so it's the only
-    # signal used here. Best-effort: TPT's exact free-price page text
-    # wasn't confirmed against a live lead-magnet page while building this
-    # check -- treat a finding as "verify manually", not certain proof.
-    if "$0.00" not in body:
-        findings.append("Could not find '$0.00' on the live page -- pricing may not be genuinely free; verify manually.")
+    # Confirmed live against a real free lead magnet (year7_algorithms_unit1
+    # lesson 5, product 17435023): TPT's own price-display widget renders a
+    # standalone "FREE" token there, NOT "$0.00" as originally guessed here
+    # -- that guess was wrong and produced a false positive on a genuinely
+    # correct listing. Checking the word "FREE" globally in `body` would be
+    # unreliable (the marketing description always says "for FREE!"
+    # regardless of actual price), so this checks `price_area` specifically
+    # -- the text between the title and the "Description" heading, i.e. the
+    # actual price widget, not the marketing copy below it.
+    if not re.search(r"\bFREE\b", price_area) and "$0.00" not in price_area:
+        findings.append(
+            "Price display area doesn't show 'FREE' or '$0.00' -- pricing may not be genuinely free; verify manually."
+        )
     return findings
 
 
@@ -160,7 +186,21 @@ def check_product_page(page, url: str, lead_magnet_lesson: int | None = None) ->
 
     body = page.evaluate("() => document.body.innerText")
     desc_idx = body.find("Description")
-    desc_text = body[desc_idx:desc_idx + 2000] if desc_idx >= 0 else ""
+    # The 2000-char window used to run straight through the real description
+    # into TPT's own trailing page chrome ("Report this resource to TPT",
+    # the seller-profile widget, "You may also like" / "More from this
+    # Teacher-Author" recommendation rails) -- confirmed live: those rails
+    # false-positived the AI-leftover-language check on a genuinely clean
+    # lead magnet because this seller's OWN unrelated shelved AI-series
+    # products showed up by name in "More from this Teacher-Author". Cut
+    # the window off at TPT's own boilerplate marker so only the actual
+    # authored description is ever scanned.
+    if desc_idx >= 0:
+        window = body[desc_idx:desc_idx + 2000]
+        boilerplate_idx = window.find("Report this resource")
+        desc_text = window[:boilerplate_idx] if boilerplate_idx >= 0 else window
+    else:
+        desc_text = ""
 
     # A genuinely short description is suspicious -- the real template
     # (overview + "what's included" bullets) always runs well over 150
@@ -180,7 +220,8 @@ def check_product_page(page, url: str, lead_magnet_lesson: int | None = None) ->
         findings.append("Literal HTML tag characters found in description -- may have swallowed real content.")
 
     if lead_magnet_lesson is not None and "free" in title.lower():
-        findings.extend(_lead_magnet_findings(title, desc_text, body, lead_magnet_lesson))
+        price_area = body[:desc_idx] if desc_idx >= 0 else body[:500]
+        findings.extend(_lead_magnet_findings(title, desc_text, body, lead_magnet_lesson, price_area))
 
     return {"url": url, "title": title, "findings": findings}
 
@@ -216,6 +257,20 @@ def main() -> None:
             sys.exit(2)
 
         products = find_unit_product_urls(page, keyword)
+
+        if args.lead_magnet_lesson is not None and not any("free" in p["t"].lower() for p in products):
+            lesson_kw = _lesson_topic_keyword(args.unit, args.lead_magnet_lesson)
+            if lesson_kw:
+                print(f"No free lead magnet found via {keyword!r} -- retrying with lesson "
+                      f"topic keyword {lesson_kw!r} (lesson>1 lead magnets lead their title "
+                      f"with the topic, which can push the unit keyword past TPT's title "
+                      f"length limit).")
+                seen_urls = {p["h"] for p in products}
+                for p in find_unit_product_urls(page, lesson_kw):
+                    if p["h"] not in seen_urls:
+                        seen_urls.add(p["h"])
+                        products.append(p)
+
         print(f"Found {len(products)} product(s).\n")
 
         any_findings = False
