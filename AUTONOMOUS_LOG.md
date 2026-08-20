@@ -21,6 +21,69 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-08-20 — Marketing push blocked again: still no Pinterest credentials in this container, and the script's `--wave` support caps out at 2
+
+Task: check each live unit's marketing-content file
+(`data/units/marketing/<unit>_marketing_content.md`, tracked in git —
+confirmed present and readable in this fresh clone, unlike the 2026-08-19
+run which hit a since-fixed `releases/`-not-committed blocker) for its
+highest existing Pinterest wave, pick 2-3 units most due for a fresh wave,
+draft 3 new distinct-angle pins each, and post via `publish_pinterest.py
+--unit <id> --wave N`. Did not get past pre-flight checks — nothing was
+drafted or posted, and no files were changed.
+
+**Blocker 1 — no Pinterest credentials in this container, same as the
+2026-08-19 (later run) finding.** Checked this session's full environment
+and the repo root: no `.pinterest_session.json` (the cookies file
+`publish_pinterest.py` requires — `COOKIES_FILE.exists()` is the first
+check in `main()` and exits immediately if missing) and no `PINTEREST_*`
+env var of any kind. This container does have working credentials for the
+other three platforms (`TPT_SESSION_JSON`, `GUMROAD_TOKEN`,
+`TES_EMAIL`/`TES_PASSWORD`), so this is specific to Pinterest, not a
+general secrets-provisioning gap. `publish_pinterest.py` has no env-var
+fallback for its cookies (unlike `publish_tpt.py`'s `TPT_SESSION_JSON`
+pattern), so nothing short of adding the cookies file or extending the
+script would let this run unattended. This is the same open item flagged
+2026-08-19 — still not provisioned a day later, still outstanding.
+
+**Blocker 2 — found while reading `publish_pinterest.py`, independent of
+credentials, and relevant to any future run once credentials exist.**
+`parse_marketing_pins()` only recognizes two section shapes: a heading
+with no "wave N" marker (treated as wave 1, the default) or one containing
+literally "wave 2". `main()`'s `--wave` argument is also hard-capped with
+`choices=[1, 2]` — passing `--wave 3` is rejected by argparse before the
+script even runs, and if that cap were simply raised, `parse_marketing_pins`
+would still silently fall through to the wave-1 section for any wave != 2
+(the `else` branch only excludes headings that *do* contain a "wave \d"
+marker, so a wave-1 heading — which has none — matches by default
+regardless of what wave number was requested). This matters right now
+because checking `data/units/marketing/*_marketing_content.md` found 10 of
+the 11 live units already carry a "## Pinterest pins — wave 2 (queued, not
+yet posted)" section (only `year7_orientation_unit1` is still wave-1-only)
+— so most units are due for wave 3, which this script cannot currently
+parse or accept even once credentials exist. Not fixed here: doing so
+untested (no way to dry-run against a real Pinterest session without the
+missing cookies) risked landing a wave-3 code path that looks plausible but
+has never actually posted a pin — a worse outcome than leaving it broken
+and flagged.
+
+**Also note**: the wave-2 sections in 10 of the 11 files are marked
+"(queued, not yet posted)" in their own heading text — worth a human check
+on whether that's accurate (were they truly never posted?) or just stale
+labeling from whenever wave 2 was drafted, since this run had no way to
+verify posting history without the missing credentials.
+
+**Net effect, unchanged from 2026-08-19**: there is no path in this cloud
+environment from "draft new Pinterest pins" to "actually post and verify
+them" until a human either adds a `.pinterest_session.json` /
+`PINTEREST_SESSION_JSON`-style secret to this environment, or accepts that
+the Marketing Push job cannot run unattended. Once that's in place, the
+`--wave` cap in `publish_pinterest.py` also needs generalizing past 2
+before any unit past its second wave can be posted.
+
+No files changed, no pins drafted, nothing posted, nothing deleted. Only
+change this run is this log entry.
+
 ## 2026-08-20 — Resource Drop: Lesson 5 lead magnet for year7_algorithms_unit1 (TES draft live, TPT blocked by session expiry)
 
 Ran the Resource Drop queue job (`data/units/RESOURCE_DROP_QUEUE.md`). First
