@@ -11,12 +11,19 @@ and flags corruption signals this project has actually hit in production:
   - a title that doesn't start with the expected unit keyword (wrong
     zip/listing pairing)
 
+Pass --lead-magnet-lesson N to additionally check the unit's free lead
+magnet specifically (the "FREE Sample" product among this unit's results):
+title mentions "Lesson N", no leftover AI-generation artifact language in
+the description (the \bAI\b pattern produce_unit.py's QA stage already
+uses), and the product actually shows as free/$0.00 on the live page.
+
 This does not fix anything -- it only reports. Read the findings and decide
 whether a listing needs a manual or scripted fix (see the "completing a
 partial product" pattern in PROGRESS.md for how to edit one in place).
 
 Usage:
     python verify_tpt_listings.py --unit year7_web_design_unit1
+    python verify_tpt_listings.py --unit year7_algorithms_unit1 --lead-magnet-lesson 5
 """
 from __future__ import annotations
 
@@ -112,7 +119,35 @@ def find_unit_product_urls(page, keyword: str) -> list[dict]:
     return unique
 
 
-def check_product_page(page, url: str) -> dict:
+def _lead_magnet_findings(title: str, desc_text: str, body: str, lesson: int) -> list[str]:
+    """Checks specific to a lead-magnet (free lesson sampler) listing --
+    only run against the product that looks like the lead magnet itself
+    (title contains "free"), so these never false-positive against a
+    unit's other paid products (bundle, other lessons, assessment)."""
+    findings = []
+    if not re.search(rf"\bLesson\s+{lesson}\b", title, re.I):
+        findings.append(
+            f"Lead magnet title doesn't mention 'Lesson {lesson}' -- wrong lesson number or stale title."
+        )
+    # Same AI-leftover-language pattern produce_unit.py's stage_qa uses
+    # (\bAI\b) -- these are Digital Technologies units, not the shelved AI
+    # series, so a literal "AI" mention in a lead magnet is a real leak.
+    if re.search(r"\bAI\b", desc_text):
+        findings.append("AI-leftover language found in lead magnet description (matched \\bAI\\b).")
+    # Deliberately not checking for the word "FREE" as a positive signal --
+    # the sampler's own marketing description always says "for FREE!"
+    # regardless of what actually got submitted, so that word is present in
+    # `body` either way and can't distinguish a real $0.00 listing from a
+    # mispriced one. "$0.00" is numeric and specific, so it's the only
+    # signal used here. Best-effort: TPT's exact free-price page text
+    # wasn't confirmed against a live lead-magnet page while building this
+    # check -- treat a finding as "verify manually", not certain proof.
+    if "$0.00" not in body:
+        findings.append("Could not find '$0.00' on the live page -- pricing may not be genuinely free; verify manually.")
+    return findings
+
+
+def check_product_page(page, url: str, lead_magnet_lesson: int | None = None) -> dict:
     # Note: individual lesson products legitimately have their own titles
     # ("HTML Basics: Structuring a Web Page") that don't repeat the unit's
     # topic keyword -- only the bundle product's title does. Don't flag a
@@ -144,6 +179,9 @@ def check_product_page(page, url: str) -> dict:
     if re.search(r"<[a-zA-Z][a-zA-Z0-9]*(\s|>)", desc_text):
         findings.append("Literal HTML tag characters found in description -- may have swallowed real content.")
 
+    if lead_magnet_lesson is not None and "free" in title.lower():
+        findings.extend(_lead_magnet_findings(title, desc_text, body, lead_magnet_lesson))
+
     return {"url": url, "title": title, "findings": findings}
 
 
@@ -151,6 +189,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--unit", required=True)
     parser.add_argument("--keyword", help="Override the auto-derived search keyword")
+    parser.add_argument("--lead-magnet-lesson", type=int, default=None,
+                         help="Also run lead-magnet-specific checks (title has "
+                              "'Lesson N', no AI-leftover language, shows as FREE) "
+                              "against this unit's free sampler product")
     args = parser.parse_args()
 
     from playwright.sync_api import sync_playwright
@@ -178,7 +220,7 @@ def main() -> None:
 
         any_findings = False
         for p in products:
-            result = check_product_page(page, p["h"])
+            result = check_product_page(page, p["h"], args.lead_magnet_lesson)
             status = "OK" if not result["findings"] else "ISSUES FOUND"
             print(f"[{status}] {result['title'][:70]}")
             print(f"         {result['url']}")

@@ -6,8 +6,16 @@ resource's edit page and reads the actual title/description field values
 TPT/Gumroad the risk here is empty fields or literal unescaped HTML, not
 unrendered **bold**).
 
+Pass --lead-magnet-lesson N to additionally check a free lead magnet
+specifically (matched by title containing "free"): title mentions
+"Lesson N", no leftover AI-generation artifact language in the description
+(the \bAI\b pattern produce_unit.py's QA stage already uses), and the
+resource's price shows as £0.00 / free rather than TES's £1.00 "Sell my
+resource" minimum.
+
 Usage:
     python verify_tes_listings.py --keyword "Unit 1"
+    python verify_tes_listings.py --keyword "Debugging" --lead-magnet-lesson 5
 """
 from __future__ import annotations
 
@@ -59,7 +67,43 @@ def find_resource_ids(page, keyword: str) -> list[dict]:
     return unique
 
 
-def check_resource(page, rid: str) -> dict:
+def _lead_magnet_findings(title: str, desc: str, body: str, lesson: int) -> list[str]:
+    """Checks specific to a lead-magnet (free lesson sampler) resource --
+    only run against a resource whose title looks like the lead magnet
+    itself (contains "free"), so these never false-positive against a
+    unit's other paid TES resources."""
+    findings = []
+    if not re.search(rf"\bLesson\s+{lesson}\b", title, re.I):
+        findings.append(
+            f"Lead magnet title doesn't mention 'Lesson {lesson}' -- wrong lesson number or stale title."
+        )
+    # Same AI-leftover-language pattern produce_unit.py's stage_qa uses
+    # (\bAI\b) -- these are Digital Technologies units, not the shelved AI
+    # series, so a literal "AI" mention in a lead magnet is a real leak.
+    if re.search(r"\bAI\b", desc):
+        findings.append("AI-leftover language found in lead magnet description (matched \\bAI\\b).")
+
+    # TES lead magnets have previously landed at the "Sell my resource" tab's
+    # £1.00 minimum instead of genuinely free (see PROGRESS.md/AUTONOMOUS_LOG.md:
+    # "TES lead magnets are £1.00, not £0.00" -- publish_tes.py's
+    # _step4_licence now selects the "Share for free" tab for price<=0 to
+    # fix this at publish time; this is the post-publish check for it).
+    # Deliberately not checking for the word "free" as a signal -- the
+    # sampler's own marketing description always says "for FREE!" whether
+    # or not the price actually landed at £0, so that word can't
+    # distinguish a real £0.00 listing from a mispriced one. "£1.00" /
+    # "£0.00" are numeric and specific, so those are what's used here.
+    # Best-effort: TES's exact price page text for an *existing* resource's
+    # edit view wasn't confirmed live while building this check -- treat a
+    # finding as "verify manually", not certain proof either way.
+    if "£1.00" in body:
+        findings.append("Lead magnet page shows £1.00 -- looks like it landed on TES's paid minimum instead of genuinely free.")
+    elif "£0.00" not in body:
+        findings.append("Could not find '£0.00' on the page -- pricing may not be genuinely free; verify manually.")
+    return findings
+
+
+def check_resource(page, rid: str, lead_magnet_lesson: int | None = None) -> dict:
     findings = []
     page.goto(f"https://www.tes.com/uploader/v2/{rid}", wait_until="domcontentloaded", timeout=20000)
     page.wait_for_timeout(2500)
@@ -81,12 +125,20 @@ def check_resource(page, rid: str) -> dict:
     if re.search(r"<[a-zA-Z][a-zA-Z0-9]*(\s|>)", desc):
         findings.append("Literal HTML tag characters found in description.")
 
+    if lead_magnet_lesson is not None and "free" in title.lower():
+        body = page.evaluate("() => document.body.innerText") or ""
+        findings.extend(_lead_magnet_findings(title, desc, body, lead_magnet_lesson))
+
     return {"id": rid, "title": title, "findings": findings}
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--keyword", default="Unit 1")
+    parser.add_argument("--lead-magnet-lesson", type=int, default=None,
+                         help="Also run lead-magnet-specific checks (title has "
+                              "'Lesson N', no AI-leftover language, shows as free) "
+                              "against resources whose title contains 'free'")
     args = parser.parse_args()
 
     from playwright.sync_api import sync_playwright
@@ -109,7 +161,7 @@ def main() -> None:
         any_findings = False
         checked = 0
         for r in resources:
-            result = check_resource(page, r["id"])
+            result = check_resource(page, r["id"], args.lead_magnet_lesson)
             title = result["title"] or ""
             if args.keyword and args.keyword not in title:
                 continue

@@ -1,14 +1,20 @@
 """
-make_lead_magnet.py — turn a unit's Lesson 1 into a standalone free-resource
-package: an exact copy of the Lesson 1 deck with one extra slide appended
-("enjoyed this? here's the full unit, and a review would mean a lot").
+make_lead_magnet.py — turn one lesson of a unit into a standalone
+free-resource package: an exact copy of that lesson's deck with one extra
+slide appended ("enjoyed this? here's the full unit, and a review would
+mean a lot").
 
-This does NOT touch the existing paid Lesson 1 listing or reprice anything —
+Defaults to Lesson 1 (the original behavior); pass --lesson N to build a
+sampler from any other lesson in the unit (e.g. the "2nd free lesson per
+unit" items in data/units/RESOURCE_DROP_QUEUE.md).
+
+This does NOT touch the existing paid lesson listing or reprice anything —
 it produces a new, separate zip. Publishing it (as a free product) is a
 manual/separate step, same as every other artifact this pipeline builds.
 
 Usage:
     python make_lead_magnet.py --unit year7_networks_hardware_unit1
+    python make_lead_magnet.py --unit year7_algorithms_unit1 --lesson 5
     python make_lead_magnet.py --unit year7_networks_hardware_unit1 \
         --bundle-url https://www.teacherspayteachers.com/Product/...
 """
@@ -72,13 +78,13 @@ FB = "Aptos"
 STORE_NAME = "FocusLab Digital"
 
 
-def _find_lesson01_pptx(unit_id: str, version: str) -> Path:
+def _find_lesson_pptx(unit_id: str, version: str, lesson: int) -> Path:
     slides_dir = _unit_root(unit_id, version) / "01_Lesson_Slides"
     if not slides_dir.exists():
         raise FileNotFoundError(f"No slides folder for {unit_id}: {slides_dir}")
-    matches = sorted(slides_dir.glob("01-*.pptx"))
+    matches = sorted(slides_dir.glob(f"{lesson:02d}-*.pptx"))
     if not matches:
-        raise FileNotFoundError(f"No Lesson 1 pptx found in {slides_dir}")
+        raise FileNotFoundError(f"No Lesson {lesson} pptx found in {slides_dir}")
     return matches[0]
 
 
@@ -179,15 +185,15 @@ def _add_cta_slide(prs: Presentation, unit_title: str, bundle_url: str | None) -
 
 
 def make_lead_magnet(unit_id: str, version: str = "v001", bundle_url: str | None = None,
-                      out_dir: Path | None = None) -> Path:
-    lesson01_path = _find_lesson01_pptx(unit_id, version)
+                      out_dir: Path | None = None, lesson: int = 1) -> Path:
+    lesson_path = _find_lesson_pptx(unit_id, version, lesson)
     unit_title = _read_unit_title(unit_id, version)
 
     out_dir = out_dir or ARTIFACTS_ROOT
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    work_pptx = out_dir / f"{lesson01_path.stem}_FREE_SAMPLE.pptx"
-    shutil.copy2(lesson01_path, work_pptx)
+    work_pptx = out_dir / f"{lesson_path.stem}_FREE_SAMPLE.pptx"
+    shutil.copy2(lesson_path, work_pptx)
 
     prs = Presentation(str(work_pptx))
     prs.slide_width = SW
@@ -195,7 +201,7 @@ def make_lead_magnet(unit_id: str, version: str = "v001", bundle_url: str | None
     _add_cta_slide(prs, unit_title, bundle_url)
     prs.save(str(work_pptx))
 
-    zip_path = out_dir / f"{unit_id}_lesson01_FREE_{version}.zip"
+    zip_path = out_dir / f"{unit_id}_lesson{lesson:02d}_FREE_{version}.zip"
     if zip_path.exists():
         zip_path.unlink()
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
@@ -209,6 +215,7 @@ def make_lead_magnet(unit_id: str, version: str = "v001", bundle_url: str | None
         names = zf.namelist()
 
     print(f"Lead magnet built: {zip_path}")
+    print(f"  Source lesson: {lesson_path.name} (Lesson {lesson})")
     print(f"  Contains: {names}")
     print(f"  Unit title used in CTA: {unit_title}")
     print(f"  Bundle link: {bundle_url or '(generic search text, no URL provided)'}")
@@ -219,6 +226,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--unit", required=True, help="Unit ID, e.g. year7_networks_hardware_unit1")
     parser.add_argument("--version", default="v001")
+    parser.add_argument("--lesson", type=int, default=1,
+                         help="Lesson number to package as the free sample (default: 1)")
     parser.add_argument("--bundle-url", default=None,
                          help="Real TPT/TES bundle product URL to link to (optional; "
                               "falls back to a generic 'search for this title' CTA)")
@@ -227,7 +236,7 @@ def main() -> None:
 
     out_dir = Path(args.out_dir) if args.out_dir else None
     try:
-        make_lead_magnet(args.unit, args.version, args.bundle_url, out_dir)
+        make_lead_magnet(args.unit, args.version, args.bundle_url, out_dir, args.lesson)
     except Exception as e:
         print(f"ERROR: {e}")
         sys.exit(1)
