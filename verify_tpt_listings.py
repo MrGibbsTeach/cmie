@@ -46,12 +46,21 @@ def _unit_topic_keyword(unit_id: str) -> str:
 
 def find_unit_product_urls(page, keyword: str) -> list[dict]:
     """A plain body-text/link scan right after page load only sees a
-    partial (virtualized?) product list on a store with 100+ products --
-    confirmed missing 7 of 9 known-live products in testing. Interacting
-    with the "Search my products" box (even though its own filtering
-    doesn't reliably narrow results) triggers the full list to render, so
-    do that first and filter client-side ourselves rather than trust the
-    search box's own filtering."""
+    partial product list on a store with 100+ products -- confirmed
+    missing 7 of 9 known-live products in testing. Interacting with the
+    "Search my products" box (even though its own filtering doesn't
+    reliably narrow results) triggers the full list to render, so do that
+    first and filter client-side ourselves rather than trust the search
+    box's own filtering.
+
+    The dashboard is also genuinely PAGINATED (`My-Products/page:N`,
+    numbered controls `a[aria-label="Go to page N"]`), not virtualized --
+    confirmed live: a whole unit's products (year7_networks_hardware_unit1,
+    the catalog's oldest/least-recently-modified) sorted entirely onto
+    page 2 while page 1 held everything else, making them invisible to a
+    page-1-only scan regardless of keyword and producing a false "only 1
+    product found" result for listings that were actually all live and
+    correctly titled. Walk every numbered page and merge results."""
     from cmie.publishing.tpt import DASHBOARD_URL
     page.goto(DASHBOARD_URL, wait_until="domcontentloaded", timeout=20000)
     page.wait_for_timeout(3000)
@@ -60,17 +69,46 @@ def find_unit_product_urls(page, keyword: str) -> list[dict]:
         search.first.click()
         search.first.fill(keyword)
         page.wait_for_timeout(2500)
-    links = page.evaluate(
-        """(kw) => Array.from(document.querySelectorAll("a[href*='/Product/']"))
-            .map(a => ({t: (a.textContent||'').trim(), h: a.href}))
-            .filter(l => l.t.includes(kw))""",
-        keyword,
-    )
+
+    def _matching_links_on_current_page() -> list[dict]:
+        return page.evaluate(
+            """(kw) => Array.from(document.querySelectorAll("a[href*='/Product/']"))
+                .map(a => ({t: (a.textContent||'').trim(), h: a.href}))
+                .filter(l => l.t.includes(kw))""",
+            keyword,
+        )
+
     seen, unique = set(), []
-    for l in links:
+    for l in _matching_links_on_current_page():
         if l["h"] not in seen:
             seen.add(l["h"])
             unique.append(l)
+
+    visited_pages = {1}
+    while True:
+        page_labels = page.evaluate(
+            """() => Array.from(document.querySelectorAll('a[aria-label^="Go to page "]'))
+                .map(a => a.getAttribute('aria-label'))"""
+        )
+        next_label = None
+        for label in page_labels:
+            m = re.search(r"Go to page (\d+)", label)
+            if m and int(m.group(1)) not in visited_pages:
+                next_label = label
+                visited_pages.add(int(m.group(1)))
+                break
+        if next_label is None:
+            break
+        link = page.locator(f'a[aria-label="{next_label}"]')
+        if link.count() == 0:
+            break
+        link.first.click()
+        page.wait_for_timeout(2500)
+        for l in _matching_links_on_current_page():
+            if l["h"] not in seen:
+                seen.add(l["h"])
+                unique.append(l)
+
     return unique
 
 
