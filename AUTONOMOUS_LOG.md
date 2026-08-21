@@ -21,6 +21,100 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-08-21 — Resource Drop: Lesson 3 lead magnet for year7_cybersecurity_unit1 (TES draft live, TPT still blocked by session expiry); two cloud-sandbox Playwright bugs fixed
+
+Task: `data/units/RESOURCE_DROP_QUEUE.md`'s first unchecked item — a second
+free lead magnet for `year7_cybersecurity_unit1`, picking a genuinely strong,
+standalone lesson (not the existing Lesson 1 sample).
+
+**Lesson choice**: read `data/units/year7_cybersecurity_unit1.json`'s 7
+topics. Picked **Lesson 3, "Spotting Phishing and Social Engineering"**
+(17 slides, the longest of the candidates; Lessons 2/4/5/6 were 15 slides
+each) — phishing/social-engineering awareness is immediately relatable and
+doesn't require the threat-landscape overview from Lesson 1 to make sense,
+unlike Lesson 7 (a capstone that assumes the whole unit). Built via
+`make_lead_magnet.py --unit year7_cybersecurity_unit1 --lesson 3` from the
+tracked `data/units/lead_magnet_source/` fallback (no local `releases/`
+tree in this fresh clone) — zip built clean, `zipfile.testzip()` found no
+corrupt entries.
+
+**Two environment bugs fixed in `cmie/publishing/browser.py` before
+anything could publish** (both blocked this exact task, not
+lead-magnet-specific — every script that launches a browser in this
+container was affected):
+1. `cloud_launch_kwargs()`'s `channel="chromium"` fix (added 2026-07-31)
+   stopped working: this session's `pip install -r requirements.txt` pulled
+   Playwright 1.62.0, whose registry expects a Chromium revision that
+   doesn't match what's actually pre-installed at
+   `$PLAYWRIGHT_BROWSERS_PATH/chromium` (a plain symlink, revision 1194) —
+   `channel="chromium"` looked for a binary that was never downloaded, and
+   `playwright install` is disabled in this sandbox. Fix: pass
+   `executable_path` at the pre-installed symlink directly when it exists,
+   falling back to the old `channel="chromium"` behavior otherwise (so a
+   differently-provisioned sandbox isn't regressed).
+2. `automation_chrome()` (used by `publish_tes.py` / `publish_lead_magnets.py
+   --platform tes`) launches headed (`headless=False`) by default, but this
+   container has no X server — Chromium exited immediately
+   ("Missing X server or $DISPLAY"). Worked around manually once with
+   `xvfb-run -a python3 publish_lead_magnets.py ...` to confirm the rest of
+   the flow, then fixed properly: `automation_chrome()` now starts its own
+   throwaway Xvfb server via a new `_ensure_display()` helper whenever
+   `$DISPLAY` isn't already set, so future runs don't need a manual
+   `xvfb-run` wrapper. No-op wherever a real or already-provided display
+   exists.
+
+**TES**: with both fixes in place, `publish_lead_magnets.py --unit
+year7_cybersecurity_unit1 --lesson 3 --platform tes` filled and saved the
+draft in one run — resource **13545886**, title "Spotting Phishing and
+Social Engineering — Lesson 3 FREE Sample (Cyber Security)". Per this
+project's standing rule, it stops at a draft; a human still needs to check
+the copyright box and click "Publish now" on the TES Author Dashboard.
+
+**Verification**: `verify_tes_listings.py --keyword "Phishing"
+--lead-magnet-lesson 3` found no leftover AI-generation language and no
+literal "£1.00" (the previously-fixed paid-minimum mispricing bug), but
+could not positively confirm "£0.00" appears on the page either. While
+investigating, found and fixed a real bug in the checker itself: it read
+the uploader's step-1 (Description) page for the price text, which never
+contains a price at all regardless of what's actually saved — the price
+only ever renders on step 4 (Licence). Fixed to navigate to the
+`/licence-editor` step specifically. Even after that fix, the check remains
+inconclusive: on reload, TES's Licence step always shows the "Sell my
+resource" tab as visually active by default, regardless of what was
+actually saved when `publish_tes.py`'s `_step4_licence()` clicked "Share for
+free" and "Continue" during the original publish — this looks like a
+stateless UI default rather than evidence of real mispricing (the exact
+same click-then-Continue code path is what's already live behind all 10
+existing Lesson-1 samples), but this run could not independently confirm it
+either way from a static page load. Flagging as **needs a human glance at
+resource 13545886 on the TES Author Dashboard** before/when clicking
+"Publish now", rather than treating it as a confirmed problem.
+
+**TPT**: still blocked. `TPT_SESSION_JSON` is unchanged since the
+2026-08-20 run (same cookies, same expiry) — reconfirmed via the same
+read-only `verify_tpt_listings.py --unit year7_cybersecurity_unit1` check
+(now that the Chromium launch bug above is fixed, the check ran cleanly and
+still reported "not logged in"). No TPT publish was attempted (form-login
+with placeholder credentials risks bot detection / account lock, per
+`cmie/publishing/tpt.py`'s own warning, and there's no `TPT_EMAIL`/
+`TPT_PASSWORD` fallback configured). **A human needs to run `python
+publish_tpt.py --save-session` (or otherwise refresh `TPT_SESSION_JSON`)
+and then run both**:
+```
+python publish_lead_magnets.py --unit year7_algorithms_unit1 --lesson 5 --platform tpt
+python publish_lead_magnets.py --unit year7_cybersecurity_unit1 --lesson 3 --platform tpt
+```
+to finish the TPT half for both queued lead magnets so far.
+
+**Queue update**: marked `year7_cybersecurity_unit1 — Lesson 3` `[x]` in
+`data/units/RESOURCE_DROP_QUEUE.md`, dated 2026-08-21.
+
+**Nothing deleted, no off-brand products touched, no pricing/strategy
+changes** — only the lesson-picking judgment call the queue item itself
+asked for, plus the two environment bug fixes above (both scoped to
+"make an existing script's browser launch actually work in this sandbox",
+not new behavior).
+
 ## 2026-08-20 — Marketing push blocked again: still no Pinterest credentials in this container, and the script's `--wave` support caps out at 2
 
 Task: check each live unit's marketing-content file
