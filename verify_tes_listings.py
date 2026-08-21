@@ -126,6 +126,19 @@ def check_resource(page, rid: str, lead_magnet_lesson: int | None = None) -> dic
         findings.append("Literal HTML tag characters found in description.")
 
     if lead_magnet_lesson is not None and "free" in title.lower():
+        # Price only ever renders on the Licence step (step 4) of the
+        # uploader -- the base /uploader/v2/{id} URL this function already
+        # navigated to for the title/description fields is step 1
+        # (Description), whose innerText never contains "£0.00" or "£1.00"
+        # regardless of actual pricing. Checking step 1's body text (as this
+        # did before) made the price finding below fire as a false positive
+        # on every lead magnet, confirmed 2026-08-21 (real price is genuinely
+        # free per publish_tes.py's own "Selected 'Share for free' tab" log
+        # line, but body had no £ sign at all because it was still on step
+        # 1). Navigate to the licence step specifically for this check.
+        page.goto(f"https://www.tes.com/uploader/v2/{rid}/licence-editor",
+                  wait_until="domcontentloaded", timeout=20000)
+        page.wait_for_timeout(2000)
         body = page.evaluate("() => document.body.innerText") or ""
         findings.extend(_lead_magnet_findings(title, desc, body, lead_magnet_lesson))
 

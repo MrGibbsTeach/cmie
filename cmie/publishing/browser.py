@@ -83,15 +83,35 @@ def cloud_launch_kwargs() -> dict:
     load). This is why the fix "worked once" (automation_chrome(), which is
     always headless=False and never hit the substitution) and "failed later"
     (a headless=True verify script, which did).
+
+    2026-08-21: `channel="chromium"` alone stopped working in this same cloud
+    sandbox -- the pip `playwright` package installed at session start
+    (1.62.0) expects a Chromium revision under Playwright's own registry that
+    doesn't match the revision actually pre-installed at
+    `$PLAYWRIGHT_BROWSERS_PATH/chromium` (a plain symlink, not a
+    registry-registered "chromium" channel), so `channel="chromium"` looks
+    for a binary that was never downloaded (and re-downloading it is blocked
+    in this sandbox). Passing `executable_path` directly at that symlink
+    sidesteps the channel lookup entirely and launches the exact same real
+    Chromium binary the channel fix was pinning to, so the TLS-1.2-cap flag
+    is still honored. Falls back to the old channel="chromium" behavior when
+    no such pre-installed binary is present (e.g. a differently-provisioned
+    sandbox), so this doesn't regress the fix above.
     """
     proxy = cloud_proxy_config()
     if not proxy:
         return {}
-    return {
+    kwargs = {
         "proxy": proxy,
-        "channel": "chromium",
         "args": ["--ignore-certificate-errors", "--ssl-version-max=tls1.2"],
     }
+    browsers_path = os.environ.get("PLAYWRIGHT_BROWSERS_PATH")
+    preinstalled = Path(browsers_path) / "chromium" if browsers_path else None
+    if preinstalled and preinstalled.exists():
+        kwargs["executable_path"] = str(preinstalled)
+    else:
+        kwargs["channel"] = "chromium"
+    return kwargs
 
 
 def cloud_context_kwargs() -> dict:
@@ -147,6 +167,36 @@ def normalize_cookies(raw_cookies: list[dict]) -> list[dict]:
     return normalized
 
 
+def _ensure_display() -> "subprocess.Popen | None":
+    """
+    headless=False (needed for form-fill scripts like publish_tes.py that
+    rely on a real rendered page) has no X server to attach to in this cloud
+    sandbox -- Chromium exits immediately with "Missing X server or
+    $DISPLAY" (first hit 2026-08-21, previously worked around by manually
+    wrapping the whole script in `xvfb-run`). Starting a throwaway Xvfb
+    server here whenever $DISPLAY isn't already set means every headed
+    launch site (not just the one that happened to be run under
+    xvfb-run manually) works unattended. No-op wherever a real/virtual
+    display already exists (a normal desktop run, or one already wrapped in
+    xvfb-run).
+    """
+    import os
+    import shutil
+    import subprocess
+    import time
+
+    if os.environ.get("DISPLAY") or not shutil.which("Xvfb"):
+        return None
+    display = ":99"
+    proc = subprocess.Popen(
+        ["Xvfb", display, "-screen", "0", "1280x1024x24", "-nolisten", "tcp"],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
+    time.sleep(1)
+    os.environ["DISPLAY"] = display
+    return proc
+
+
 @contextmanager
 def automation_chrome(headless: bool = False, slow_mo: int = 200):
     """
@@ -162,22 +212,28 @@ def automation_chrome(headless: bool = False, slow_mo: int = 200):
     if "args" in cloud_kwargs:
         extra_args += cloud_kwargs.pop("args")
 
-    with sync_playwright() as pw:
-        context = pw.chromium.launch_persistent_context(
-            user_data_dir=str(AUTOMATION_PROFILE),
-            headless=headless,
-            slow_mo=slow_mo,
-            args=extra_args,
-            ignore_default_args=["--enable-automation"],
-            **cloud_kwargs,
-            **cloud_context_kwargs(),
-        )
-        page = context.new_page()
-        try:
-            yield context, page
-        finally:
-            page.close()
-            context.close()
+    xvfb = None if headless else _ensure_display()
+    try:
+        with sync_playwright() as pw:
+            context = pw.chromium.launch_persistent_context(
+                user_data_dir=str(AUTOMATION_PROFILE),
+                headless=headless,
+                slow_mo=slow_mo,
+                args=extra_args,
+                ignore_default_args=["--enable-automation"],
+                **cloud_kwargs,
+                **cloud_context_kwargs(),
+            )
+            page = context.new_page()
+            try:
+                yield context, page
+            finally:
+                page.close()
+                context.close()
+    finally:
+        if xvfb:
+            xvfb.terminate()
+            xvfb.wait(timeout=5)
 
 
 def setup() -> None:
