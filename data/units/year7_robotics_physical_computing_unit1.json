@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_robotics_physical_computing_unit1",
+  "title": "Robotics & Physical Computing: Unit 1 – Sensors, Actuators, and Building Smart Machines",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "What Is Robotics? Sensors, Actuators, and Control Systems" },
+    { "title": "Inputs and Outputs: How Machines Sense and Act on the World" },
+    { "title": "Programming Movement: Sequences, Loops, and Conditionals" },
+    { "title": "Using Sensor Data to Make Decisions" },
+    { "title": "Microcontrollers and Physical Computing Boards" },
+    { "title": "Testing and Debugging a Physical System" },
+    { "title": "Designing a Robotic Solution for a Real Problem" }
+  ],
+  "lesson_videos": {}
+}

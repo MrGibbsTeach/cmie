@@ -21,6 +21,93 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-08-21 (later run) — New Unit Production: Robotics & Physical Computing built and QA-verified end-to-end; TES live, TPT and Gumroad both blocked by missing/expired credentials — queue item left unchecked
+
+Task: `data/units/UPCOMING_QUEUE.md`'s first unchecked item, **Robotics &
+Physical Computing**.
+
+**Built**: `data/units/year7_robotics_physical_computing_unit1.json` (7
+topics — sensors/actuators/control systems, inputs & outputs, programming
+movement with sequences/loops/conditionals, using sensor data to make
+decisions, microcontrollers, testing & debugging, designing a robotic
+solution for a real problem). Ran `python produce_unit.py --unit-config
+data/units/year7_robotics_physical_computing_unit1.json` end-to-end
+(pipeline → qa → thumbnail → package) — all stages passed, automated QA
+found no AI-leftover language or `- -` artifacts, packaging validation
+clean, all 10 customer zips built and verified.
+
+**Manual spot-check (per this queue's own standing instruction not to trust
+automated QA alone)**: read Lesson 1, Lesson 4, and Lesson 7's actual PPTX
+slide text, plus `Assessment_Task.docx`, directly. Content is genuinely
+good — coherent, on-topic, age-appropriate, no markdown leaks, no AI/ethics
+framing bleeding in from the shelved AI series. One near-miss: a naive text
+extraction (joining run text without preserving `<a:br/>` elements) made two
+hook slides look like run-on sentences with a missing space
+("...automatically.How does..."). Checked the real `text_frame.text`
+(preserves breaks as `\x0b`) and confirmed these are genuine paragraph
+breaks that render as a clean two-line hook in real PowerPoint — same
+false-positive class already documented in `PROGRESS.md`'s 2026-07-02 visual
+QA section (`<a:br/>` reads back as `\x0b`, not a defect). Not a real bug,
+no fix needed.
+
+**Publishing — 1 of 3 platforms live**:
+- **TES: live.** `publish_tes.py --unit year7_robotics_physical_computing_unit1
+  --price 9.99` filled and saved the 5-step wizard draft (resource
+  `13546444`). Then performed the manual-equivalent "Publish now" step
+  myself (checked the copyright confirmation box, clicked "Publish now" on
+  the existing draft's own Publish screen — did not touch Categories or
+  Licence, per the hard boundary above) and verified via a fresh page load
+  of `tes.com/teaching-resource/resource-13546444`: real public resource
+  page, "Last updated 21 August 2026", Edit/Download/Share controls visible.
+  `verify_tes_listings.py --keyword Robotics` ran clean (`[OK]`, no
+  AI-leftover language).
+- **TPT: blocked, not attempted.** `TPT_SESSION_JSON` cookies (`sessionKey`,
+  `TPT`, `__cf_bm`) are expired — confirmed directly by decoding the env
+  var's own cookie expiry timestamps (expired ~1 day before this run), not
+  just inferred from a failed check. `verify_tpt_listings.py --unit
+  year7_robotics_physical_computing_unit1` independently confirmed "not
+  logged in." No TPT_EMAIL/TPT_PASSWORD configured, and per this project's
+  standing policy (a past bot-detection account lock), automated form-login
+  is deliberately never attempted as a workaround. **Needs a human to run
+  `python publish_tpt.py --save-session`**, then `python publish_tpt.py
+  --unit year7_robotics_physical_computing_unit1 --part all --publish`.
+- **Gumroad: blocked, not attempted.** `publish_gumroad.py --unit
+  year7_robotics_physical_computing_unit1 --price 12.99` failed at the
+  Playwright login step (before any product was created via the API — safe,
+  nothing orphaned on Gumroad): "No GUMROAD_EMAIL/GUMROAD_PASSWORD in .env
+  and no saved session." `GUMROAD_TOKEN` is present in this container's env
+  but the API token alone only covers product creation; the zip/thumbnail/
+  description upload steps need a real browser session. **Needs a human to
+  either set `GUMROAD_EMAIL`/`GUMROAD_PASSWORD`, or run `python
+  publish_gumroad.py --save-session`**, then `python publish_gumroad.py
+  --unit year7_robotics_physical_computing_unit1 --price 12.99`.
+
+**Deliberately not done this run**: `data/units/bundle_urls.json` entry and
+`generate_marketing_content.py` — both are built around a TPT bundle URL
+(every existing entry in that file is a teacherspayteachers.com link, and
+`generate_marketing_content.py` uses it as the primary promo link for
+Pinterest/social copy). Adding an interim Gumroad/TES link there would
+break that convention for no real benefit before TPT is live, so left for
+whoever finishes the TPT step.
+
+**Queue item left unchecked** — 2 of the 3 required platforms (TPT,
+Gumroad) aren't live, so the "publish across TPT/Gumroad/TES, add bundle
+URL, generate marketing" checklist isn't complete. **Important**: this
+session's `releases/`, `generated_lessons/`, and the `.produce_state.json`
+resume file are all gitignored (not persisted) — the built content only
+exists in this container's ephemeral disk. Whoever picks this up next,
+either **finish it from here in this same session/container** (fastest —
+content is already built and QA-verified) or, if this container has already
+been reclaimed, **re-run `produce_unit.py` for this exact config from
+scratch** (costs OpenAI generation again) before publishing TPT/Gumroad —
+do not try to "resume" from a state file that no longer exists. Do not
+re-pick "Robotics & Physical Computing" as a *new* topic; it's this same
+in-flight item, not a fresh one.
+
+**Nothing deleted, no off-brand products touched, no pricing/strategy
+changes** — Gumroad/TES prices used match the existing catalog norm
+($12.99 AUD / £9.99, same as all 10 live units), not a new decision.
+
 ## 2026-08-21 — Resource Drop: Lesson 3 lead magnet for year7_cybersecurity_unit1 (TES draft live, TPT still blocked by session expiry); two cloud-sandbox Playwright bugs fixed
 
 Task: `data/units/RESOURCE_DROP_QUEUE.md`'s first unchecked item — a second

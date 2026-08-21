@@ -33,3 +33,12 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
 ## Log
 
 (the job appends a line here each time it completes or skips a cycle)
+
+- 2026-08-21: Started "Robotics & Physical Computing" — config written
+  (`year7_robotics_physical_computing_unit1`), built + QA-verified +
+  packaged successfully, published live to TES (resource `13546444`).
+  **Not marking `[x]` yet**: TPT (expired session) and Gumroad (no
+  credentials/session) are both blocked in this container — see
+  `AUTONOMOUS_LOG.md`'s 2026-08-21 "New Unit Production" entry for exact
+  human steps needed. This item is still in-flight, not abandoned — finish
+  publishing TPT+Gumroad for this same unit before picking a new topic.
