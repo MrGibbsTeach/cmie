@@ -23,10 +23,15 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import re
 import sys
 import urllib.request
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
@@ -41,14 +46,27 @@ BOARD_FREE = "Free Teacher Resources"
 PIN_BOARD_BY_INDEX = {0: BOARD_PAID, 1: BOARD_PAID, 2: BOARD_FREE}
 
 
-def _load_env() -> dict:
-    env = {}
-    env_path = PROJECT_ROOT / ".env"
-    for line in env_path.read_text(encoding="utf-8").splitlines():
-        if "=" in line and not line.strip().startswith("#"):
-            k, v = line.split("=", 1)
-            env[k.strip()] = v.strip().strip('"').strip("'")
-    return env
+def _load_pinterest_cookies() -> list[dict]:
+    """Cloud sandboxes don't have the gitignored .pinterest_session.json
+    file -- fall back to the same cookies set by hand as PINTEREST_SESSION_JSON
+    in the Claude Code environment's settings, mirroring the TPT_SESSION_JSON
+    pattern in cmie/publishing/tpt.py. Previously this ONLY read the file and
+    hard-exited if it didn't exist, so pasting a cookie into the environment
+    dialog had no code path to actually reach it -- confirmed live 2026-08-20
+    (Routine 3 run found zero credentials despite none being needed to be
+    missing, just unreadable)."""
+    if COOKIES_FILE.exists():
+        return json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
+    raw = os.environ.get("PINTEREST_SESSION_JSON")
+    if raw:
+        return json.loads(raw)
+    log.error(
+        f"{COOKIES_FILE} not found and no PINTEREST_SESSION_JSON env var set. "
+        "Export Pinterest cookies via Cookie-Editor and either save them to "
+        f"{COOKIES_FILE.name} locally, or set PINTEREST_SESSION_JSON in the "
+        "cloud environment's variables."
+    )
+    sys.exit(1)
 
 
 def _all_unit_ids() -> list[str]:
@@ -67,13 +85,16 @@ def _unit_marketing_file(unit_id: str) -> Path:
 
 def parse_marketing_pins(md_path: Path, wave: int = 1) -> list[dict]:
     text = md_path.read_text(encoding="utf-8")
-    # Wave-1 and wave-2 sections both start with "## Pinterest pins" -- pick
-    # the right one by requiring (wave 2) or excluding ("wave 2" absent) that
-    # marker on the heading LINE itself. Find the heading line first with a
-    # non-DOTALL regex (so the lookahead only scans that one line, not the
-    # rest of the document), then capture the section body separately.
-    if wave == 2:
-        heading_re = re.compile(r"^## Pinterest pins.*wave 2.*$", re.MULTILINE)
+    # Every wave section starts with "## Pinterest pins" -- pick the right
+    # one by requiring (wave N, N>=2) or excluding (wave 1, no marker at
+    # all -- the original convention, predates wave numbering) that marker
+    # on the heading LINE itself. Generalized from a wave-1-vs-2-only check
+    # (hardcoded via `if wave == 2`) since 10/11 live units hit wave 2 by
+    # 2026-08-20 with no wave 3 support -- find the heading line first with
+    # a non-DOTALL regex (so the lookahead only scans that one line, not
+    # the rest of the document), then capture the section body separately.
+    if wave >= 2:
+        heading_re = re.compile(rf"^## Pinterest pins.*wave {wave}\b.*$", re.MULTILINE)
     else:
         heading_re = re.compile(r"^## Pinterest pins(?!.*wave \d).*$", re.MULTILINE)
     heading_match = heading_re.search(text)
@@ -201,24 +222,20 @@ def main() -> None:
     group.add_argument("--unit", help="Single unit_id to publish pins for")
     group.add_argument("--all", action="store_true", help="Publish pins for all units with marketing content")
     parser.add_argument("--dry-run", action="store_true", help="Fill pin forms but do not click Publish")
-    parser.add_argument("--wave", type=int, default=1, choices=[1, 2], help="Which pin wave to post (default 1)")
+    parser.add_argument("--wave", type=int, default=1, help="Which pin wave to post (default 1)")
     args = parser.parse_args()
 
-    if not COOKIES_FILE.exists():
-        log.error(f"{COOKIES_FILE} not found. Export Pinterest cookies via Cookie-Editor first.")
-        sys.exit(1)
+    cookies = _load_pinterest_cookies()
 
-    env = _load_env()
-    token = env.get("GUMROAD_TOKEN")
+    token = os.getenv("GUMROAD_TOKEN")
     if not token:
-        log.error("GUMROAD_TOKEN not found in .env")
+        log.error("GUMROAD_TOKEN not found (checked .env and environment variables)")
         sys.exit(1)
 
     unit_ids = [args.unit] if args.unit else _all_unit_ids()
     log.info(f"Publishing pins for {len(unit_ids)} unit(s): {unit_ids}")
 
     products = fetch_gumroad_thumbnails(token)
-    cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
 
     from playwright.sync_api import sync_playwright
     from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies

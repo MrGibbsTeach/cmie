@@ -15,6 +15,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -39,14 +40,23 @@ def _expected_links() -> set[str]:
     return links
 
 
-def main() -> None:
-    if not COOKIES_FILE.exists():
-        print(f"ERROR: {COOKIES_FILE} not found.")
-        sys.exit(1)
+def _load_pinterest_cookies() -> list[dict]:
+    """Same PINTEREST_SESSION_JSON env-var fallback as publish_pinterest.py
+    -- previously this only read the local file and had no cloud path at
+    all, same bug class already fixed for TPT_SESSION_JSON."""
+    if COOKIES_FILE.exists():
+        return json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
+    raw = os.environ.get("PINTEREST_SESSION_JSON")
+    if raw:
+        return json.loads(raw)
+    print(f"ERROR: {COOKIES_FILE} not found and no PINTEREST_SESSION_JSON env var set.")
+    sys.exit(1)
 
+
+def main() -> None:
     from playwright.sync_api import sync_playwright
     from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies
-    cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
+    cookies = _load_pinterest_cookies()
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True, **cloud_launch_kwargs())
