@@ -90,9 +90,12 @@ def main() -> None:
         for pid in pin_ids:
             page.goto(f"https://www.pinterest.com/pin/{pid}/", wait_until="domcontentloaded", timeout=20000)
             page.wait_for_timeout(1500)
-            title = page.evaluate("""
-            () => { const el = document.querySelector('h1'); return el ? el.innerText.trim() : ''; }
-            """)
+            # The pin page renders TWO <h1> elements: a generic "Pinterest"
+            # site-header one first, then the actual pin title -- querySelector('h1')
+            # always grabbed the generic one, so this check silently never caught an
+            # empty pin title. document.title reliably holds the real pin title
+            # (confirmed live 2026-08-22).
+            title = page.title().strip()
             if not title:
                 empty_title_count += 1
                 findings.append(f"Pin {pid} has an empty/missing title.")

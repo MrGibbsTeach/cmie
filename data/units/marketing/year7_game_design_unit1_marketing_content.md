@@ -66,9 +66,9 @@ Check it out here: https://www.teacherspayteachers.com/Product/Game-Design-Unit-
 
 Thanks for following the store — more units on the way!
 
-## Pinterest pins — wave 2 (queued, not yet posted)
+## Pinterest pins — wave 2 (confirmed live on the account's Created page, checked 2026-08-22 — the "queued, not yet posted" label here was stale, likely posted in an earlier untracked session)
 
-New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins. Review before posting; not yet live.
+New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins. Confirmed live — see heading above.
 
 ### Pin 1 (standout lesson — Scratch sprites & events)
 **Title** (60 chars): Build a Game with Scratch: Sprites & Events (Ready to Teach)

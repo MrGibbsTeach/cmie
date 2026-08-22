@@ -66,9 +66,9 @@ Check it out here: https://www.teacherspayteachers.com/Product/Cyber-Security-Di
 
 Thanks for following the store — more units on the way!
 
-## Pinterest pins — wave 2 (queued, not yet posted)
+## Pinterest pins — wave 2 (partially posted — checked 2026-08-22: Pin 1 and Pin 2 are confirmed live, Pin 3 "Term 3 Digital Technologies: Cyber Security Unit Ready to Go" is NOT live. The "queued, not yet posted" label here was stale for Pins 1-2, likely posted in an earlier untracked session. Pin 3 was never posted, and there's no way to post a single pin via publish_pinterest.py without duplicating the two that are already live — needs either a script change to post individual pins, or manual posting of just Pin 3.)
 
-New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins. Review before posting; not yet live.
+New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins.
 
 ### Pin 1 (standout lesson — Phishing & Social Engineering)
 **Title** (57 chars): Teach Students to Spot Phishing & Social Engineering (Y7)
@@ -88,5 +88,30 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Title** (60 chars): Term 3 Digital Technologies: Cyber Security Unit Ready to Go
 
 **Description**: Online safety and digital footprints, planned for you. This 7-lesson unit covers passwords, phishing, and managing your digital footprint — editable slides, workbook, and assessment pack included, ready for Term 3. #term3planning #digitalcitizenship #onlinesafety #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Cyber-Security-Digital-Footprints-Unit-1-Protecting-Yourself-Online-Year-16908167
+
+## Pinterest pins — wave 3 (posted 2026-08-22, live — verified on the account's Created page)
+
+Third posting batch — wave 1 was the generic bundle/lesson-pack/free-sample promo, wave 2 covered the Phishing lesson, a value-stack pin, and Term 3 planning. These pivot to a different standout lesson (the "What Apps Collect" privacy lesson), the capstone project, and a "not an IT expert" pain point for generalist teachers.
+
+### Pin 1 (standout lesson — what apps collect about you)
+**Title** (66 chars): What Do Your Apps Really Know About You? (Eye-Opening Y7 Lesson)
+
+**Description**: A genuinely eye-opening lesson on what apps actually collect about students — a great hook for a digital privacy conversation. Ready-to-teach slides, part of a full 7-lesson Cyber Security & Digital Footprints unit with workbook and assessment pack. #digitalprivacy #cybersecurity #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Cyber-Security-Digital-Footprints-Unit-1-Protecting-Yourself-Online-Year-16908167
+
+### Pin 2 (capstone project)
+**Title** (66 chars): The Capstone Lesson: Students Design Their Own Cyber Security Plan
+
+**Description**: The final lesson has students design a cyber security plan for a real scenario — a genuine applied capstone, not just another worksheet. Comes complete with the other 6 lessons, a student workbook, unit roadmap, and full assessment pack with rubric. #digitaltechnologies #projectbasedlearning #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Cyber-Security-Digital-Footprints-Unit-1-Protecting-Yourself-Online-Year-16908167
+
+### Pin 3 (pain point — non-specialist teacher)
+**Title** (62 chars): You Don't Need to Be an IT Expert to Teach Cyber Security Well
+
+**Description**: You don't need an IT background to teach this well — this 7-lesson unit breaks passwords, phishing, digital footprints, and privacy down into clear, ready-to-teach lessons with a student workbook and full assessment pack already built. #digitaltech #teacherspayteachers #cybersecurity
 
 **Link**: https://www.teacherspayteachers.com/Product/Cyber-Security-Digital-Footprints-Unit-1-Protecting-Yourself-Online-Year-16908167

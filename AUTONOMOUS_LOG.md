@@ -21,6 +21,98 @@ is found during a run:
 
 (entries below this line, newest first)
 
+## 2026-08-22 — Marketing Push: 12 new Pinterest pins posted and verified live across 4 units; discovered the "queued, not yet posted" wave-2 labels across most units were stale (already live), and fixed a verify-script bug that made its title check silently useless
+
+Task: check each live unit's marketing content for its highest Pinterest
+wave, pick 2-3 units most due for a fresh wave, draft 3 distinct-angle pins
+each, post via `publish_pinterest.py --unit <id> --wave N`, verify live.
+
+**First finding — the premise didn't match reality.** `PINTEREST_SESSION_JSON`
+is now present in this container for the first time (prior runs on
+2026-08-19/20 logged this credential as the sole blocker). But the
+`data/units/marketing/*.md` files' "wave 2 (queued, not yet posted)" labels
+turned out to be **stale for 8 of 10 eligible units** — a live check of the
+account's own Created page (`focuslabdigitalteach`, via
+`verify_pinterest_pins.py`'s approach, extended with scrolling since the
+un-scrolled version only surfaces a small first-viewport batch) found wave 2
+already live for algorithms, data_representation, digital_systems,
+game_design, python_programming, spreadsheets, ux_design, and web_design —
+apparently posted in an untracked session, since no prior log entry records
+a successful post. Two real exceptions: **cybersecurity** wave 2 is
+partially live (2 of 3 pins; "Term 3 Digital Technologies: Cyber Security
+Unit Ready to Go" never posted, and there's no way to post a single pin via
+this script without duplicating the two already live), and
+**networks_hardware** wave 2 is fully unposted. Updated each file's wave-2
+heading/body to reflect what's actually live instead of the stale label —
+straight documentation-accuracy fix, no wave content changed.
+
+**Second finding — 2 of the "most due" candidates are blocked by a
+Gumroad-thumbnail gap, unrelated to Pinterest.** `publish_pinterest.py`
+sources its pin image from a matching Gumroad product thumbnail. Confirmed
+live (dry-run, real error) that **algorithms** and **networks_hardware**
+have no matching Gumroad product at all in this account's current 10-product
+catalog — so neither can be posted to right now regardless of wave content
+readiness. Not something to fix in a marketing-only run; flagging for the
+person maintaining Gumroad listings.
+
+**What was actually picked and posted** (2 for "haven't had one recently" +
+1 for "newest with only wave 1", per the task's own criteria, adjusted for
+the thumbnail blocker above):
+- **year7_orientation_unit1** — never had a wave 2 (only unit besides the
+  brand-new robotics without one). Drafted and posted wave 2: a
+  Passwords-&-Privacy lesson deep-dive, a "stop building this from scratch"
+  pain point, and a deliberate pivot away from wave 1's back-to-school
+  framing (new-student-mid-year angle) since wave 1 already fully owned
+  that angle.
+- **year7_cybersecurity_unit1** — rather than trying to patch the 1 missing
+  wave-2 pin (would duplicate the 2 already live), drafted and posted a
+  full wave 3: a "What Do Your Apps Collect" privacy-lesson deep-dive, the
+  Lesson 7 capstone, and a "not an IT expert" teacher pain point.
+- **year7_data_representation_unit1** — oldest bundle still with a working
+  Gumroad thumbnail (algorithms and networks_hardware, the actual oldest,
+  are blocked per above) and hasn't been refreshed since wave 2. Drafted
+  and posted wave 3: an ASCII/Unicode lesson deep-dive, the Lesson 7
+  capstone, and a "not a CS specialist" pain point.
+- **year7_robotics_physical_computing_unit1** (added mid-session) — while
+  investigating, pulled `origin/main` per this run's branch instructions and
+  found it 3 commits ahead, including "Mark Robotics & Physical Computing
+  unit complete — all 3 platforms live." That commit unblocked exactly the
+  Gumroad-thumbnail gap above for this one unit (confirmed live via the
+  Gumroad API: thumbnail now present, product published). Robotics had
+  **zero** Pinterest pins live — its wave 1 was drafted at unit-launch but
+  never posted. Posted the existing wave 1 as-is (no new content needed,
+  nothing to be distinct from yet).
+
+All 12 pins (3 x 4 units) verified live individually by re-loading each
+pin's own URL and checking `document.title` + outbound TPT link — not just
+the publish script's "Submitted" log line. Titles and links all matched the
+source markdown exactly.
+
+**Bug fixed in `verify_pinterest_pins.py`**: its title-emptiness check used
+`document.querySelector('h1')`, but a pin page renders two `<h1>` elements —
+a generic "Pinterest" site-header one first, then the real pin title — so
+the check always read the generic one and could never actually detect an
+empty title. Confirmed live by inspecting the DOM directly. Switched to
+`document.title`, which reliably holds the real pin title. Not otherwise
+touched — its pin-count check remains flaky (two consecutive runs today
+found 26 and then 18 of the same live pins, seemingly due to Pinterest's
+lazy-loaded/virtualized list and the script's fixed 4s wait with no
+scrolling) — a separate, pre-existing limitation not fixed here since this
+run's own targeted per-pin verification already covers what was posted
+today.
+
+**Branch note**: per this run's instructions, started work on an isolated
+branch that was 3 commits behind `origin/main` (`git status` showed it as
+literally named `main` locally, but `git fetch` + `git log origin/main`
+showed it wasn't current). Stashed local changes, fast-forwarded to
+`origin/main` (no conflicts — the incoming commits only touched
+`publish_gumroad.py` and `UPCOMING_QUEUE.md`), reapplied the stash, and
+committed on top of the up-to-date `main`.
+
+Nothing deleted, no off-brand products touched, no pricing/platform/strategy
+changes — only Pinterest wave content drafted and posted, plus the
+documentation-accuracy and verify-script fixes described above.
+
 ## 2026-08-21 (later run) — New Unit Production: Robotics & Physical Computing built and QA-verified end-to-end; TES live, TPT and Gumroad both blocked by missing/expired credentials — queue item left unchecked
 
 Task: `data/units/UPCOMING_QUEUE.md`'s first unchecked item, **Robotics &

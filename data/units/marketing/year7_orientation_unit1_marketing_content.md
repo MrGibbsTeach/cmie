@@ -67,3 +67,28 @@ There's also a free Lesson 1 sample if you'd like to try before buying the bundl
 Check it out here: https://www.teacherspayteachers.com/Product/Digital-Technologies-Orientation-Unit-1-Getting-Started-for-the-Year-Year-7-17077293
 
 Thanks for following the store — more units on the way!
+
+## Pinterest pins — wave 2 (posted 2026-08-22, live — verified on the account's Created page)
+
+New angles for the second Pinterest posting batch — wave 1 leaned entirely on the back-to-school/Week-1 framing (this unit's core selling point), so these pivot to a specific-lesson deep dive, a pain-point angle, and an evergreen "any time of year" reframe, rather than repeating the same back-to-school promo three more times.
+
+### Pin 1 (standout lesson — Passwords & Privacy)
+**Title** (73 chars): Passwords & Privacy: The Digital Citizenship Lesson Every Student Needs
+
+**Description**: A ready-to-teach lesson on passwords, privacy, and protecting personal information online — one of the most practical digital citizenship skills a Year 7 student can learn. Part of a complete 7-lesson Digital Technologies Orientation unit with workbook and assessment pack. #digitalcitizenship #onlinesafety #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Digital-Technologies-Orientation-Unit-1-Getting-Started-for-the-Year-Year-7-17077293
+
+### Pin 2 (pain point — building your own citizenship unit)
+**Title** (62 chars): Stop Building Your Own Digital Citizenship Unit From Scratch
+
+**Description**: Digital citizenship, file organisation, passwords, netiquette, and goal-setting — planned for you across 7 ready-to-teach lessons, with an editable student workbook and full assessment pack included. No more patching together a Week 1 unit from random slides. #digitalcitizenship #digitaltechnologies #teacherspayteachers
+
+**Link**: https://www.teacherspayteachers.com/Product/Digital-Technologies-Orientation-Unit-1-Getting-Started-for-the-Year-Year-7-17077293
+
+### Pin 3 (evergreen reframe — not just for day one)
+**Title** (72 chars): New Student Starting Mid-Year? This Digital Tech Foundation Unit Helps
+
+**Description**: This isn't only a first-week resource — it's a complete digital citizenship and digital-skills foundation any Year 7 student can work through, any time of year. 7 lessons, editable slides, workbook, and assessment pack included. #digitaltechnologies #newstudent #teacherspayteachers #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Digital-Technologies-Orientation-Unit-1-Getting-Started-for-the-Year-Year-7-17077293

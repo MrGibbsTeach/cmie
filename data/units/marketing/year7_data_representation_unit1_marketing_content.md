@@ -66,9 +66,9 @@ Check it out here: https://www.teacherspayteachers.com/Product/Data-Representati
 
 Thanks for following the store — more units on the way!
 
-## Pinterest pins — wave 2 (queued, not yet posted)
+## Pinterest pins — wave 2 (confirmed live on the account's Created page, checked 2026-08-22 — the "queued, not yet posted" label here was stale, likely posted in an earlier untracked session)
 
-New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins. Review before posting; not yet live.
+New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins. Confirmed live — see heading above.
 
 ### Pin 1 (standout lesson — Images as Data)
 **Title** (59 chars): How Do Computers Store a Picture? A Pixels & Bitmaps Lesson
@@ -88,5 +88,30 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Title** (61 chars): Data Representation Bundle: 7 Lessons + Workbook + Assessment
 
 **Description**: Everything for a complete Data Representation unit in one download: 7 lesson decks (binary, ASCII, pixels, sound), a student workbook, unit roadmap, and assessment pack with rubric. #digitaltechnologies #binary #middleschoolcs
+
+**Link**: https://www.teacherspayteachers.com/Product/Data-Representation-Unit-1-Binary-and-How-Computers-See-the-World-Year-7--16907385
+
+## Pinterest pins — wave 3 (posted 2026-08-22, live — verified on the account's Created page)
+
+Third posting batch — wave 1 was the generic bundle/lesson-pack/free-sample promo, wave 2 covered the Pixels & Bitmaps lesson, a "make binary click" pain point, and a value-stack pin. These pivot to a different standout lesson (ASCII & Unicode), the capstone project, and a "not a CS specialist" pain point aimed at generalist teachers.
+
+### Pin 1 (standout lesson — Text as Data / ASCII & Unicode)
+**Title** (58 chars): Why Does 'A' = 65? A Ready-to-Teach ASCII & Unicode Lesson
+
+**Description**: A genuinely clicky way into how computers represent text — students discover how every letter and symbol maps to a number, no prior knowledge needed. Ready-to-teach slides from a complete 7-lesson Data Representation unit covering binary, pixels, and sound as data too. #digitaltechnologies #computerscience #binary #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Data-Representation-Unit-1-Binary-and-How-Computers-See-the-World-Year-7--16907385
+
+### Pin 2 (capstone project)
+**Title** (75 chars): The Data Representation Capstone: Students Design Their Own Encoding Scheme
+
+**Description**: The final lesson has students design a data encoding scheme for a real scenario — a genuine applied capstone, not just another worksheet. Comes complete with the other 6 lessons, a student workbook, unit roadmap, and full assessment pack with rubric. #digitaltechnologies #projectbasedlearning #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Data-Representation-Unit-1-Binary-and-How-Computers-See-the-World-Year-7--16907385
+
+### Pin 3 (pain point — non-specialist teacher)
+**Title** (69 chars): Never Taught Binary or Data Representation? This Unit Has You Covered
+
+**Description**: You don't need a computer science background to teach this well — this 7-lesson unit breaks binary, ASCII, pixels, and sound down into clear, ready-to-teach lessons with a student workbook and full assessment pack already built. #digitaltech #teacherspayteachers #computationalthinking
 
 **Link**: https://www.teacherspayteachers.com/Product/Data-Representation-Unit-1-Binary-and-How-Computers-See-the-World-Year-7--16907385

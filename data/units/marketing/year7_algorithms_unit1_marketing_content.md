@@ -66,9 +66,9 @@ Check it out here: https://www.teacherspayteachers.com/Product/Algorithms-Progra
 
 Thanks for following the store — more units on the way!
 
-## Pinterest pins — wave 2 (queued, not yet posted)
+## Pinterest pins — wave 2 (confirmed live on the account's Created page, checked 2026-08-22 — the "queued, not yet posted" label here was stale, likely posted in an earlier untracked session)
 
-New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins. Review before posting; not yet live.
+New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins. Confirmed live — see heading above.
 
 ### Pin 1 (standout lesson — Debugging)
 **Title** (57 chars): The Lesson Every CS Teacher Needs: Debugging Logic Errors
@@ -88,5 +88,30 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Title** (57 chars): Term 3 Sorted: A Complete Algorithms Unit, Ready to Teach
 
 **Description**: Planning your Term 3 Digital Technologies program? This 7-lesson Algorithms & Programming Logic unit slots straight in — editable slides, student workbook, unit roadmap, and a full assessment pack with rubric. Built for Year 7 / KS3 classrooms. #term3planning #digitaltechnologies #backtoschool #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Algorithms-Programming-Logic-Unit-1-Thinking-Like-a-Programmer-Lower-16835705
+
+## Pinterest pins — wave 3 (queued, not yet posted)
+
+Third posting batch — wave 1 was the generic bundle/lesson-pack/free-sample promo, wave 2 covered the Debugging lesson, a lesson-prep pain point, and Term 3 planning. These pivot to a different standout lesson (Efficiency), the capstone project, and a "not a CS specialist" pain point aimed at generalist teachers assigned to teach this unit.
+
+### Pin 1 (standout lesson — Efficiency)
+**Title** (66 chars): Which Algorithm Is Better? A Ready-to-Teach Efficiency Lesson (Y7)
+
+**Description**: Comparing different algorithms for the same problem is one of the harder computational-thinking ideas to teach well — this ready-to-teach lesson breaks it down clearly for Year 7. Part of a complete 7-lesson Algorithms & Programming Logic unit with workbook and assessment pack. #computationalthinking #digitaltechnologies #y7 #algorithms
+
+**Link**: https://www.teacherspayteachers.com/Product/Algorithms-Programming-Logic-Unit-1-Thinking-Like-a-Programmer-Lower-16835705
+
+### Pin 2 (capstone project)
+**Title** (59 chars): The Algorithms Capstone: Students Design Their Own Solution
+
+**Description**: The final lesson has students design an algorithm for a real problem of their own — a genuine applied capstone, not just another worksheet. Comes complete with the other 6 lessons, a student workbook, unit roadmap, and full assessment pack with rubric. #digitaltechnologies #projectbasedlearning #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Algorithms-Programming-Logic-Unit-1-Thinking-Like-a-Programmer-Lower-16835705
+
+### Pin 3 (pain point — non-specialist teacher)
+**Title** (67 chars): Never Taught Computer Science? This Algorithms Unit Has You Covered
+
+**Description**: You don't need a computer science background to teach algorithms well — this 7-lesson unit breaks flowcharts, pseudocode, debugging, and efficiency down into clear, ready-to-teach lessons with a student workbook and full assessment pack already built. #digitaltech #teacherspayteachers #computationalthinking
 
 **Link**: https://www.teacherspayteachers.com/Product/Algorithms-Programming-Logic-Unit-1-Thinking-Like-a-Programmer-Lower-16835705
