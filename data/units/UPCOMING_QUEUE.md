@@ -6,7 +6,7 @@ date and unit_id. Do not build an entry that's already `[x]`. If every
 entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
 — do not invent a new topic.
 
-- [ ] Robotics & Physical Computing
+- [x] Robotics & Physical Computing — done 2026-08-22 (year7_robotics_physical_computing_unit1)
 - [ ] Databases: Organising and Querying Data
 - [ ] Digital Media & Multimedia Production (video/audio editing, digital storytelling)
 
@@ -65,3 +65,14 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
   the description from `data/units/marketing/year7_robotics_physical_computing_unit1_marketing_content.md`,
   and the thumbnail). **Still not marking `[x]`** — Gumroad is the one
   remaining piece.
+- 2026-08-22 (later same day): **Gumroad finished.** Root cause of the
+  login-bounce was Gumroad 2FA silently defeating the automated form-login
+  (found by the human, not by automation) — fixed by reusing a
+  human-completed session cookie instead of disabling 2FA. That surfaced a
+  second real bug: the description field's clipboard-paste can silently
+  no-op under automation exactly like the earlier TPT bug, so the same
+  verify+typing-fallback was added to `publish_gumroad.py::_fill_description`.
+  Product `iuunxn` now has title, description, zip, and thumbnail all
+  live and verified (`published: true` via the Gumroad API) —
+  https://focuslabdigital.gumroad.com/l/iuunxn. **Marking `[x]`** — all 3
+  platforms (TPT, TES, Gumroad) are live for this unit.
