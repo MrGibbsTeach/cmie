@@ -197,6 +197,32 @@ def _ensure_display() -> "subprocess.Popen | None":
     return proc
 
 
+def _alternate_local_chromium(exclude: str | None) -> str | None:
+    """Find another locally-installed Chromium build's executable, excluding
+    the one at `exclude` (a full path). Playwright's default browser
+    resolution can point at a build that's specifically broken for
+    launch_persistent_context() while working fine for plain launch() --
+    confirmed live 2026-08-22 on this machine, chromium-1208 crashed every
+    persistent-context launch (exitCode -2147483645, no useful message)
+    while chromium-1223, installed alongside it, worked immediately. Rather
+    than hardcode a revision number that goes stale the next time
+    Playwright's pinned version changes, scan the standard ms-playwright
+    cache dir for any other chromium-* build and use whichever isn't the
+    one that just failed."""
+    base = Path(os.environ.get("PLAYWRIGHT_BROWSERS_PATH") or (Path.home() / "AppData" / "Local" / "ms-playwright"))
+    if not base.exists():
+        return None
+    exclude_norm = str(Path(exclude)).lower() if exclude else None
+    for entry in sorted(base.glob("chromium-*"), reverse=True):
+        for exe_name in ("chrome.exe", "chrome", "headless_shell.exe", "headless_shell"):
+            candidate = entry / "chrome-win64" / exe_name
+            if not candidate.exists():
+                candidate = entry / "chrome-linux" / exe_name
+            if candidate.exists() and str(candidate).lower() != exclude_norm:
+                return str(candidate)
+    return None
+
+
 @contextmanager
 def automation_chrome(headless: bool = False, slow_mo: int = 200):
     """
@@ -215,15 +241,37 @@ def automation_chrome(headless: bool = False, slow_mo: int = 200):
     xvfb = None if headless else _ensure_display()
     try:
         with sync_playwright() as pw:
-            context = pw.chromium.launch_persistent_context(
-                user_data_dir=str(AUTOMATION_PROFILE),
-                headless=headless,
-                slow_mo=slow_mo,
-                args=extra_args,
-                ignore_default_args=["--enable-automation"],
-                **cloud_kwargs,
-                **cloud_context_kwargs(),
-            )
+            try:
+                context = pw.chromium.launch_persistent_context(
+                    user_data_dir=str(AUTOMATION_PROFILE),
+                    headless=headless,
+                    slow_mo=slow_mo,
+                    args=extra_args,
+                    ignore_default_args=["--enable-automation"],
+                    **cloud_kwargs,
+                    **cloud_context_kwargs(),
+                )
+            except Exception as e:
+                failed_exe = cloud_kwargs.get("executable_path")
+                alternate = _alternate_local_chromium(failed_exe)
+                if not alternate:
+                    raise
+                log.warning(
+                    f"launch_persistent_context failed with the default Chromium build "
+                    f"({e}) -- retrying with an alternate local build: {alternate}"
+                )
+                retry_kwargs = dict(cloud_kwargs)
+                retry_kwargs.pop("channel", None)
+                retry_kwargs["executable_path"] = alternate
+                context = pw.chromium.launch_persistent_context(
+                    user_data_dir=str(AUTOMATION_PROFILE),
+                    headless=headless,
+                    slow_mo=slow_mo,
+                    args=extra_args,
+                    ignore_default_args=["--enable-automation"],
+                    **retry_kwargs,
+                    **cloud_context_kwargs(),
+                )
             page = context.new_page()
             try:
                 yield context, page

@@ -42,3 +42,26 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
   `AUTONOMOUS_LOG.md`'s 2026-08-21 "New Unit Production" entry for exact
   human steps needed. This item is still in-flight, not abandoned — finish
   publishing TPT+Gumroad for this same unit before picking a new topic.
+- 2026-08-22: Finished locally (this machine has working local credentials
+  for all 3 platforms). **TPT: fully live**, all 9 parts (7 lessons +
+  assessment + bundle), verified clean via `verify_tpt_listings.py`. Bundle
+  URL added to `bundle_urls.json`, marketing content generated. Found and
+  fixed 3 real bugs in `cmie/publishing/tpt.py`/`verify_tpt_listings.py`
+  along the way (description-paste silently failing, a missing validation-
+  error pattern, and a checker keyword-truncation false-negative) — see
+  `AUTONOMOUS_LOG.md` for detail. **Gumroad: still blocked**, but for a
+  different, deeper reason than "no credentials" — a real product exists
+  (`https://focuslabdigital.gumroad.com/l/iuunxn`, draft, empty) but every
+  attempt to reach its edit page bounces back to `gumroad.com/login` even
+  immediately after a reportedly-successful login, reproduced 3 times, not
+  a timing fluke. Also found and fixed a separate, real local environment
+  bug along the way (`cmie/publishing/browser.py::automation_chrome()` was
+  crashing on Chromium build 1208 specifically for persistent-context
+  launches; added a self-healing fallback to another local build). The
+  Gumroad login-bounce itself is NOT fixed — needs either a deeper look at
+  Gumroad's session/cookie handling for the edit-page route specifically,
+  or a human to log in to Gumroad directly and finish product `iuunxn`
+  manually (upload `releases/artifacts/year7_robotics_physical_computing_unit1_v001_PUBLIC.zip`,
+  the description from `data/units/marketing/year7_robotics_physical_computing_unit1_marketing_content.md`,
+  and the thumbnail). **Still not marking `[x]`** — Gumroad is the one
+  remaining piece.
