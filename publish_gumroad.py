@@ -86,12 +86,37 @@ def _save_session(context) -> None:
 
 
 def _load_session(context) -> bool:
-    if not COOKIES_FILE.exists():
-        return False
-    cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
-    context.add_cookies(normalize_cookies(cookies))
-    log.info("Gumroad session loaded from file.")
-    return True
+    if COOKIES_FILE.exists():
+        cookies = json.loads(COOKIES_FILE.read_text(encoding="utf-8"))
+        context.add_cookies(normalize_cookies(cookies))
+        log.info("Gumroad session loaded from file.")
+        return True
+
+    # Cloud sandboxes don't have this gitignored file -- fall back to the
+    # same cookies set by hand as GUMROAD_SESSION_JSON in the Claude Code
+    # environment's settings, mirroring the TPT_SESSION_JSON /
+    # PINTEREST_SESSION_JSON pattern. Needed because Gumroad account 2FA
+    # makes the GUMROAD_EMAIL/PASSWORD form-login path unusable for
+    # unattended runs -- confirmed live 2026-08-22: every automated login
+    # attempt fills email+password fine, then stalls on a 2FA challenge
+    # page whose URL doesn't contain "login", so the code's own
+    # "did we leave the login page" check is fooled into logging
+    # "Form login succeeded" while never actually completing
+    # authentication. A real, human-completed login (2FA included, via
+    # --save-session) is the only way to get a genuinely authenticated
+    # session; from there this env var lets the cloud routine reuse it
+    # without re-triggering 2FA on every run.
+    raw = os.environ.get("GUMROAD_SESSION_JSON")
+    if raw:
+        try:
+            cookies = json.loads(raw)
+            context.add_cookies(normalize_cookies(cookies))
+            log.info("Gumroad session loaded from GUMROAD_SESSION_JSON env var.")
+            return True
+        except Exception as e:
+            log.warning(f"Could not parse GUMROAD_SESSION_JSON: {e}")
+
+    return False
 
 
 def _is_logged_in(page) -> bool:
