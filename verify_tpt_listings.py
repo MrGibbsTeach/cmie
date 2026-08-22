@@ -64,13 +64,25 @@ def _unit_topic_keyword(unit_id: str) -> str:
     individual product (bundle, each lesson, assessment) shares the
     "Unit N - Subtitle" part AFTER the colon (the part BEFORE the colon is
     only in the bundle/lead-magnet titles, not per-lesson ones), so match
-    on that, not the topic-prefix keyword."""
+    on that, not the topic-prefix keyword.
+
+    Capped to 30 chars -- confirmed live 2026-08-22 on
+    year7_robotics_physical_computing_unit1 ("Unit 1 - Sensors, Actuators,
+    and Building Smart Machines", 56 chars uncapped): TPT truncates the
+    stored title before the full phrase survives, so searching on the full
+    phrase silently found only 3 of 9 real, live, correctly-formed
+    products -- looked like a corruption/missing-listings problem until a
+    direct per-URL check proved otherwise. Same truncation-vs-search-
+    keyword mismatch already fixed for lead magnets in
+    _lesson_topic_keyword(); this is the equivalent fix for regular units
+    whose "Unit N - Subtitle" phrase happens to be unusually long."""
     import json
     cfg_path = PROJECT_ROOT / "data" / "units" / f"{unit_id}.json"
     if cfg_path.exists():
         cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
         title = cfg.get("title", "")
-        return title.split(":", 1)[1].strip() if ":" in title else title[:30].strip()
+        keyword = title.split(":", 1)[1].strip() if ":" in title else title.strip()
+        return keyword[:30].strip()
     return unit_id.replace("_", " ")
 
 

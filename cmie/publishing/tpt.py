@@ -300,7 +300,29 @@ def _fill_description(page: Page, description: str) -> None:
     page.keyboard.press("Control+a")
     page.keyboard.press("Control+v")
     time.sleep(1)
-    log.info("Description pasted.")
+
+    # The clipboard-paste approach above is inherently flaky under
+    # unattended automation (navigator.clipboard.write/paste both depend on
+    # document focus, which a rapid multi-part publish run can lose) --
+    # confirmed live 2026-08-22: it logged "Description pasted" and
+    # reported no error, but the field was genuinely empty on submit
+    # ("Please include a description"), and the prior code trusted the
+    # paste unconditionally. Verify the editor actually has content now;
+    # if not, fall back to typing the plain text directly (slower, but
+    # doesn't depend on clipboard/focus at all).
+    if not editor.inner_text().strip():
+        log.warning("Description editor empty after paste — falling back to direct typing.")
+        plain = re.sub(r"<[^>]+>", "", html)
+        editor.click()
+        page.keyboard.press("Control+a")
+        page.keyboard.type(plain, delay=5)
+        time.sleep(0.5)
+        if not editor.inner_text().strip():
+            log.error("Description editor still empty after typing fallback — submission will likely fail.")
+        else:
+            log.info("Description filled via typing fallback.")
+    else:
+        log.info("Description pasted.")
 
 
 # ---------------------------------------------------------------------------
@@ -760,11 +782,15 @@ def upload_unit(
 
                     # TPT's field validation errors consistently start with
                     # "Please ..." (e.g. "Please select a tax code.",
-                    # "Please upload at least the main cover image."). Don't
-                    # match on bare "required"/"error" -- those words appear
-                    # in our own listing copy ("No prep required") and would
-                    # falsely flag a successful submit as failed.
-                    error_text = page.locator("text=/^Please (select|upload|enter|fix|choose)/i")
+                    # "Please upload at least the main cover image.",
+                    # "Please include a description" -- this last one was
+                    # missing and let a real, specific error fall through to
+                    # the ambiguous "still on URL" branch undetected, found
+                    # live 2026-08-22). Don't match on bare "required"/
+                    # "error" -- those words appear in our own listing copy
+                    # ("No prep required") and would falsely flag a
+                    # successful submit as failed.
+                    error_text = page.locator("text=/^Please (select|upload|enter|fix|choose|include|add|provide)/i")
                     ambiguous = False
                     if error_text.count() > 0:
                         log.error(f"Submit appears to have failed — validation message present: {error_text.first.inner_text()[:200]}")
