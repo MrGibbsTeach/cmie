@@ -15,6 +15,7 @@ OR run --save-session to log in manually and cache cookies.
 import argparse
 import logging
 import os
+import re
 import sys
 import json
 from pathlib import Path
@@ -233,7 +234,27 @@ def _fill_description(page, description: str) -> None:
         )
         page.keyboard.press("Control+v")
         page.wait_for_timeout(1000)
-        log.info("Description filled.")
+
+        # Clipboard-paste is flaky under unattended automation --
+        # navigator.clipboard.write/paste both depend on document focus,
+        # which can silently fail with no exception raised (confirmed live
+        # 2026-08-22: logged success, field was genuinely empty on reload).
+        # Verify the editor actually has content; fall back to direct
+        # typing if not, mirroring the same fix already applied to TPT's
+        # description field (cmie/publishing/tpt.py::_fill_description).
+        if not desc_area.inner_text().strip():
+            log.warning("Description editor empty after paste — falling back to direct typing.")
+            plain = re.sub(r"<[^>]+>", "", html)
+            desc_area.click()
+            page.keyboard.press("Control+a")
+            page.keyboard.type(plain, delay=5)
+            page.wait_for_timeout(500)
+            if not desc_area.inner_text().strip():
+                log.error("Description editor still empty after typing fallback.")
+            else:
+                log.info("Description filled via typing fallback.")
+        else:
+            log.info("Description filled.")
     except Exception as e:
         log.warning(f"Description fill failed (non-fatal): {e}")
 
