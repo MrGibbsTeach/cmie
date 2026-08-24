@@ -1,22 +1,22 @@
-# Business Review — 2026-08-20 05:41 UTC
+# Business Review — 2026-08-24 01:11 UTC
 
 ## Revenue
-- **TPT**: USD 8.98 net, 3 sale(s)
+- **TPT**: ERROR — TPT session expired (.tpt_session.json no longer valid). Refresh it manually once: python publish_tpt.py --save-session (automated form login is disabled here — it has triggered TPT bot detection and an account lock before).
 - **Gumroad**: AUD 0 net, 0 sale(s)
 - **TES**: GBP 0.3 net, 1 sale(s)
-- **Combined (not currency-converted)**: USD8.98 + AUD0 + GBP0.3
+- **Combined (not currency-converted)**: AUD0 + GBP0.3
 
 ## Catalog — 0 live unit(s)
 
 ## Recent activity (last 8 commits)
-- 2026-08-20 Fix verify_tpt_listings.py: handle My-Products dashboard pagination
-- 2026-08-20 Commit lead-magnet source content for Routine 4's next queue units (fresh-clone fallback)
-- 2026-08-20 Move marketing content out of gitignored releases/ so Routine 3 works in fresh clones
-- 2026-08-19 Log scheduled business review + integrity checks: TPT fully working again (cookie fix confirmed), TES still blocked, flag networks_hardware_unit1 product-count anomaly
-- 2026-08-19 Log Marketing Push blocker: no Pinterest credentials or local release artifacts in this container
-- 2026-08-19 Normalize raw Cookie-Editor exports before Playwright add_cookies()
-- 2026-08-19 Log scheduled business review + integrity checks: credentials present for the first time, TPT/TES fail on new specific errors, Gumroad verified clean
-- 2026-08-17 Log scheduled business review + integrity checks: all platforms blocked again, no credentials/sessions in this container
+- 2026-08-22 Marketing Push: post 12 new Pinterest pins across 4 units, fix stale wave-2 status labels, fix verify script title-check bug
+- 2026-08-22 Mark Robotics & Physical Computing unit complete — all 3 platforms live
+- 2026-08-22 Fix Gumroad description clipboard-paste silently failing under automation
+- 2026-08-22 Diagnose Gumroad login-bounce as 2FA, add GUMROAD_SESSION_JSON env fallback
+- 2026-08-22 Complete TPT publish for Robotics unit locally; fix Chromium build crash; leave Gumroad as the one remaining blocker
+- 2026-08-22 Fix 3 real TPT publish bugs found live: description paste silently failing, missing validation-error pattern, checker keyword truncation
+- 2026-08-21 New Unit Production: Robotics & Physical Computing built, QA-verified, and published to TES
+- 2026-08-21 Merge branch 'main' of https://github.com/MrGibbsTeach/cmie
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).
