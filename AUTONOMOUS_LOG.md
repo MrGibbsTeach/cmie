@@ -49,6 +49,46 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-08-24 — Scheduled business review + integrity checks: TPT session expired (accepted platform limit), Gumroad and TES both clean
+
+Ran the standard routine: `python business_review.py --save`, then the three
+post-publish integrity checkers against all 12 live units. Report-only run —
+nothing found below was touched, edited, or deleted.
+
+**Revenue snapshot** (see `BUSINESS_REVIEW.md`, timestamp 2026-08-24 06:28 UTC):
+- **TPT**: could not check — session expired. Exact error: "TPT session
+  expired (.tpt_session.json no longer valid). Refresh it manually once:
+  python publish_tpt.py --save-session (automated form login is disabled
+  here — it has triggered TPT bot detection and an account lock before)."
+  Per this session's task instructions and the "Known platform limitation"
+  note above, this is an accepted platform limit (Cloudflare blocks fresh
+  browser fingerprints in the cloud container regardless of cookie
+  validity) — did not attempt any login workaround or retry.
+- **Gumroad**: AUD 0.00 net, 0 sales (via API, `GUMROAD_TOKEN` — checked
+  successfully).
+- **TES**: GBP 0.30 net, 1 sale (via saved session cookies — checked
+  successfully).
+- **Combined (not currency-converted)**: AUD 0 + GBP 0.30.
+
+**Catalog**: 12 live units, unchanged from the last review.
+
+**Integrity checks**:
+- **TPT** (`verify_tpt_listings.py --unit <id>` × 12): all 12 failed with
+  "not logged in to TPT (no valid session found) — cannot check listings"
+  (`Could not extract Chrome cookies: 'DBUS_SESSION_BUS_ADDRESS'`). Same
+  accepted platform limit as above, not a new issue — no checks could run,
+  which is distinct from "0 products, nothing to check."
+- **Gumroad** (`verify_gumroad_listings.py`): 13 of 17 products matched
+  'Unit 1' and were checked, all `[OK] (published)`. No integrity issues.
+- **TES** (`verify_tes_listings.py`): 22 of 33 resources matched 'Unit 1'
+  and were checked, all `[OK]`. No integrity issues.
+
+**No new integrity issues found.** Open items unchanged from the prior
+entry (TES Unit 1 AI-series cosmetic bug, TES duplicate pair 13432831 /
+13432796, permanently-broken TES resource 13445828, off-brand Gumroad
+products, real unattended scheduling) — see `BUSINESS_REVIEW.md` for the
+current list.
+
 ## 2026-08-24 — Automation hardening session: fixed root causes behind 4 routines' recurring failures, automated TES publish, confirmed TPT cloud automation is a hard platform limit (not a bug)
 
 Working session (not a scheduled routine run) to get all 4 routines to a

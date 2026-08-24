@@ -1,4 +1,4 @@
-# Business Review — 2026-08-24 01:11 UTC
+# Business Review — 2026-08-24 06:28 UTC
 
 ## Revenue
 - **TPT**: ERROR — TPT session expired (.tpt_session.json no longer valid). Refresh it manually once: python publish_tpt.py --save-session (automated form login is disabled here — it has triggered TPT bot detection and an account lock before).
@@ -6,17 +6,29 @@
 - **TES**: GBP 0.3 net, 1 sale(s)
 - **Combined (not currency-converted)**: AUD0 + GBP0.3
 
-## Catalog — 0 live unit(s)
+## Catalog — 12 live unit(s)
+- year7_algorithms_unit1
+- year7_cybersecurity_unit1
+- year7_data_representation_unit1
+- year7_digital_systems_unit1
+- year7_game_design_unit1
+- year7_networks_hardware_unit1
+- year7_orientation_unit1
+- year7_python_programming_unit1
+- year7_robotics_physical_computing_unit1
+- year7_spreadsheets_unit1
+- year7_ux_design_unit1
+- year7_web_design_unit1
 
 ## Recent activity (last 8 commits)
+- 2026-08-24 Document TPT cloud-automation limit as accepted-for-now, not permanent; log today's full automation-hardening session
+- 2026-08-24 Automate TES publish-now step; add Gumroad duplicate guard; fix catalog-size and Chromium-retry noise
+- 2026-08-24 Fix Gumroad API pagination bug silently hiding products past page 1
+- 2026-08-24 Log scheduled business review + integrity checks: TPT session expired, Gumroad and TES both clean across all 12 live units
 - 2026-08-22 Marketing Push: post 12 new Pinterest pins across 4 units, fix stale wave-2 status labels, fix verify script title-check bug
 - 2026-08-22 Mark Robotics & Physical Computing unit complete — all 3 platforms live
 - 2026-08-22 Fix Gumroad description clipboard-paste silently failing under automation
 - 2026-08-22 Diagnose Gumroad login-bounce as 2FA, add GUMROAD_SESSION_JSON env fallback
-- 2026-08-22 Complete TPT publish for Robotics unit locally; fix Chromium build crash; leave Gumroad as the one remaining blocker
-- 2026-08-22 Fix 3 real TPT publish bugs found live: description paste silently failing, missing validation-error pattern, checker keyword truncation
-- 2026-08-21 New Unit Production: Robotics & Physical Computing built, QA-verified, and published to TES
-- 2026-08-21 Merge branch 'main' of https://github.com/MrGibbsTeach/cmie
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).
