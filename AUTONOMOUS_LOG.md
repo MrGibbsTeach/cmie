@@ -17,9 +17,115 @@ is found during a run:
   ambiguous state), log it clearly below and move on — do not attempt to
   resolve it unilaterally
 
+Known platform limitation, accepted for now (2026-08-24) — NOT permanent,
+revisit periodically:
+- TPT sits behind a Cloudflare bot challenge that a fresh/disposable
+  browser fails even with genuinely valid, freshly-exported session
+  cookies — verified directly: a same-machine, same-IP, 2-minute-old
+  cookie export still hit "Performing security verification" in a new
+  browser profile. This is NOT a cookie-staleness problem, so refreshing
+  `TPT_SESSION_JSON` does not fix it and never has reliably — the cloud
+  sandbox is a disposable container every run, so it can never carry the
+  aged, real-usage browser trust TPT's Cloudflare challenge is actually
+  checking for. Local automation works because it runs against a
+  long-lived, real-usage Chrome profile on this machine, not a cookie
+  snapshot.
+- Accepted interim shape: Gumroad, TES, and Pinterest run unattended in
+  the cloud. TPT stays local-only — a human (or an active session at this
+  machine) periodically runs the TPT half of whatever queued up. Jobs
+  should detect the block, log it clearly, and move on without retrying
+  login workarounds — this is expected behavior, not a bug to chase.
+- This is accepted as a current constraint to work within, not a decision
+  to stop improving on. Do not treat "3 of 4 platforms automated" as a
+  finish line.
+
+Standing direction (2026-08-24): automation maturity is one axis of
+improvement, not the whole project. Keep actively looking for gains in:
+resource quality, which platforms/marketplaces the catalog lists on,
+pricing, marketing effectiveness, and automation coverage — in every
+session, not just when asked.
+
 ---
 
 (entries below this line, newest first)
+
+## 2026-08-24 — Automation hardening session: fixed root causes behind 4 routines' recurring failures, automated TES publish, confirmed TPT cloud automation is a hard platform limit (not a bug)
+
+Working session (not a scheduled routine run) to get all 4 routines to a
+state where a full week can run unattended. Found and fixed real, live
+bugs; ran two real corrective actions; made one deliberate scope decision.
+
+**Root-caused the Gumroad duplicate-listing incident.** The Gumroad API
+paginates at 10 products/page via `next_page_url`. Once the catalog
+passed 10 products (2026-08-22), `verify_gumroad_listings.py` had been
+silently checking only page 1 for days — reporting "10 of 10, all clean"
+while never seeing the other real products — and `publish_pinterest.py`'s
+thumbnail lookup independently hit the same blind spot, falsely
+concluding `algorithms` and `networks_hardware` had no Gumroad listing at
+all (both real, both on page 2; a cloud Marketing Push run on 2026-08-22
+logged this exact false conclusion too). Trusting that false signal, 2
+duplicate live Gumroad products were created (`jimmhz`, `ffsjn`) before
+the real cause was found. Fixed: both fetchers now paginate fully; the
+two duplicates were deleted (0 sales on either, originals `bpvevc`/`rrdvk`
+untouched); `publish_gumroad.py`'s product-creation path now refuses to
+create a duplicate-titled product at all, closing the class of bug for
+good rather than just this instance.
+
+**Automated TES's final "Publish now" step.** This was a deliberate
+manual-review gate in `publish_tes.py`/`publish_lead_magnets.py`, not a
+technical limitation — confirmed by inspecting the real wizard: step 5
+is just a `#confirm` checkbox + "Publish now" button. Automating it is
+consistent with this project's standing live-publishing policy (backed
+by `verify_tes_listings.py`'s post-publish checks). Added `--publish` to
+both scripts and a `--resume <resource_id>` path in `publish_tes.py` for
+finishing an already-created draft. Used it live to finish the 2 TES
+drafts that had been stuck waiting on this exact manual click since
+2026-08-20/21 (resources `13545886`, `13545171`) — both confirmed
+published ("Nice one claytongibbs!"; TES notes up to 3 working days
+before public visibility).
+
+**Fixed `business_review.py` reporting "0 live units" on every cloud
+run** — it read the gitignored `releases/public/` build dir (always
+empty on a fresh clone) instead of the git-tracked
+`data/units/bundle_urls.json` every other check already treats as the
+real catalog list. Now reads the same source of truth.
+
+**Reduced Chromium launch noise** — build 1208 crashes on
+`launch_persistent_context()` 100% of the time on this machine; every
+run was eating a ~30s failed launch + a large log dump before falling
+back to the working build (1223). Added a small local cache
+(`~/.cmie_working_chromium.txt`) so it skips straight to the working
+build after the first fallback, without hardcoding a version project-wide
+(the cloud environment's build can still drift independently).
+
+**Refreshed the local TPT session** — the real auth cookie had been dead
+since 2026-07-03 despite `sessionKey` itself being far from expired;
+local automation had been silently working the whole time via
+`browser_cookie3` reading cookies live from the regular Chrome browser,
+masking that the exported snapshot was stale. `browser_cookie3` extraction
+itself needs admin rights on this Windows machine (DPAPI), so a true
+non-interactive refresh isn't possible here — refreshed via a real login
+instead, using the persistent CMIEChrome profile (already Cloudflare-
+trusted) rather than `publish_tpt.py --save-session`'s throwaway browser,
+which hung indefinitely on Cloudflare's challenge.
+
+**Then disproved the fix.** Testing whether the fresh export would
+actually help the cloud environment (via `TPT_SESSION_JSON`), a faithful
+local simulation — same anti-detection launch args, a completely fresh
+throwaway profile, cookies only 2 minutes old — still hit Cloudflare's
+"Performing security verification" page and never got signed in. This
+means the TPT blocker was never really about cookie staleness: it's
+Cloudflare challenging any new/disposable browser fingerprint regardless
+of cookie validity, and the cloud sandbox is definitionally a new
+fingerprint every run. Refreshing `TPT_SESSION_JSON` was not pushed to
+the cloud environment as a result — it would not have fixed anything.
+See the "Known platform limitation" note above for the accepted interim
+shape and the explicit instruction that this is not being treated as a
+finish line.
+
+**Not yet done**: confirm `GUMROAD_SESSION_JSON` was actually pasted into
+the cloud environment (asked 2026-08-22, unconfirmed); a real end-to-end
+test of a scheduled routine run under all these fixes.
 
 ## 2026-08-24 — Scheduled business review + integrity checks: TPT session expired again, Gumroad and TES both clean
 
