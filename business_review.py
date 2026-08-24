@@ -68,15 +68,15 @@ def _git_recent(n: int = 8) -> list[str]:
 
 
 def _catalog_units() -> list[str]:
-    units_dir = PROJECT_ROOT / "releases" / "public"
-    if not units_dir.exists():
+    # releases/public/ is gitignored build output -- empty on every fresh
+    # clone, which made this always report "0 live units" in the cloud.
+    # data/units/bundle_urls.json is git-tracked and is the actual source
+    # of truth every routine log entry already cross-checks against.
+    bundle_urls_path = PROJECT_ROOT / "data" / "units" / "bundle_urls.json"
+    if not bundle_urls_path.exists():
         return []
-    seen = set()
-    for p in sorted(units_dir.glob("*_v001")):
-        name = p.name.replace("_v001", "")
-        if "ai_data" not in name:
-            seen.add(name)
-    return sorted(seen)
+    import json
+    return sorted(json.loads(bundle_urls_path.read_text(encoding="utf-8")).keys())
 
 
 def build_report(headless: bool = True) -> str:

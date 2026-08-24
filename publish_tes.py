@@ -321,11 +321,29 @@ def _step4_licence(page, price_gbp: float) -> None:
     log.info(f"Step 5 (Publish preview): {page.url}")
 
 
+def _step5_publish(page) -> None:
+    """Check the copyright-confirmation box and click 'Publish now'. Only
+    called when explicitly requested (--publish) -- consistent with
+    publish_tpt.py's --publish flag, and with this project's standing
+    policy of proceeding with live publishing backed by post-publish
+    integrity checks (verify_tes_listings.py) rather than a manual
+    pre-publish gate."""
+    confirm_box = page.locator("#confirm")
+    confirm_box.check(timeout=10000)
+    log.info("Checked copyright confirmation box.")
+    page.wait_for_timeout(500)
+
+    page.get_by_role("button", name="Publish now").first.click(timeout=10000)
+    page.wait_for_load_state("domcontentloaded", timeout=20000)
+    page.wait_for_timeout(3000)
+    log.info(f"Clicked 'Publish now'. Landed on: {page.url}")
+
+
 # ---------------------------------------------------------------------------
 # Main publish flow
 # ---------------------------------------------------------------------------
 
-def publish_unit(unit_id: str, price_gbp: float = PRICE_GBP) -> None:
+def publish_unit(unit_id: str, price_gbp: float = PRICE_GBP, publish: bool = False) -> None:
     from cmie.publishing.browser import automation_chrome
 
     unit_folder = RELEASES_ROOT / unit_id
@@ -360,13 +378,24 @@ def publish_unit(unit_id: str, price_gbp: float = PRICE_GBP) -> None:
             _step4_licence(page, price_gbp)
 
             _take_debug_screenshot(page, f"{unit_id}_step5_preview")
-            log.info("")
-            log.info("=" * 60)
-            log.info("FORM FILLED — saved as a draft, NOT published.")
-            log.info("  Review the draft on your TES Author Dashboard, then")
-            log.info("  manually check the copyright box and click 'Publish now'.")
-            log.info(f"  Screenshot: releases/debug_tes_{unit_id}_step5_preview.png")
-            log.info("=" * 60)
+
+            if publish:
+                _step5_publish(page)
+                _take_debug_screenshot(page, f"{unit_id}_published")
+                log.info("")
+                log.info("=" * 60)
+                log.info("PUBLISHED — live on TES.")
+                log.info(f"  Screenshot: releases/debug_tes_{unit_id}_published.png")
+                log.info("=" * 60)
+            else:
+                log.info("")
+                log.info("=" * 60)
+                log.info("FORM FILLED — saved as a draft, NOT published.")
+                log.info("  Review the draft on your TES Author Dashboard, then")
+                log.info("  manually check the copyright box and click 'Publish now',")
+                log.info("  or re-run this command with --publish.")
+                log.info(f"  Screenshot: releases/debug_tes_{unit_id}_step5_preview.png")
+                log.info("=" * 60)
 
         except Exception as e:
             _take_debug_screenshot(page, f"{unit_id}_error")
@@ -374,13 +403,71 @@ def publish_unit(unit_id: str, price_gbp: float = PRICE_GBP) -> None:
             raise
 
 
+def resume_and_publish(resource_id: str) -> None:
+    """Reopen an existing draft (already fully filled by a prior
+    publish_unit() run that stopped before --publish existed) and click
+    through to Publish now, WITHOUT changing any already-saved field.
+    Navigating straight to /uploader/v2/<id> always reopens at step 1 with
+    the saved content pre-filled -- clicking Continue on each step (no
+    edits) advances through files/classification/licence-editor/preview,
+    matching exactly what a human reviewing the draft would do."""
+    from cmie.publishing.browser import automation_chrome
+
+    email    = os.environ.get("TES_EMAIL", "")
+    password = os.environ.get("TES_PASSWORD", "")
+    url = f"{TES_BASE}/uploader/v2/{resource_id}"
+
+    with automation_chrome() as (context, page):
+        try:
+            page.goto(TES_UPLOAD_URL, wait_until="domcontentloaded", timeout=30000)
+            page.wait_for_timeout(2000)
+            if not _check_logged_in(page):
+                _login(page, context, email, password)
+
+            page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            page.wait_for_timeout(2000)
+
+            accept_btn = page.locator("#onetrust-accept-btn-handler")
+            if accept_btn.count() > 0:
+                try:
+                    accept_btn.first.click(timeout=5000)
+                    page.wait_for_timeout(1000)
+                except Exception:
+                    pass
+
+            for _ in range(4):
+                page.get_by_role("button", name="Continue").last.click(timeout=10000)
+                page.wait_for_load_state("domcontentloaded", timeout=15000)
+                page.wait_for_timeout(2000)
+            log.info(f"Reached preview step: {page.url}")
+
+            _take_debug_screenshot(page, f"resume_{resource_id}_step5_preview")
+            _step5_publish(page)
+            _take_debug_screenshot(page, f"resume_{resource_id}_published")
+            log.info(f"Published resource {resource_id}.")
+
+        except Exception as e:
+            _take_debug_screenshot(page, f"resume_{resource_id}_error")
+            log.error(f"Error: {e}")
+            raise
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Publish a unit's bundle to TES")
-    parser.add_argument("--unit", required=True, help="Unit ID, e.g. year7_networks_hardware_unit1")
+    parser.add_argument("--unit", help="Unit ID, e.g. year7_networks_hardware_unit1")
     parser.add_argument("--price", type=float, default=PRICE_GBP, help="Price in GBP")
+    parser.add_argument("--publish", action="store_true", help="Check copyright box and click Publish now (live)")
+    parser.add_argument("--resume", help="Resource ID of an existing draft to resume and publish")
     args = parser.parse_args()
 
-    publish_unit(args.unit, args.price)
+    if args.resume:
+        resume_and_publish(args.resume)
+        return
+
+    if not args.unit:
+        parser.error("--unit is required unless using --resume")
+
+    publish_unit(args.unit, args.price, publish=args.publish)
 
 
 if __name__ == "__main__":

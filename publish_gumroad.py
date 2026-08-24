@@ -167,9 +167,39 @@ def _fill_field(page, label: str, value: str, timeout: int = 5000) -> bool:
         return False
 
 
+def _fetch_all_products(token: str) -> list[dict]:
+    """Fetch every Gumroad product across all pages. The API paginates at
+    10/page via next_page_url -- fetching only page 1 silently hid 9 real
+    products once the catalog passed 10 (2026-08-22), which caused a false
+    "no matching product" diagnosis and led to 2 duplicate live listings
+    being created. Every caller that needs the full catalog must paginate."""
+    import urllib.request, json
+    products = []
+    url = f"https://api.gumroad.com/v2/products?access_token={token}"
+    while url:
+        with urllib.request.urlopen(url) as resp:
+            data = json.loads(resp.read())
+        if not data.get("success"):
+            raise RuntimeError(f"Gumroad API call failed: {data}")
+        products.extend(data.get("products", []))
+        next_page_url = data.get("next_page_url")
+        url = f"https://api.gumroad.com{next_page_url}&access_token={token}" if next_page_url else None
+    return products
+
+
 def _create_product_via_api(token: str, title: str, price: float) -> str:
     """Create product via API. Returns the Gumroad edit URL."""
     import urllib.request, urllib.parse, json
+
+    existing = _fetch_all_products(token)
+    for p in existing:
+        if p.get("name") == title:
+            raise RuntimeError(
+                f"Refusing to create duplicate: a Gumroad product named {title!r} "
+                f"already exists ({p.get('short_url')}). If it's genuinely gone, "
+                f"delete it on Gumroad first, then retry."
+            )
+
     data = urllib.parse.urlencode({
         "name":     title,
         "price":    int(round(price * 100)),

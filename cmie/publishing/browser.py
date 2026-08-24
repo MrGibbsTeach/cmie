@@ -223,6 +223,9 @@ def _alternate_local_chromium(exclude: str | None) -> str | None:
     return None
 
 
+_WORKING_CHROMIUM_CACHE = Path.home() / ".cmie_working_chromium.txt"
+
+
 @contextmanager
 def automation_chrome(headless: bool = False, slow_mo: int = 200):
     """
@@ -237,6 +240,20 @@ def automation_chrome(headless: bool = False, slow_mo: int = 200):
     cloud_kwargs = cloud_launch_kwargs()
     if "args" in cloud_kwargs:
         extra_args += cloud_kwargs.pop("args")
+
+    # If a prior run on this machine already found the default build broken
+    # and fell back to a working alternate, skip straight to that build --
+    # avoids eating the same ~30s failed-launch attempt (and huge log spam)
+    # on every single run. Deliberately not project-wide/hardcoded (would go
+    # stale when the cloud environment's Chromium build changes) -- this is
+    # a local, self-healing cache: only written after a real fallback
+    # succeeded here, and still falls through to the original scan-and-retry
+    # logic below if the cached path no longer works.
+    if _WORKING_CHROMIUM_CACHE.exists():
+        cached = _WORKING_CHROMIUM_CACHE.read_text(encoding="utf-8").strip()
+        if cached and Path(cached).exists():
+            cloud_kwargs.pop("channel", None)
+            cloud_kwargs["executable_path"] = cached
 
     xvfb = None if headless else _ensure_display()
     try:
@@ -272,6 +289,10 @@ def automation_chrome(headless: bool = False, slow_mo: int = 200):
                     **retry_kwargs,
                     **cloud_context_kwargs(),
                 )
+                try:
+                    _WORKING_CHROMIUM_CACHE.write_text(alternate, encoding="utf-8")
+                except Exception:
+                    pass
             page = context.new_page()
             try:
                 yield context, page
