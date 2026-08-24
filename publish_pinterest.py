@@ -123,12 +123,21 @@ def parse_marketing_pins(md_path: Path, wave: int = 1) -> list[dict]:
 
 
 def fetch_gumroad_thumbnails(token: str) -> list[dict]:
+    # The Gumroad API paginates at 10 products/page (next_page_url) -- the
+    # catalog passed 10 products on 2026-08-22 and this silently started
+    # missing real products (algorithms, networks_hardware) that happened
+    # to land on page 2, causing false "no matching product" errors.
+    products = []
     url = f"https://api.gumroad.com/v2/products?access_token={token}"
-    with urllib.request.urlopen(url) as resp:
-        data = json.loads(resp.read())
-    if not data.get("success"):
-        raise RuntimeError(f"Gumroad API call failed: {data}")
-    return data.get("products", [])
+    while url:
+        with urllib.request.urlopen(url) as resp:
+            data = json.loads(resp.read())
+        if not data.get("success"):
+            raise RuntimeError(f"Gumroad API call failed: {data}")
+        products.extend(data.get("products", []))
+        next_page_url = data.get("next_page_url")
+        url = f"https://api.gumroad.com{next_page_url}&access_token={token}" if next_page_url else None
+    return products
 
 
 def _unit_keyword(unit_id: str) -> str:

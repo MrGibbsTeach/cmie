@@ -34,12 +34,21 @@ _BOLD_RE = re.compile(r"\*\*[^*\n]*[a-zA-Z][^*\n]*\*\*")
 
 
 def fetch_products(token: str) -> list[dict]:
+    # The Gumroad API paginates at 10 products/page (next_page_url) -- once
+    # the catalog passed 10 products (2026-08-22) this silently stopped
+    # checking every product past page 1, reporting "all clean" while
+    # genuinely never seeing the rest.
+    products = []
     url = f"https://api.gumroad.com/v2/products?access_token={token}"
-    with urllib.request.urlopen(url) as resp:
-        data = json.loads(resp.read())
-    if not data.get("success"):
-        raise RuntimeError(f"Gumroad API call failed: {data}")
-    return data.get("products", [])
+    while url:
+        with urllib.request.urlopen(url) as resp:
+            data = json.loads(resp.read())
+        if not data.get("success"):
+            raise RuntimeError(f"Gumroad API call failed: {data}")
+        products.extend(data.get("products", []))
+        next_page_url = data.get("next_page_url")
+        url = f"https://api.gumroad.com{next_page_url}&access_token={token}" if next_page_url else None
+    return products
 
 
 def check_product(p: dict) -> dict:
