@@ -49,6 +49,31 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-08-25 — Added check_tpt_backlog.py; found and closed a real TPT gap (cybersecurity lead magnet); fixed a real Cloudflare-risk bug in upload_unit()
+
+Built `check_tpt_backlog.py` so catching up TPT locally (see the
+"Known platform limitation" note above) is a 2-minute check instead of
+reading through this log. It diffs completed units against
+`bundle_urls.json` and does a live local TPT search for completed lead
+magnets (no tracking file exists for those).
+
+First run found `year7_cybersecurity_unit1` lesson 3's lead magnet had
+never actually reached TPT, unlike `year7_algorithms_unit1` lesson 5
+(done 2026-08-20) — a real gap that had gone unnoticed. Publishing it hit
+Cloudflare's challenge even with a freshly-refreshed local session,
+which led to finding the real cause: `upload_unit()` in
+`cmie/publishing/tpt.py` (used for every new TPT product, including all
+lead magnets) launched a fresh throwaway browser instead of the
+persistent, Cloudflare-trusted profile `automation_chrome()` provides —
+same risk class as `--save-session`'s Cloudflare hang. Fixed; retried
+live with no challenge this time. Product `17480910` confirmed live.
+`replace_product_file()` in the same file has the identical pattern and
+was not fixed this session (not currently blocking anything).
+
+Also committed a `publish_lead_magnets.py` change (the `--publish` flag
+for TES) that had been made the prior session but never actually
+committed.
+
 ## 2026-08-24 — Scheduled business review + integrity checks: TPT session expired (accepted platform limit), Gumroad and TES both clean
 
 Ran the standard routine: `python business_review.py --save`, then the three
