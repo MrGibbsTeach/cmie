@@ -7,15 +7,15 @@ to publish the sampler built from any other lesson (e.g. the "2nd free
 lesson per unit" items in data/units/RESOURCE_DROP_QUEUE.md).
 
 TPT has no draft state: this makes the resource live immediately (price $0).
-TES always stops at a draft (per this project's standing rule) — the final
-"Publish now" click stays a manual, human step on TES's Author Dashboard.
-This is existing, pre-existing behavior for every TES publish in this
-project (not lead-magnet-specific and not a new gate being added here).
+TES stops at a draft unless --publish is passed, in which case it also
+checks the copyright box and clicks "Publish now" (see publish_tes.py for
+the reasoning -- consistent with this project's standing live-publishing
+policy, backed by verify_tes_listings.py's post-publish checks).
 
 Usage:
     python publish_lead_magnets.py --unit year7_networks_hardware_unit1 --platform tpt
     python publish_lead_magnets.py --unit year7_algorithms_unit1 --platform tpt --lesson 5
-    python publish_lead_magnets.py --unit year7_networks_hardware_unit1 --platform tes
+    python publish_lead_magnets.py --unit year7_networks_hardware_unit1 --platform tes --publish
 """
 from __future__ import annotations
 
@@ -197,11 +197,11 @@ def publish_to_tpt(unit_id: str, version: str = "v001", lesson: int = 1) -> str:
     return status
 
 
-def publish_to_tes(unit_id: str, version: str = "v001", lesson: int = 1) -> None:
+def publish_to_tes(unit_id: str, version: str = "v001", lesson: int = 1, publish: bool = False) -> None:
     from cmie.publishing.browser import automation_chrome
     from publish_tes import (
         _navigate_to_upload, _step1_description, _step2_add_files,
-        _step3_categories, _step4_licence, _take_debug_screenshot,
+        _step3_categories, _step4_licence, _step5_publish, _take_debug_screenshot,
     )
 
     zip_path = ARTIFACTS_ROOT / f"{unit_id}_lesson{lesson:02d}_FREE_{version}.zip"
@@ -223,11 +223,20 @@ def publish_to_tes(unit_id: str, version: str = "v001", lesson: int = 1) -> None
             _step4_licence(page, 0.00)
 
             _take_debug_screenshot(page, f"{unit_id}_lead_magnet_l{lesson:02d}_step5_preview")
-            print("=" * 60)
-            print("FORM FILLED — saved as a draft, NOT published.")
-            print("Review on the TES Author Dashboard, then manually check")
-            print("the copyright box and click 'Publish now'.")
-            print("=" * 60)
+
+            if publish:
+                _step5_publish(page)
+                _take_debug_screenshot(page, f"{unit_id}_lead_magnet_l{lesson:02d}_published")
+                print("=" * 60)
+                print("PUBLISHED — live on TES.")
+                print("=" * 60)
+            else:
+                print("=" * 60)
+                print("FORM FILLED — saved as a draft, NOT published.")
+                print("Review on the TES Author Dashboard, then manually check")
+                print("the copyright box and click 'Publish now',")
+                print("or re-run this command with --publish.")
+                print("=" * 60)
         except Exception as e:
             _take_debug_screenshot(page, f"{unit_id}_lead_magnet_l{lesson:02d}_error")
             print(f"ERROR: {e}")
@@ -241,12 +250,13 @@ def main() -> None:
     parser.add_argument("--lesson", type=int, default=1,
                          help="Lesson number of the sampler to publish (default: 1)")
     parser.add_argument("--platform", required=True, choices=["tpt", "tes"])
+    parser.add_argument("--publish", action="store_true", help="TES only: check copyright box and click Publish now (live)")
     args = parser.parse_args()
 
     if args.platform == "tpt":
         publish_to_tpt(args.unit, args.version, args.lesson)
     else:
-        publish_to_tes(args.unit, args.version, args.lesson)
+        publish_to_tes(args.unit, args.version, args.lesson, publish=args.publish)
 
 
 if __name__ == "__main__":

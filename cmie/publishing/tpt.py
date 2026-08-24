@@ -728,16 +728,9 @@ def upload_unit(
     if not zip_path.exists():
         raise FileNotFoundError(f"Zip not found: {zip_path}")
 
-    with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=False, slow_mo=80, **cloud_launch_kwargs())
-        context = browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
-            **cloud_context_kwargs(),
-        )
-        # Hide the webdriver flag that TPT uses to detect automation
-        context.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-        page    = context.new_page()
+    from cmie.publishing.browser import automation_chrome
 
+    with automation_chrome() as (context, page):
         try:
             _login(page, context, email, password)
             _open_new_product(page)
@@ -843,6 +836,3 @@ def upload_unit(
             except Exception:
                 log.error(f"Error: {exc}")
             raise
-        finally:
-            context.close()
-            browser.close()
