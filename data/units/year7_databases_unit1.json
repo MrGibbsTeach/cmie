@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_databases_unit1",
+  "title": "Databases Unit 1 – Organising and Querying Data",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "What Is a Database? From Filing Cabinets to Digital Records" },
+    { "title": "Tables, Fields, and Records: Structuring Data That Makes Sense" },
+    { "title": "Data Types and Validation: Keeping Data Accurate and Consistent" },
+    { "title": "Keys and Relationships: Connecting Tables Without Duplicating Data" },
+    { "title": "Asking Questions with Queries: Sorting, Filtering, and Searching" },
+    { "title": "Forms and Reports: Getting Data In and Getting Answers Out" },
+    { "title": "Designing a Database for a Real-World Problem" }
+  ],
+  "lesson_videos": {}
+}
