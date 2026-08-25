@@ -76,3 +76,30 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
   live and verified (`published: true` via the Gumroad API) —
   https://focuslabdigital.gumroad.com/l/iuunxn. **Marking `[x]`** — all 3
   platforms (TPT, TES, Gumroad) are live for this unit.
+- 2026-08-25: Started "Databases: Organising and Querying Data"
+  (`year7_databases_unit1`) — config written, built + QA-verified +
+  packaged successfully via `produce_unit.py`, content spot-checked (7
+  lessons, assessment, slide decks all technically accurate and on-topic,
+  no AI-leftover artifacts). **Published live to TES** (resource
+  `13550116`), verified clean via `verify_tes_listings.py`.
+  **Not marking `[x]` yet** — TPT and Gumroad both blocked in this cloud
+  container:
+  - **Gumroad**: no `GUMROAD_SESSION_JSON` env var set here (only the
+    read-only `GUMROAD_TOKEN` API key is present) — the browser-based
+    publish flow needs a human-completed session cookie because of
+    Gumroad 2FA, same root cause as the 2026-08-22 entry above. Did not
+    attempt a workaround. A human needs to refresh/set
+    `GUMROAD_SESSION_JSON` (or run `publish_gumroad.py` locally).
+  - **TPT**: found and fixed 2 real bugs in `cmie/publishing/tpt.py`
+    along the way (a blank-credential guard that blocked the
+    cookie-session login path entirely before it could even try, and a
+    missing Xvfb display start that crashed headed Chromium launches in
+    this cloud sandbox) — see `AUTONOMOUS_LOG.md` for detail. With both
+    fixed, `TPT_SESSION_JSON` now loads and is attempted, but the
+    resulting page still shows logged-out (plain TPT homepage, not a
+    Cloudflare challenge screen this time) — the session itself appears
+    stale/invalid rather than a live Cloudflare block. Worth a human
+    trying `python publish_tpt.py --save-session` to refresh it before
+    assuming this is the same hard Cloudflare limit as before.
+  This item is still in-flight, not abandoned — finish TPT + Gumroad for
+  this same unit before picking a new topic next cycle.

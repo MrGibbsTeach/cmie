@@ -74,6 +74,98 @@ Also committed a `publish_lead_magnets.py` change (the `--publish` flag
 for TES) that had been made the prior session but never actually
 committed.
 
+**Merge note**: this session's `upload_unit()` fix (throwaway browser →
+`automation_chrome()`) was made independently of, and in parallel with,
+the cloud routine's own `upload_unit()`/`replace_product_file()` fix
+below (blank-credential guard + missing Xvfb) — both landed the same day
+on overlapping code and needed a manual merge to keep both. Final state:
+`upload_unit()` uses `automation_chrome()` (which already handles Xvfb
+internally) with no upfront email/password requirement;
+`replace_product_file()` keeps the routine's Xvfb + no-upfront-credential
+fix on its still-throwaway launch (not migrated to `automation_chrome()`
+this session).
+
+## 2026-08-25 — New Unit Production: Databases – Organising and Querying Data built, QA-verified, spot-checked, and published to TES; TPT and Gumroad still blocked in this cloud container
+
+Picked the first unchecked `UPCOMING_QUEUE.md` topic, "Databases:
+Organising and Querying Data". Wrote `data/units/year7_databases_unit1.json`
+(7 topics, matching the existing catalog format), ran
+`produce_unit.py --unit-config ...` end to end (pipeline → qa → thumbnail →
+package) — all stages passed, automated QA found no AI-leftover language or
+`- -` artifacts.
+
+**Manual spot-check** (not just automated QA, per the 2026-07-19 cosmetic-
+bug lesson in project memory): read the full lesson-1 JSON, the queries
+lesson (5), the keys/relationships lesson (4), the assessment task, and
+extracted real slide text from the queries deck via python-pptx. All
+technically accurate for the age group (sorting/filtering/searching,
+primary/foreign keys, validation), well-structured (Explore → Hook →
+Watch → Learn → Apply → Reflect → Teacher Notes, matching the existing
+catalog), assessment realistically scoped (90–120 min, community-library
+database design task). No issues found.
+
+**Published live to TES** (resource `13550116`,
+https://www.tes.com/uploader/v2/13550116) via `publish_tes.py --publish`
+— fully automated, no manual step, confirmed by the task's note that this
+is fully live as of 2026-08-24. Verified clean via
+`verify_tes_listings.py --keyword "Databases"`.
+
+**Gumroad: blocked, not attempted further.** `publish_gumroad.py` failed
+immediately: "No GUMROAD_EMAIL/GUMROAD_PASSWORD in .env and no saved
+session." This container has `GUMROAD_TOKEN` (the read-only API key used
+by `verify_gumroad_listings.py`/`business_review.py`) but not
+`GUMROAD_SESSION_JSON` (the browser-session cookie the *publish* flow
+needs, because Gumroad 2FA defeats form login — see the 2026-08-22 entry
+below). Did not attempt a login workaround, per standing instructions.
+**A human needs to set `GUMROAD_SESSION_JSON` in this environment's
+settings** (export a fresh session the same way as the 2026-08-22 fix),
+or run `publish_gumroad.py` locally.
+
+**TPT: found and fixed 2 real bugs, but still blocked.** First attempt
+failed immediately: `RuntimeError: TPT_EMAIL and TPT_PASSWORD must be set
+in .env`, even though `TPT_SESSION_JSON` *is* set in this container. Read
+`cmie/publishing/tpt.py` and found `upload_unit()` /
+`replace_product_file()` both raised on missing email/password *before*
+ever calling `_login()` — which already tries the cookie/env session
+first and only needs credentials for the form-login fallback. Fixed by
+removing the upfront requirement and instead having `_login()` itself
+refuse a blank-credential form submit explicitly (never silently attempt
+one — that has triggered TPT bot detection and an account lock before).
+
+Retried — got past the credential check, but then hit a second bug:
+`playwright._impl._errors.TargetClosedError` / "Missing X server or
+$DISPLAY". Both launch sites called `pw.chromium.launch(headless=False,
+...)` directly, bypassing the `_ensure_display()` throwaway-Xvfb-server
+helper that `automation_chrome()` already uses elsewhere in this project
+for exactly this cloud-sandbox failure. Fixed by calling
+`_ensure_display()` before each launch and tearing it down in the
+existing `finally:` blocks.
+
+Retried again with both fixes: `TPT_SESSION_JSON` now loads
+successfully and `_login()` attempts it, but `_is_logged_in()` still
+comes back false — the debug screenshot shows a normal, non-Cloudflare-
+challenge TPT homepage in a logged-out state (not the "Performing
+security verification" screen from the 2026-08-24 note). This is a
+*different* symptom than the previously-documented hard Cloudflare
+block, and might just mean today's `TPT_SESSION_JSON` value is stale —
+**worth a human trying `python publish_tpt.py --save-session` to refresh
+it** before concluding this is the same unfixable platform limit. Did
+not retry further or attempt any login workaround, per standing
+instructions.
+
+Both TPT fixes committed and pushed directly to `main`
+(`770610b`) — they're real, narrowly-scoped correctness fixes
+independent of whether TPT itself unblocks.
+
+**Queue item left unchecked** (`data/units/UPCOMING_QUEUE.md`) — TES is
+live, TPT + Gumroad both need a human/local step before this unit is
+complete. Bundle URL and marketing-content generation deferred until
+TPT is live (bundle_urls.json only holds TPT product URLs; marketing
+content is normally generated once the full listing set exists).
+Boundaries respected: nothing deleted, no Categories/Licence touched on
+any published resource, no off-brand products touched, no pricing/
+strategic changes.
+
 ## 2026-08-24 — Scheduled business review + integrity checks: TPT session expired (accepted platform limit), Gumroad and TES both clean
 
 Ran the standard routine: `python business_review.py --save`, then the three
