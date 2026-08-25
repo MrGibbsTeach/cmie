@@ -28,7 +28,7 @@ from typing import Optional
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, Page, expect
 
-from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies
+from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies, _ensure_display
 
 load_dotenv()
 log = logging.getLogger(__name__)
@@ -131,7 +131,18 @@ def _login(page, context, email: str, password: str) -> None:
         log.info("Logged in via Chrome session cookies.")
         return
 
-    # Fallback: standard form login
+    # Fallback: standard form login. Deliberately refuse to attempt this
+    # with blank credentials -- submitting an empty login form has
+    # triggered TPT bot detection and an account lock before (see the
+    # module docstring). A missing/invalid session should fail loudly
+    # here, not fall through into a blind form submit.
+    if not email or not password:
+        raise RuntimeError(
+            "No valid TPT session (TPT_SESSION_JSON / Chrome cookies / "
+            ".tpt_session.json) and no TPT_EMAIL/TPT_PASSWORD to fall back "
+            "to form login. Refusing to submit a blank login form."
+        )
+
     log.info("Cookie login failed — trying form login...")
     page.goto(LOGIN_URL, wait_until="domcontentloaded", timeout=15000)
 
@@ -605,14 +616,20 @@ def replace_product_file(product_id: str, new_zip_path: Path) -> None:
     "Last updated" timestamp after submitting, not the filename, to confirm
     the replacement took effect.
     """
+    # No upfront TPT_EMAIL/TPT_PASSWORD requirement here -- see upload_unit().
     email    = os.environ.get("TPT_EMAIL", "")
     password = os.environ.get("TPT_PASSWORD", "")
-    if not email or not password:
-        raise RuntimeError("TPT_EMAIL and TPT_PASSWORD must be set in .env")
     if not new_zip_path.exists():
         raise FileNotFoundError(f"Zip not found: {new_zip_path}")
 
     edit_url = f"https://www.teacherspayteachers.com/itemsDigital/editNext/{product_id}"
+
+    # headless=False has no X server to attach to in the cloud sandbox --
+    # start a throwaway Xvfb server when $DISPLAY isn't already set (see
+    # _ensure_display()'s docstring; mirrors automation_chrome()'s fix for
+    # the same "Missing X server or $DISPLAY" failure). Torn down in the
+    # existing finally: block below, alongside context/browser.close().
+    xvfb = _ensure_display()
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=False, slow_mo=80, **cloud_launch_kwargs())
@@ -671,6 +688,9 @@ def replace_product_file(product_id: str, new_zip_path: Path) -> None:
         finally:
             context.close()
             browser.close()
+            if xvfb:
+                xvfb.terminate()
+                xvfb.wait(timeout=5)
 
 
 # ---------------------------------------------------------------------------
@@ -716,10 +736,11 @@ def upload_unit(
     """
     from cmie.publishing.listing_reader import read_tpt_listing
 
+    # No upfront TPT_EMAIL/TPT_PASSWORD requirement here -- _login() tries a
+    # saved/env session first and only needs credentials for the form-login
+    # fallback, which it refuses to attempt blank (see _login()).
     email    = os.environ.get("TPT_EMAIL", "")
     password = os.environ.get("TPT_PASSWORD", "")
-    if not email or not password:
-        raise RuntimeError("TPT_EMAIL and TPT_PASSWORD must be set in .env")
 
     if listing is None:
         listing = read_tpt_listing(unit_folder)
@@ -727,6 +748,13 @@ def upload_unit(
 
     if not zip_path.exists():
         raise FileNotFoundError(f"Zip not found: {zip_path}")
+
+    # headless=False has no X server to attach to in the cloud sandbox --
+    # start a throwaway Xvfb server when $DISPLAY isn't already set (see
+    # _ensure_display()'s docstring; mirrors automation_chrome()'s fix for
+    # the same "Missing X server or $DISPLAY" failure). Torn down in the
+    # existing finally: block below, alongside context/browser.close().
+    xvfb = _ensure_display()
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=False, slow_mo=80, **cloud_launch_kwargs())
@@ -846,3 +874,6 @@ def upload_unit(
         finally:
             context.close()
             browser.close()
+            if xvfb:
+                xvfb.terminate()
+                xvfb.wait(timeout=5)
