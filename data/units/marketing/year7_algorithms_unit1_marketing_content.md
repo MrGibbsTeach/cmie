@@ -91,7 +91,7 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 
 **Link**: https://www.teacherspayteachers.com/Product/Algorithms-Programming-Logic-Unit-1-Thinking-Like-a-Programmer-Lower-16835705
 
-## Pinterest pins — wave 3 (queued, not yet posted)
+## Pinterest pins — wave 3 (posted 2026-08-26, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
 
 Third posting batch — wave 1 was the generic bundle/lesson-pack/free-sample promo, wave 2 covered the Debugging lesson, a lesson-prep pain point, and Term 3 planning. These pivot to a different standout lesson (Efficiency), the capstone project, and a "not a CS specialist" pain point aimed at generalist teachers assigned to teach this unit.
 

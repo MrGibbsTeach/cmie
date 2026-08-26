@@ -326,6 +326,58 @@ No code changes this run beyond the environment-level dependency install
 
 ---
 
+## 2026-08-26 — Marketing Push: 9 new Pinterest pins posted and individually verified live across 3 units; closed out 2 long-standing "queued, not yet posted" backlog waves now that their Gumroad-thumbnail blocker is resolved
+
+Task: check each live unit's highest existing Pinterest wave, pick 2-3
+units most due for a fresh wave, draft 3 distinct-angle pins each, post via
+`publish_pinterest.py --unit <id> --wave N`, verify live.
+
+**First finding — 2 of the most-due units already had unposted draft
+content, and the blocker on it is now gone.** `year7_algorithms_unit1`
+had a full wave 3 marked "queued, not yet posted" since 2026-08-19/20, and
+`year7_networks_hardware_unit1` had a wave 2 in the same state — both
+originally blocked because neither had a matching Gumroad product/thumbnail
+in the account's then-10-product catalog (per the 2026-08-22 entry).
+Checked the live Gumroad catalog directly via the API today: it now has 17
+products, including both "Algorithms & Programming Logic" and "Networks &
+Hardware" with thumbnails present. Confirmed with `--dry-run` before
+touching anything live. Rather than draft yet another wave on top of
+already-written, on-brand, non-time-sensitive content that simply never
+got its chance to post, posted the existing drafts as-is — same approach
+taken for robotics' wave 1 on 2026-08-22.
+
+**Third unit — genuinely new content.** `year7_robotics_physical_computing_unit1`
+still only had wave 1 (posted 2026-08-22), making it the clearest "newest
+with only wave 1" candidate per the task's own criteria. Drafted and
+appended a real wave 2: a standout-lesson pin (using sensor data to make
+decisions, Lesson 4), a "no engineering background needed" pain-point pin,
+and the Lesson 7 capstone-project pin — all distinct from wave 1's generic
+bundle/lesson-pack/free-sample promos.
+
+**Posted and verified** (`publish_pinterest.py --unit <id> --wave N`, no
+`--dry-run`, after a clean dry-run pass for all three first):
+- year7_algorithms_unit1 — wave 3 (Efficiency lesson, capstone, non-specialist pain point)
+- year7_networks_hardware_unit1 — wave 2 (data-travel lesson, Term 3 planning, non-specialist pain point)
+- year7_robotics_physical_computing_unit1 — wave 2 (sensor-decisions lesson, non-specialist pain point, capstone)
+
+**Verification — did not trust the "Submitted" log lines.** Wrote a
+targeted check (scratch script, not committed) rather than running the
+full `verify_pinterest_pins.py` sweep, since that script's overall pin-count
+check is documented as flaky on this account (lazy-loaded/virtualized list).
+Loaded the account's own Created page fresh, took the newest 20 pin ids
+(newest-first ordering), and for each of the 9 just-posted pins individually
+reloaded its own pin URL and checked `document.title` plus the outbound
+teacherspayteachers.com link. All 9 titles and links matched the source
+markdown exactly — genuinely live, not just logged as submitted. Updated
+each file's wave heading to record this.
+
+Nothing deleted, no off-brand products touched, no pricing/platform/strategy
+changes — only Pinterest wave content posted (2 pre-existing drafts, 1
+newly drafted) plus the wave-heading status updates above. Dependencies
+(`playwright`, `python-dotenv`, etc.) weren't preinstalled in this container;
+ran `pip install -r requirements.txt` before anything else (Playwright's
+Chromium browser was already present at the environment's preconfigured path).
+
 ## 2026-08-22 — Marketing Push: 12 new Pinterest pins posted and verified live across 4 units; discovered the "queued, not yet posted" wave-2 labels across most units were stale (already live), and fixed a verify-script bug that made its title check silently useless
 
 Task: check each live unit's marketing content for its highest Pinterest
