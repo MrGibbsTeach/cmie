@@ -65,3 +65,28 @@ There's also a free Lesson 1 sample if you'd like to try before buying the bundl
 Check it out here: https://www.teacherspayteachers.com/Product/Robotics-Physical-Computing-Unit-1-Sensors-Actuators-and-Building-Smart-17453266
 
 Thanks for following the store — more units on the way!
+
+## Pinterest pins — wave 2 (posted 2026-08-26, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
+
+New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos. Pivots to a standout lesson (using sensor data to make decisions), a "no engineering background needed" pain point, and the Lesson 7 capstone project.
+
+### Pin 1 (standout lesson — sensor data decisions)
+**Title** (57 chars): The Robotics Lesson Where Sensors Meet Decisions (Year 7)
+
+**Description**: Give students a genuine "if this, then that" moment — this ready-to-teach lesson has them use real sensor data to make decisions in a physical system, not just wire a circuit. Part of a complete 7-lesson Robotics & Physical Computing unit with workbook, roadmap, and assessment pack. #robotics #digitaltechnologies #computationalthinking #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Robotics-Physical-Computing-Unit-1-Sensors-Actuators-and-Building-Smart-17453266
+
+### Pin 2 (pain point — non-specialist teacher)
+**Title** (55 chars): Never Taught Robotics Before? This Unit Has You Covered
+
+**Description**: You don't need an engineering degree or a box of kits to teach robotics well — this 7-lesson unit breaks sensors, actuators, control systems, and programming movement down into clear, ready-to-teach lessons with a student workbook and full assessment pack already built. #digitaltech #teacherspayteachers #robotics #middleschoolcs
+
+**Link**: https://www.teacherspayteachers.com/Product/Robotics-Physical-Computing-Unit-1-Sensors-Actuators-and-Building-Smart-17453266
+
+### Pin 3 (capstone project)
+**Title** (54 chars): The Robotics Capstone: Students Design a Real Solution
+
+**Description**: The final lesson has students design a robotic solution for a real problem of their own — a genuine applied capstone, not just another worksheet. Comes complete with the other 6 lessons, a student workbook, unit roadmap, and full assessment pack with rubric. #digitaltechnologies #projectbasedlearning #y7 #robotics
+
+**Link**: https://www.teacherspayteachers.com/Product/Robotics-Physical-Computing-Unit-1-Sensors-Actuators-and-Building-Smart-17453266

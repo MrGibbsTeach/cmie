@@ -66,9 +66,9 @@ Check it out here: https://www.teacherspayteachers.com/Product/Networks-Hardware
 
 Thanks for following the store — more units on the way!
 
-## Pinterest pins — wave 2 (queued, not yet posted)
+## Pinterest pins — wave 2 (posted 2026-08-26, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
 
-New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins. Review before posting; not yet live.
+New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this brand-new account posting fresh content rather than reposting the same 3 pins.
 
 ### Pin 1 (standout lesson — how data travels)
 **Title** (59 chars): How Does Data Actually Travel Across a Network? (Y7 Lesson)
