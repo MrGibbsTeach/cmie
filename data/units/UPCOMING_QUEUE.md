@@ -7,7 +7,7 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
 — do not invent a new topic.
 
 - [x] Robotics & Physical Computing — done 2026-08-22 (year7_robotics_physical_computing_unit1)
-- [ ] Databases: Organising and Querying Data
+- [x] Databases: Organising and Querying Data — done 2026-08-26 (year7_databases_unit1)
 - [ ] Digital Media & Multimedia Production (video/audio editing, digital storytelling)
 
 ## Format for each unit (matches the existing 10-unit catalog)
@@ -103,3 +103,18 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
     assuming this is the same hard Cloudflare limit as before.
   This item is still in-flight, not abandoned — finish TPT + Gumroad for
   this same unit before picking a new topic next cycle.
+- 2026-08-26: **Finished locally.** Rebuilt the unit fresh (local build
+  output isn't tracked in git, so the cloud session's work wasn't
+  available here) — same config, QA passed clean again. **TPT: all 9
+  parts published and verified clean** via `verify_tpt_listings.py`, no
+  Cloudflare issue this time (yesterday's `upload_unit()` fix — trusted
+  persistent browser profile instead of a throwaway one — held up for a
+  full real 9-part publish run). Bundle URL added to `bundle_urls.json`.
+  **Gumroad: published**, but the API created it at the stale `.env`
+  default price (A$29.99, not the catalog's A$12.99) — caught and fixed
+  via a direct API price update immediately after, verified clean via
+  `verify_gumroad_listings.py`. Fixed the root cause too:
+  `.env`'s `GUMROAD_PRICE` was still 29.99 (this had apparently been
+  hand-corrected per-listing for years without anyone fixing the actual
+  default). Marketing content generated. **Marking `[x]`** — all 3
+  platforms (TPT, TES, Gumroad) are live for this unit.
