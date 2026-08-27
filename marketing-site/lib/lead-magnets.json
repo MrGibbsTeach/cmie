@@ -1,0 +1,110 @@
+[
+  {
+    "slug": "year7_algorithms_unit1-lesson01",
+    "unitId": "year7_algorithms_unit1",
+    "unitTitle": "Algorithms & Programming Logic: Unit 1 \u00e2\u20ac\u201c Thinking Like a Programmer",
+    "lessonNumber": 1,
+    "lessonTopic": "What Is an Algorithm?",
+    "filename": "year7_algorithms_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Algorithms-Programming-Logic-Unit-1-Thinking-Like-a-Programmer-Lower-16835705"
+  },
+  {
+    "slug": "year7_algorithms_unit1-lesson05",
+    "unitId": "year7_algorithms_unit1",
+    "unitTitle": "Algorithms & Programming Logic: Unit 1 \u00e2\u20ac\u201c Thinking Like a Programmer",
+    "lessonNumber": 5,
+    "lessonTopic": "Debugging: Finding and Fixing Logic Errors",
+    "filename": "year7_algorithms_unit1_lesson05_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Algorithms-Programming-Logic-Unit-1-Thinking-Like-a-Programmer-Lower-16835705"
+  },
+  {
+    "slug": "year7_cybersecurity_unit1-lesson01",
+    "unitId": "year7_cybersecurity_unit1",
+    "unitTitle": "Cyber Security & Digital Footprints: Unit 1 \u00e2\u20ac\u201c Protecting Yourself Online",
+    "lessonNumber": 1,
+    "lessonTopic": "The Cyber Threat Landscape",
+    "filename": "year7_cybersecurity_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Cyber-Security-Digital-Footprints-Unit-1-Protecting-Yourself-Online-Year-16908167"
+  },
+  {
+    "slug": "year7_cybersecurity_unit1-lesson03",
+    "unitId": "year7_cybersecurity_unit1",
+    "unitTitle": "Cyber Security & Digital Footprints: Unit 1 \u00e2\u20ac\u201c Protecting Yourself Online",
+    "lessonNumber": 3,
+    "lessonTopic": "Spotting Phishing and Social Engineering",
+    "filename": "year7_cybersecurity_unit1_lesson03_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Cyber-Security-Digital-Footprints-Unit-1-Protecting-Yourself-Online-Year-16908167"
+  },
+  {
+    "slug": "year7_data_representation_unit1-lesson01",
+    "unitId": "year7_data_representation_unit1",
+    "unitTitle": "Data Representation: Unit 1 \u00e2\u20ac\u201c Binary and How Computers See the World",
+    "lessonNumber": 1,
+    "lessonTopic": "Why Computers Speak in 1s and 0s",
+    "filename": "year7_data_representation_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Data-Representation-Unit-1-Binary-and-How-Computers-See-the-World-Year-7--16907385"
+  },
+  {
+    "slug": "year7_digital_systems_unit1-lesson01",
+    "unitId": "year7_digital_systems_unit1",
+    "unitTitle": "Digital Systems: Unit 1 \u00e2\u20ac\u201c How Computers Actually Work",
+    "lessonNumber": 1,
+    "lessonTopic": "Inside a Computer: Hardware Components",
+    "filename": "year7_digital_systems_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Digital-Systems-Unit-1-How-Computers-Actually-Work-Year-7-Grade-7-Middle-17047072"
+  },
+  {
+    "slug": "year7_game_design_unit1-lesson01",
+    "unitId": "year7_game_design_unit1",
+    "unitTitle": "Game Design: Unit 1 \u00e2\u20ac\u201c Designing and Building Your First Game",
+    "lessonNumber": 1,
+    "lessonTopic": "What Makes a Game Fun? Game Design Basics",
+    "filename": "year7_game_design_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Game-Design-Unit-1-Designing-and-Building-Your-First-Game-Year-7-Grade-7-17047398"
+  },
+  {
+    "slug": "year7_networks_hardware_unit1-lesson01",
+    "unitId": "year7_networks_hardware_unit1",
+    "unitTitle": "Networks & Hardware: Unit 1 \u00e2\u20ac\u201c Building and Securing a Network",
+    "lessonNumber": 1,
+    "lessonTopic": "What Is a Network?",
+    "filename": "year7_networks_hardware_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Networks-Hardware-Unit-1-Building-and-Securing-a-Network-Lower-Secondary-16818112"
+  },
+  {
+    "slug": "year7_python_programming_unit1-lesson01",
+    "unitId": "year7_python_programming_unit1",
+    "unitTitle": "Introduction to Programming: Unit 1 \u00e2\u20ac\u201c Writing Your First Python Programs",
+    "lessonNumber": 1,
+    "lessonTopic": "What Is Programming? From Algorithm to Code",
+    "filename": "year7_python_programming_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Introduction-to-Programming-Unit-1-Writing-Your-First-Python-Programs-Year-17047311"
+  },
+  {
+    "slug": "year7_spreadsheets_unit1-lesson01",
+    "unitId": "year7_spreadsheets_unit1",
+    "unitTitle": "Spreadsheets & Data Analysis: Unit 1 \u00e2\u20ac\u201c Making Sense of Data with Spreadsheets",
+    "lessonNumber": 1,
+    "lessonTopic": "Why Spreadsheets? Rows, Columns, and Cells",
+    "filename": "year7_spreadsheets_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Spreadsheets-Data-Analysis-Unit-1-Making-Sense-of-Data-with-Spreadsheets-17046870"
+  },
+  {
+    "slug": "year7_ux_design_unit1-lesson01",
+    "unitId": "year7_ux_design_unit1",
+    "unitTitle": "UX & Interface Design: Unit 1 \u00e2\u20ac\u201c Designing Apps People Love",
+    "lessonNumber": 1,
+    "lessonTopic": "Good Design, Bad Design: What Is UX?",
+    "filename": "year7_ux_design_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398"
+  },
+  {
+    "slug": "year7_web_design_unit1-lesson01",
+    "unitId": "year7_web_design_unit1",
+    "unitTitle": "Websites & Web Design: Unit 1 \u00e2\u20ac\u201c Building Your First Website",
+    "lessonNumber": 1,
+    "lessonTopic": "How the Web Works: Browsers, Servers, and Requests",
+    "filename": "year7_web_design_unit1_lesson01_FREE_v001.zip",
+    "bundleUrl": "https://www.teacherspayteachers.com/Product/Websites-Web-Design-Unit-1-Building-Your-First-Website-Year-7-Grade-7-17047001"
+  }
+]
