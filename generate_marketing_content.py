@@ -36,12 +36,29 @@ MARKETING_DIR = DATA_UNITS / "marketing"
 BUNDLE_URLS_FILE = DATA_UNITS / "bundle_urls.json"
 
 STORE_NAME = "FocusLab Digital"
+MARKETING_SITE_BASE = "https://focuslab-marketing3.vercel.app"
+LEAD_MAGNETS_FILE = PROJECT_ROOT / "marketing-site" / "lib" / "lead-magnets.json"
 
 
 def _load_bundle_urls() -> dict:
     if BUNDLE_URLS_FILE.exists():
         return json.loads(BUNDLE_URLS_FILE.read_text(encoding="utf-8"))
     return {}
+
+
+def _free_landing_url(unit_id: str, lesson: int = 1) -> str | None:
+    """Email-gated landing page for a unit's free lesson sample, if one
+    exists in marketing-site/ -- routes free-sample traffic through an
+    email capture instead of straight to the native TPT/TES listing.
+    Falls back to None (caller uses bundle_url instead) for any unit
+    without a lead magnet built yet, so this never produces a dead link."""
+    if not LEAD_MAGNETS_FILE.exists():
+        return None
+    lead_magnets = json.loads(LEAD_MAGNETS_FILE.read_text(encoding="utf-8"))
+    slug = f"{unit_id}-lesson{lesson:02d}"
+    if any(lm["slug"] == slug for lm in lead_magnets):
+        return f"{MARKETING_SITE_BASE}/free/{slug}"
+    return None
 
 
 def _topic_keyword(title: str) -> str:
@@ -68,7 +85,8 @@ def _read_lesson_titles(unit_id: str) -> list[str]:
     return [t["title"] for t in cfg.get("topics", [])]
 
 
-def build_pinterest_pins(topic: str, title: str, grade: str, bundle_url: str, lesson_count: int) -> list[dict]:
+def build_pinterest_pins(topic: str, title: str, grade: str, bundle_url: str, lesson_count: int,
+                          free_sample_url: str | None = None) -> list[dict]:
     return [
         {
             "title": f"{topic} Unit for {grade.split('/')[0].strip()} — No-Prep Digital Technologies",
@@ -99,7 +117,7 @@ def build_pinterest_pins(topic: str, title: str, grade: str, bundle_url: str, le
                 f"roadmap, and assessment pack) is linked in the resource. "
                 f"#freeteacherresource #tpt #digitaltechnologies"
             ),
-            "link": bundle_url,
+            "link": free_sample_url or bundle_url,
         },
     ]
 
@@ -157,8 +175,9 @@ def generate_for_unit(unit_id: str, version: str = "v001") -> Path:
 
     bundle_urls = _load_bundle_urls()
     bundle_url = bundle_urls.get(unit_id, "[PASTE BUNDLE URL HERE]")
+    free_sample_url = _free_landing_url(unit_id)
 
-    pins = build_pinterest_pins(topic, title, grade, bundle_url, lesson_count)
+    pins = build_pinterest_pins(topic, title, grade, bundle_url, lesson_count, free_sample_url)
     captions = build_social_captions(topic, title, bundle_url)
     fb_post = build_facebook_group_post(topic, title, bundle_url, lesson_count, lesson_titles)
     follower_note = build_tpt_follower_note(topic, title, bundle_url)

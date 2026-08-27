@@ -24,6 +24,7 @@ from pathlib import Path
 from openai import OpenAI
 
 DRAFTS_DIR = Path("marketing-site/content/blog_drafts")
+SITE_BASE = "https://focuslab-marketing3.vercel.app"
 
 
 def slugify(value: str) -> str:
@@ -45,7 +46,9 @@ keyword-stuffing. Write like a real teacher-author sharing genuine classroom
 experience, not marketing copy. 500-800 words. Include 2-3 concrete, specific
 examples or activities a teacher could use tomorrow, not generic advice.
 End with a short, natural mention that FocusLab Digital has free lesson
-samples and full ready-to-teach units, without being pushy.
+samples, without being pushy. Include exactly one real markdown link in
+that closing mention: [free lesson samples]({SITE_BASE}/) -- use that
+literal URL, not a placeholder.
 
 Respond with exactly this structure:
 TITLE: <a specific, human title, not clickbait>
