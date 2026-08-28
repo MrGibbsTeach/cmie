@@ -49,6 +49,72 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-08-28 — Resource Drop: Lesson 6 lead magnet for year7_web_design_unit1 (TES fully live, TPT still blocked by accepted platform limit); found a new instance of the known TES duplicate-draft behavior, not touched
+
+Worked the first unchecked item in `data/units/RESOURCE_DROP_QUEUE.md`:
+a second free lead magnet for `year7_web_design_unit1`. Picked Lesson 6,
+"Accessibility and Responsive Design Basics" — of the unit's 7 lessons,
+the most standalone and broadly relatable (a conceptual lesson on
+inclusive/responsive design, not dependent on the HTML/CSS build-up in
+Lessons 2-5), matching the pattern used for the previous two lead-magnet
+picks (Debugging for algorithms, Phishing for cybersecurity).
+
+**Build**: `python make_lead_magnet.py --unit year7_web_design_unit1
+--lesson 6` — succeeded, zip built at
+`releases/artifacts/year7_web_design_unit1_lesson06_FREE_v001.zip` from
+the tracked source pptx (all 7 lesson decks are committed under
+`data/units/lead_magnet_source/year7_web_design_unit1_v001/`, so no
+`releases/` tree dependency).
+
+**TPT**: blocked, exactly the accepted platform limit — `TPT_SESSION_JSON`
+has no valid session in this container and no `TPT_EMAIL`/`TPT_PASSWORD`
+fallback is configured, so `publish_lead_magnets.py --platform tpt`
+correctly refused to submit a blank login form rather than risk bot
+detection. Per the 2026-08-24 finding, this is a Cloudflare fresh-browser-
+fingerprint block, not fixable by refreshing cookies from this sandbox —
+not retried. A human running locally: `python publish_tpt.py
+--save-session` then `python publish_lead_magnets.py --unit
+year7_web_design_unit1 --lesson 6 --platform tpt`.
+
+**TES**: `python publish_lead_magnets.py --unit year7_web_design_unit1
+--lesson 6 --platform tes --publish` ran the full flow end-to-end — login,
+title/description, zip upload, categories, "Share for free" licence,
+copyright checkbox, "Publish now" — and landed on the `.../published` URL
+for resource **13553843**. Fully live, no manual step, per the TES
+full-automation fix landed 2026-08-24.
+
+**Verification, and a new open item found (not touched)**:
+`verify_tes_listings.py --keyword Accessibility --lead-magnet-lesson 6`
+found **two** resources with the identical Lesson 6 title/content —
+13553843 (the one this run's own publish log named) and a second,
+13553844, with the same title, same "Created: 28 Aug 2026" / "Last
+modified: 28 Aug 2026" timestamps, and the same CC-BY-SA licence (checked
+directly via a dashboard-row dump and a per-resource page load for both
+IDs). This run's `publish_lead_magnets.py` call was made exactly once and
+its own log output only ever mentions 13553843 — nothing in this session's
+commands directly created or touched 13553844. This reads as the same
+class of platform-side duplicate-draft behavior already an open item
+elsewhere in this project (the 13432831 / 13432796 pair), not a bug
+introduced by this run's script usage. Per the standing "never delete
+anything" rule, neither resource was modified or removed — this needs a
+human to look at both and decide whether to keep, edit, or remove the
+extra one. The checker's other flag ("could not find £0.00 on the page")
+is the already-documented inherent limitation of that specific check
+(TES's Licence step always shows the "Sell my resource" tab by default on
+a fresh page load, regardless of the actually-saved price) — the reliable
+confirmation of genuine £0.00 pricing is the publish run's own "Selected
+'Share for free' tab (price <= 0)" log line, which fired correctly here.
+
+**Queue update**: marked `year7_web_design_unit1 — Lesson 6` `[x]` in
+`data/units/RESOURCE_DROP_QUEUE.md` with today's date, and logged the
+duplicate finding there too.
+
+**Nothing was deleted, no off-brand products were touched, no pricing or
+strategic changes were made.** Files changed:
+`data/units/RESOURCE_DROP_QUEUE.md` (item checked off + log note), this
+file. `releases/artifacts/*` and `releases/debug_*.png` are gitignored
+working files, not committed.
+
 ## 2026-08-25 — Added check_tpt_backlog.py; found and closed a real TPT gap (cybersecurity lead magnet); fixed a real Cloudflare-risk bug in upload_unit()
 
 Built `check_tpt_backlog.py` so catching up TPT locally (see the

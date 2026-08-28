@@ -14,7 +14,7 @@ standalone lesson (not one that depends on earlier lessons to make sense).
 
 - [x] year7_algorithms_unit1 — Lesson 5 (Debugging: Finding and Fixing Logic Errors) — 2026-08-20
 - [x] year7_cybersecurity_unit1 — Lesson 3 (Spotting Phishing and Social Engineering) — 2026-08-21
-- [ ] year7_web_design_unit1 — a strong standalone lesson (check config for the best fit)
+- [x] year7_web_design_unit1 — Lesson 6 (Accessibility and Responsive Design Basics) — 2026-08-28
 
 ## Small bundle packages (combine 2-3 existing units, reuse existing zips,
 ## no new content generation, one new listing per bundle)
@@ -71,3 +71,42 @@ standalone lesson (not one that depends on earlier lessons to make sense).
   form-fill flow) had no X server to attach to — `automation_chrome()` now
   starts a throwaway Xvfb server itself when `$DISPLAY` isn't already set.
   See AUTONOMOUS_LOG.md for full detail.
+- 2026-08-28: Built + published the Lesson 6 lead magnet for
+  year7_web_design_unit1 ("Accessibility and Responsive Design Basics" —
+  chosen as the most standalone/broadly-relatable of the remaining lessons:
+  a conceptual lesson on inclusive and responsive design that doesn't
+  depend on the HTML/CSS build-up from Lessons 2-5). TES: `--publish` run
+  completed successfully end-to-end (login, upload, categories, "Share for
+  free" licence, copyright box, "Publish now") and landed on the
+  `.../published` URL for resource **13553843** — genuinely live, no
+  manual step needed, per the TES full-automation fix from 2026-08-24.
+  TPT: blocked exactly as expected — `TPT_SESSION_JSON` has no valid
+  session and no `TPT_EMAIL`/`TPT_PASSWORD` fallback, so
+  `publish_lead_magnets.py --platform tpt` refused to submit a blank login
+  form. This is the accepted platform limit (Cloudflare blocks fresh
+  browser fingerprints in this cloud sandbox regardless of cookie
+  validity, confirmed 2026-08-24) — not retried, not a bug. A human can
+  finish the TPT half locally with `python publish_tpt.py --save-session`
+  then `python publish_lead_magnets.py --unit year7_web_design_unit1
+  --lesson 6 --platform tpt`.
+  **Found, not touched**: `verify_tes_listings.py --keyword Accessibility
+  --lead-magnet-lesson 6` found **two** live resources with the identical
+  Lesson 6 title/content — 13553843 (the one this run's publish log
+  reported) and 13553844 (same title, same "Created: 28 Aug 2026" /
+  "Last modified: 28 Aug 2026" timestamps, same CC-BY-SA licence, both
+  showing normal View/Edit/Delete controls on the dashboard). This run's
+  own `publish_lead_magnets.py --platform tes --publish` invocation was
+  called exactly once and its log only ever names 13553843 — nothing in
+  this session created or touched 13553844 directly. This looks like the
+  same class of platform-side duplicate-draft behavior already open as an
+  unresolved item elsewhere in this project (the 13432831 / 13432796 pair
+  in `AUTONOMOUS_LOG.md`), not a new bug in this script. Per the standing
+  "never delete anything" rule, neither resource was touched or removed —
+  flagging for a human to pick which one (if not both) should stay live.
+  The checker's other finding, "could not find £0.00 on the page", is the
+  already-documented inherent limitation of that static check (TES's
+  Licence step always renders the "Sell my resource" tab by default on
+  reload regardless of the saved price) — not a real mispricing signal;
+  the publish log's own "Selected 'Share for free' tab" line is the
+  reliable confirmation the price is genuinely £0.00. See
+  AUTONOMOUS_LOG.md for full detail.
