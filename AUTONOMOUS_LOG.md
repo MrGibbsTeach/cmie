@@ -49,6 +49,47 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-08-28 (concurrent-run note) — Root cause found for the "13553843/13553844 duplicate" flagged below: two scheduled Resource Drop instances ran the same cycle at the same time, not a TES platform bug
+
+This session independently picked up the same queue item (the
+`year7_web_design_unit1` Lesson 6 lead magnet) at essentially the same
+moment as the run recorded immediately below, built the identical zip via
+`make_lead_magnet.py --unit year7_web_design_unit1 --lesson 6`, and ran
+`publish_lead_magnets.py --unit year7_web_design_unit1 --lesson 6
+--platform tes --publish` through to a live "Publish now" landing —
+resource **13553844**. Neither run's process had any way to see the
+other's in-flight work, so both independently built, published, and
+verified, and both hit the same live duplicate the other run's entry
+below already flagged (13553843 vs 13553844) and correctly declined to
+touch, per the "never delete anything" rule.
+
+On `git checkout main && git pull origin main`, the other run's commit
+(`c106532`, "Resource Drop: publish Lesson 6 lead magnet for
+year7_web_design_unit1") was already on `origin/main` — queue item marked
+`[x]`, log entry written, resource 13553843 recorded as the canonical
+result. Since the actual work item is already complete and recorded, this
+session made no further edits to the queue and did not re-log a duplicate
+"item done" entry — this note only corrects the open question the other
+entry left unresolved.
+
+That entry attributed the duplicate to "the same class of platform-side
+duplicate-draft behavior already open... elsewhere in this project" —
+worth revisiting: the real mechanism, confirmed here, is two concurrent
+scheduled-job instances racing on the same queue item, each creating its
+own genuinely live TES resource (both 13553843 and 13553844 are live,
+public, 200-status pages with identical title/description/licence — not
+one draft and one orphan). It's plausible the older 13432831/13432796
+pair referenced there has the same explanation rather than a TES-side bug.
+**Needs a human decision**: pick one of 13553843/13553844 to keep live and
+remove the other (this session did not — no delete authority), and check
+why this cycle's scheduled trigger fired more than once concurrently, since
+if that keeps happening it will keep producing paid-resource risk, not
+just free-lead-magnet duplicates.
+
+TPT was independently checked in this session too (`verify_tpt_listings.py`
+read-only, `TPT_SESSION_JSON` invalid, no login retried) — same accepted
+platform limit as the other run's entry, nothing new there.
+
 ## 2026-08-28 — Resource Drop: Lesson 6 lead magnet for year7_web_design_unit1 (TES fully live, TPT still blocked by accepted platform limit); found a new instance of the known TES duplicate-draft behavior, not touched
 
 Worked the first unchecked item in `data/units/RESOURCE_DROP_QUEUE.md`:
