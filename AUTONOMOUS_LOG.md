@@ -49,6 +49,62 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-08-31 — Scheduled business review + integrity checks: Gumroad and TES clean, TPT blocked by the accepted Cloudflare/session limit on all 13 units
+
+Ran `business_review.py --save` followed by the three integrity checkers,
+report-only, per the standing job description.
+
+- **Revenue**: Gumroad AUD 0 (0 sales), TES GBP 0.30 (1 sale). TPT revenue
+  unreadable (session expired, see below). Combined not currency-converted:
+  AUD0 + GBP0.30.
+- **Catalog**: 13 live units (unchanged from the prior run) — algorithms,
+  cybersecurity, data_representation, databases, digital_systems,
+  game_design, networks_hardware, orientation, python_programming,
+  robotics_physical_computing, spreadsheets, ux_design, web_design.
+- **`verify_tpt_listings.py --unit <unit_id>`**, run for all 13 live
+  units: every single one failed the same way — `TPT_SESSION_JSON` /
+  `.tpt_session.json` is not a valid session (`ERROR: not logged in to
+  TPT (no valid session found)`, plus `Could not extract Chrome cookies:
+  'DBUS_SESSION_BUS_ADDRESS'` since this container has no real browser
+  profile to pull cookies from). This is the accepted platform limit
+  documented above (2026-08-24): TPT's Cloudflare challenge rejects a
+  disposable cloud container's browser fingerprint regardless of cookie
+  validity. Not a bug, no login/retry attempted, no code changes made.
+- **`verify_gumroad_listings.py`** — **ran clean.** 14 products matching
+  "Unit 1" (of 18 total) checked, all "(published)", no empty/near-empty
+  descriptions, no unrendered markdown, no HTML leakage. Same 14 URLs as
+  prior runs plus the AI & Data Literacy Series Unit 1 listing
+  (`focuslabdigital.gumroad.com/l/cqwjlt`).
+- **`verify_tes_listings.py`** — **ran clean.** Logged in via saved
+  session cookies; found 36 resources total on the dashboard, 23 matching
+  "Unit 1". All 23 checked clean — no empty descriptions, no literal HTML
+  tags, no unrendered markdown. As in prior runs, several topic titles
+  are shared by two resource IDs (e.g. Networks & Hardware: `13517745`
+  and `13517664`; Game Design: `13517663` and `13516159`; Introduction to
+  Programming: `13517665` and `13516158`; Digital Systems: `13517662`
+  and `13516138`; Websites & Web Design: `13517668` and `13516137`;
+  Spreadsheets: `13517666` and `13516136`; UX & Interface Design:
+  `13517667` and `13514520`; Cyber Security: `13517659` and `13514519`;
+  Data Representation: `13517661` and `13514517`; Algorithms:
+  `13517658` and `13503396`) — per the 2026-07-31 entry below, these are
+  separate per-lesson resources sharing a "Unit 1" title prefix, not new
+  duplicates (a genuine duplicate would share the *exact same* title, as
+  the already-logged `13432831`/`13432796` pair does). Not investigated
+  further this run.
+
+**Open items carried forward, unchanged, none touched this run** (full
+list in `BUSINESS_REVIEW.md`): TES Unit 1 (AI series) presenter-
+placeholder/"Unknown" quote cosmetic bug on the TES side; TES genuine
+duplicate `13432831`/`13432796`; TES resource `13445828` permanently
+broken; off-brand Gumroad products (SWMS, ADHD guide) still on the
+storefront; shelved AI-series Units 3-8 still live on TES.
+
+No fixes, edits, or deletions made — report-only per the job's hard
+boundaries. Environment dependency installs (`python-dotenv`,
+`playwright`, `browser_cookie3`, `openai`, `python-pptx`, `python-docx`,
+`yt-dlp` via `pip install -r requirements.txt`) are ephemeral to this
+container, not committed.
+
 ## 2026-08-28 (concurrent-run note) — Root cause found for the "13553843/13553844 duplicate" flagged below: two scheduled Resource Drop instances ran the same cycle at the same time, not a TES platform bug
 
 This session independently picked up the same queue item (the
