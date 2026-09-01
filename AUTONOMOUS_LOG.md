@@ -49,6 +49,73 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-01 — New Unit Production: Digital Media & Multimedia Production — Gumroad + TES live, TPT blocked by the accepted Cloudflare/session limit; found and fixed a real thumbnail font bug
+
+Ran the standard New Unit Production routine against `UPCOMING_QUEUE.md`'s
+first unchecked item, "Digital Media & Multimedia Production (video/audio
+editing, digital storytelling)".
+
+- Wrote `data/units/year7_digital_media_unit1.json` (7 lessons: what digital
+  media is, story planning, capturing footage/sound, video editing, audio
+  editing, titles/effects, publishing + reflecting).
+- Built via `produce_unit.py` (pipeline -> qa -> thumbnail -> package): all
+  stages passed clean, automated QA found no AI-leftover language or `- -`
+  artifacts, package validation reported no structural issues.
+- **Spot-checked real content**, not just automated QA, per the standing
+  instruction (the 2026-07-19 cosmetic-bug incident is exactly why this
+  matters): read the full lesson JSON for 2 of 7 lessons (slide-by-slide)
+  and the assessment task in full. Technically accurate, on-topic, properly
+  scoped for Lower Secondary, no filler or AI tells.
+- **Found and fixed a real bug** while spot-checking the thumbnail image:
+  `cmie/publishing/thumbnail.py::_font()`'s candidate list only checked
+  `C:/Windows/Fonts/segoeui.ttf` / `arial.ttf`. Neither exists on this Linux
+  cloud container, so it silently fell back to Pillow's `load_default()` —
+  a tiny bitmap font with no glyph for the en dash ("–") used in every unit
+  title — which rendered as a visible tofu box on the product cover image
+  that would have gone out to all 3 marketplaces. Added Liberation Sans
+  (metric-compatible with Arial, present at
+  `/usr/share/fonts/truetype/liberation/`) and DejaVu Sans as Linux
+  fallbacks, regenerated the thumbnail, confirmed clean visually. Commit
+  `59170e7`. This is a latent bug that would affect every unit's thumbnail
+  built from this cloud container, not just this one — worth checking
+  whether any of the 13 existing live thumbnails were also built here with
+  the tofu-box bug (not checked this run; scope was the new unit only).
+- **Gumroad: published and verified live.**
+  `https://focuslabdigital.gumroad.com/l/xmhbi`, $12.99 AUD (matching the
+  catalog's corrected default price from the 2026-08-26 entry), confirmed
+  `published: true` via the Gumroad API. `verify_gumroad_listings.py --keyword
+  "Digital Media"` ran clean.
+- **TES: published live.** Resource `13559319`, £9.99, "Publish now"
+  completed end-to-end with no manual step needed (per the 2026-08-24 TES
+  automation note). Landed on the standard "may take up to 3 working days to
+  appear in search" notice, which is expected, not an error.
+  `verify_tes_listings.py --keyword "Digital Media"` ran clean (had to retry
+  once in the background — the first attempt hit the same TES dashboard
+  slowness/cookie-banner pattern noted in earlier entries and was killed by
+  a local timeout, not a real failure).
+- **TPT: blocked**, same accepted platform limitation documented 2026-08-24
+  (Cloudflare rejects a disposable cloud container's browser fingerprint
+  regardless of cookie validity). `TPT_SESSION_JSON` loaded but the
+  logged-in check failed; no `TPT_EMAIL`/`TPT_PASSWORD` fallback is set in
+  this container, and the code deliberately refuses to attempt a blind form
+  login (has caused bot-detection account locks before). No workaround
+  attempted, per standing policy — a human or a local-machine session needs
+  to finish the TPT half.
+- Generated marketing content
+  (`data/units/marketing/year7_digital_media_unit1_marketing_content.md`)
+  with the bundle URL left as `[PASTE BUNDLE URL HERE]` since no TPT
+  product URL exists yet.
+- **Did not** add an entry to `bundle_urls.json` (all existing entries are
+  TPT product URLs; none exists for this unit yet) and **did not** mark the
+  queue item `[x]` — both wait on TPT, per precedent (Robotics 2026-08-21/22,
+  Databases 2026-08-25/26). See `UPCOMING_QUEUE.md`'s log for the matching
+  entry with full detail.
+
+**Next step for a human or local session**: finish TPT for
+`year7_digital_media_unit1` (`publish_tpt.py --unit year7_digital_media_unit1
+--part all --publish`), then add the bundle URL to `bundle_urls.json`, fill
+in the marketing content placeholders, and mark the queue item `[x]`.
+
 ## 2026-08-31 — Scheduled business review + integrity checks: Gumroad and TES clean, TPT blocked by the accepted Cloudflare/session limit on all 13 units
 
 Ran `business_review.py --save` followed by the three integrity checkers,

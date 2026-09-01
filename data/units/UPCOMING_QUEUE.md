@@ -34,6 +34,39 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
 
 (the job appends a line here each time it completes or skips a cycle)
 
+- 2026-09-01: Started "Digital Media & Multimedia Production"
+  (`year7_digital_media_unit1`) — config written, built + QA-verified +
+  packaged successfully via `produce_unit.py` (7 lessons, assessment,
+  workbook, roadmap, teacher guide). Spot-checked real content (not just
+  automated QA): lesson slides, essential questions, and the assessment
+  task are technically accurate, on-topic, and well-scoped; no AI-leftover
+  artifacts. Also caught and fixed a real bug while spot-checking the
+  thumbnail: `cmie/publishing/thumbnail.py`'s font fallback only checked
+  `C:/Windows/Fonts/...` paths, so on this Linux cloud container it fell
+  back to Pillow's tiny default bitmap font, which has no glyph for the
+  en dash used in every unit title — rendered as a visible tofu box on
+  the cover image. Added Liberation Sans / DejaVu Sans as Linux fallbacks
+  and regenerated a clean thumbnail (commit `59170e7`).
+  **Published live**: Gumroad (`https://focuslabdigital.gumroad.com/l/xmhbi`,
+  $12.99 AUD, verified `published: true` via API) and TES (resource
+  `13559319`, £9.99, "Publish now" completed — TES notes live resources
+  can take up to 3 working days to appear in on-site search, which is
+  normal). Both verified clean via `verify_gumroad_listings.py` and
+  `verify_tes_listings.py`.
+  **Not marking `[x]` yet** — **TPT blocked** by the accepted cloud
+  Cloudflare/session limitation documented above (2026-08-24): session
+  cookies loaded from `TPT_SESSION_JSON` but the logged-in check failed,
+  and there's no `TPT_EMAIL`/`TPT_PASSWORD` fallback in this container
+  (deliberately disabled — a blind form-login attempt has triggered bot
+  detection/an account lock before). No login workaround attempted, per
+  standing project policy. Marketing content generated
+  (`data/units/marketing/year7_digital_media_unit1_marketing_content.md`)
+  with the bundle URL left as a placeholder until TPT is live. Bundle URL
+  not yet added to `bundle_urls.json` (no TPT product URL exists yet).
+  This item is still in-flight, not abandoned — finish TPT for this same
+  unit (and then add the bundle URL + fill in marketing placeholders)
+  before picking a new topic next cycle.
+
 - 2026-08-21: Started "Robotics & Physical Computing" — config written
   (`year7_robotics_physical_computing_unit1`), built + QA-verified +
   packaged successfully, published live to TES (resource `13546444`).
