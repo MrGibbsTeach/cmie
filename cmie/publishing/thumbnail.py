@@ -31,6 +31,8 @@ def _font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     candidates = [
         f"C:/Windows/Fonts/{'segoeuib' if bold else 'segoeui'}.ttf",
         f"C:/Windows/Fonts/{'arialbd'  if bold else 'arial'}.ttf",
+        f"/usr/share/fonts/truetype/liberation/LiberationSans-{'Bold' if bold else 'Regular'}.ttf",
+        f"/usr/share/fonts/truetype/dejavu/DejaVuSans{'-Bold' if bold else ''}.ttf",
     ]
     for p in candidates:
         try:
