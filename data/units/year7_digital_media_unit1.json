@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_digital_media_unit1",
+  "title": "Digital Media Unit 1 – Video, Audio, and Multimedia Storytelling",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "What Is Digital Media? Video, Audio, and Multimedia Storytelling" },
+    { "title": "Planning a Story: Scripts, Storyboards, and Shot Lists" },
+    { "title": "Capturing Footage and Sound: Composition and Recording Basics" },
+    { "title": "Editing Video: Cuts, Transitions, and Pacing" },
+    { "title": "Editing Audio: Levels, Mixing, and Adding Music or Sound Effects" },
+    { "title": "Titles, Captions, and Visual Effects" },
+    { "title": "Publishing a Multimedia Project and Reflecting on the Process" }
+  ],
+  "lesson_videos": {}
+}
