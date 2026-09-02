@@ -49,6 +49,81 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-02 — Marketing Push: 9 new Pinterest pins posted and individually verified live across 3 units (Databases wave 2, Spreadsheets wave 3, Web Design wave 3)
+
+Task: check each live unit's highest existing Pinterest wave, pick 2-3 units
+most due for a fresh wave, draft 3 distinct-angle pins each, post via
+`publish_pinterest.py --unit <id> --wave N`, verify live.
+
+**Note on the task's stated file path**: the instructions referenced
+`07_Marketing/marketing_content.md` per unit — no such path exists in this
+repo (checked with a full-filesystem search). The real, git-tracked
+equivalent this project actually uses is `data/units/marketing/
+<unit>_marketing_content.md`, read by `publish_pinterest.py` itself. Used
+that instead.
+
+**Selection.** Read every live unit's highest wave heading (13 units per
+`bundle_urls.json`; `year7_digital_media_unit1` excluded — not yet live,
+TPT still pending per the 2026-09-01 entry above, bundle URL still a
+placeholder). Waves: algorithms/cybersecurity/data_representation at wave 3
+(2026-08-22/26), networks_hardware/robotics at wave 2 (2026-08-26, more
+recent), 7 units tied at wave 2 posted 2026-08-22 (digital_systems,
+game_design, orientation, python_programming, spreadsheets, ux_design,
+web_design), and **databases at wave 1 only** — it just went fully live
+(`97d5992`, TPT + Gumroad live) so it had never had a second wave.
+
+Picked **databases** (clear "newest with only wave 1" case) plus
+**spreadsheets** and **web_design** from the 7-way tie for "haven't had a
+fresh wave since 2026-08-22" (11 days stale, no further signal to break the
+tie by, so picked two with strong new-angle material available from
+unused lesson topics).
+
+**Drafted new waves**, each following the established 3-pin pattern
+(standout-lesson deep dive, non-specialist pain point, capstone-project
+pin) with angles verified distinct from every prior wave in that unit's
+file:
+- `year7_databases_unit1` — wave 2: primary/foreign keys (Lesson 4), "you
+  don't need to be a database administrator", capstone (Lesson 7).
+- `year7_spreadsheets_unit1` — wave 3: conditional formatting & data
+  validation (Lesson 5, not used in waves 1-2), "you don't need to be a
+  data analyst" (distinct from wave 2's "stop reinventing" pain point),
+  capstone (Lesson 7, distinct from wave 2's Term 3 planning pin).
+- `year7_web_design_unit1` — wave 3: accessibility & responsive design
+  (Lesson 6, not used in waves 1-2), "you don't need to know how to code"
+  (new pain-point angle), capstone (Lesson 7, distinct from wave 2's Term 3
+  planning and value-stack pins).
+
+**Pre-flight checks before posting anything live**: confirmed
+`PINTEREST_SESSION_JSON` and `GUMROAD_TOKEN` both present in this
+container's env; confirmed all 3 units have a live, published Gumroad
+product with a thumbnail (the pin-image source `publish_pinterest.py`
+depends on) via a direct Gumroad API call — no repeat of the
+2026-08-22/26 thumbnail-gap blocker. Ran `--dry-run` for all three units
+first; all parsed and filled cleanly.
+
+**Posted live** (no `--dry-run`): `publish_pinterest.py --unit
+year7_databases_unit1 --wave 2`, `--unit year7_spreadsheets_unit1 --wave
+3`, `--unit year7_web_design_unit1 --wave 3` — all 9 pins logged
+"Submitted".
+
+**Verification — did not trust the "Submitted" log lines**, per the
+2026-08-26 precedent (this account's overall pin-count check is documented
+as flaky/lazy-loaded). Wrote a targeted scratch script (not committed):
+loaded the account's own Created page fresh with scrolling (found 78
+unique pin ids after scroll), then for each of the newest pins individually
+reloaded its own pin URL and checked `document.title` plus the outbound
+teacherspayteachers.com link against the 9 titles/links just posted. **All
+9 confirmed live** — titles and outbound links matched the source markdown
+exactly (Pinterest appends its own `?utm_source=Pinterest&utm_medium=
+organic` query string to the outbound link, matched on the base URL).
+Updated each file's new wave heading to record this.
+
+Nothing deleted, no off-brand products touched, no pricing/platform/
+strategy changes — only Pinterest wave content drafted and posted, plus
+the wave-heading status updates above. Dependencies (`playwright`,
+`python-dotenv`, etc.) weren't preinstalled in this container; ran `pip
+install -r requirements.txt` before anything else.
+
 ## 2026-09-01 — New Unit Production: Digital Media & Multimedia Production — Gumroad + TES live, TPT blocked by the accepted Cloudflare/session limit; found and fixed a real thumbnail font bug
 
 Ran the standard New Unit Production routine against `UPCOMING_QUEUE.md`'s

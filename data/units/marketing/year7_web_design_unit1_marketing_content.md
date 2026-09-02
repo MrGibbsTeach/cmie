@@ -90,3 +90,28 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Description**: Everything to teach a complete Web Design unit: 7 lesson decks (HTML, CSS, layout, accessibility), a student workbook, unit roadmap, and full assessment pack with rubric. #webdesign #digitaltechnologies #htmlcss
 
 **Link**: https://www.teacherspayteachers.com/Product/Websites-Web-Design-Unit-1-Building-Your-First-Website-Year-7-Grade-7-17047001
+
+## Pinterest pins — wave 3 (posted 2026-09-02, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
+
+New angles for the third Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos and wave 2's CSS-lesson/Term-3/value-stack pins.
+
+### Pin 1 (standout lesson — accessibility & responsive design)
+**Title** (59 chars): Web Accessibility & Responsive Design, Explained for Year 7
+
+**Description**: A ready-to-teach lesson on designing web pages that work for every user and every screen size — accessibility and responsive design made concrete for Year 7. Part of a complete 7-lesson Websites & Web Design unit. #digitaltechnologies #webdesign #accessibility #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Websites-Web-Design-Unit-1-Building-Your-First-Website-Year-7-Grade-7-17047001
+
+### Pin 2 (pain point — non-specialist)
+**Title** (48 chars): You Don't Need to Know How to Code to Teach This
+
+**Description**: How the web works, HTML, CSS, layout, accessibility — a full 7-lesson progression already planned and explained step by step, no coding background required to teach it. Editable slides, workbook, roadmap, and assessment pack included. #webdesign #teacherspayteachers #digitaltechnologies
+
+**Link**: https://www.teacherspayteachers.com/Product/Websites-Web-Design-Unit-1-Building-Your-First-Website-Year-7-Grade-7-17047001
+
+### Pin 3 (capstone)
+**Title** (65 chars): Web Design Capstone: Students Build a Real Website With a Purpose
+
+**Description**: The final lesson has students design and build their own website for a real purpose, applying HTML, CSS, and layout instead of just practicing them in isolation. Part of a complete 7-lesson Websites & Web Design unit. #webdesign #capstoneproject #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Websites-Web-Design-Unit-1-Building-Your-First-Website-Year-7-Grade-7-17047001

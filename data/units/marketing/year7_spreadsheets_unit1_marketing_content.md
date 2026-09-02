@@ -90,3 +90,28 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Description**: A complete Data Analysis with Spreadsheets unit, planned for Term 3: formulas, sorting and filtering, charts, and real-world data sets, finishing with a student-designed spreadsheet solution. #term3planning #digitaltechnologies #spreadsheets #y7
 
 **Link**: https://www.teacherspayteachers.com/Product/Spreadsheets-Data-Analysis-Unit-1-Making-Sense-of-Data-with-Spreadsheets-17046870
+
+## Pinterest pins — wave 3 (posted 2026-09-02, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
+
+New angles for the third Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos and wave 2's charts-lesson/reinventing-lessons/Term-3 pins.
+
+### Pin 1 (standout lesson — conditional formatting & data validation)
+**Title** (78 chars): Conditional Formatting & Data Validation: Catch Errors Before They Spread (Y7)
+
+**Description**: A ready-to-teach lesson on using conditional formatting and data validation to catch bad data before it wrecks a spreadsheet — a real workplace skill, not just a spreadsheet trick. Part of a complete 7-lesson Spreadsheets & Data Analysis unit. #digitaltechnologies #dataanalysis #spreadsheets #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Spreadsheets-Data-Analysis-Unit-1-Making-Sense-of-Data-with-Spreadsheets-17046870
+
+### Pin 2 (pain point — non-specialist)
+**Title** (49 chars): You Don't Need to Be a Data Analyst to Teach This
+
+**Description**: Formulas, sorting and filtering, charts, conditional formatting, real-world data sets — a full skill progression already planned, explained step by step. Editable slides, student workbook, unit roadmap, and assessment pack included. #spreadsheets #teacherspayteachers #dataanalysis
+
+**Link**: https://www.teacherspayteachers.com/Product/Spreadsheets-Data-Analysis-Unit-1-Making-Sense-of-Data-with-Spreadsheets-17046870
+
+### Pin 3 (capstone)
+**Title** (62 chars): Spreadsheets Capstone: Students Solve a Real Problem With Data
+
+**Description**: The final lesson has students design their own spreadsheet solution to a real problem, applying formulas, filtering, and charts instead of just practicing them in isolation. Part of a complete 7-lesson Spreadsheets & Data Analysis unit. #spreadsheets #capstoneproject #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Spreadsheets-Data-Analysis-Unit-1-Making-Sense-of-Data-with-Spreadsheets-17046870

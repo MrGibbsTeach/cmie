@@ -65,3 +65,28 @@ There's also a free Lesson 1 sample if you'd like to try before buying the bundl
 Check it out here: https://www.teacherspayteachers.com/Product/Databases-Unit-1-Organising-and-Querying-Data-Year-7-Grade-7-Middle-17494550
 
 Thanks for following the store — more units on the way!
+
+## Pinterest pins — wave 2 (posted 2026-09-02, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
+
+New angles for the second Pinterest posting batch — different from wave 1's generic bundle/lesson-pack/free-sample promos, to keep this posting fresh content rather than reposting the same 3 pins.
+
+### Pin 1 (standout lesson — keys & relationships)
+**Title** (66 chars): Teach Primary & Foreign Keys Without the Duplication Headache (Y7)
+
+**Description**: A ready-to-teach lesson on how primary and foreign keys let tables share information without duplicating it — the exact idea students trip over first. Part of a complete 7-lesson Databases unit covering structure, validation, queries, and forms. #digitaltechnologies #databases #computerscience #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Databases-Unit-1-Organising-and-Querying-Data-Year-7-Grade-7-Middle-17494550
+
+### Pin 2 (pain point — non-specialist)
+**Title** (59 chars): You Don't Need to Be a Database Administrator to Teach This
+
+**Description**: Tables, keys, queries, forms — a full 7-lesson progression already planned and explained in plain language, no database background required. Editable slides, student workbook, unit roadmap, and assessment pack with rubric included. #databases #teacherspayteachers #digitaltechnologies
+
+**Link**: https://www.teacherspayteachers.com/Product/Databases-Unit-1-Organising-and-Querying-Data-Year-7-Grade-7-Middle-17494550
+
+### Pin 3 (capstone)
+**Title** (60 chars): Databases Capstone: Students Design a Real Database Solution
+
+**Description**: The final lesson has students design their own database for a real-world problem — applying tables, keys, and queries instead of just recalling them. Part of a complete 7-lesson Databases unit for Year 7 / Grade 7 Digital Technologies. #databases #capstoneproject #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Databases-Unit-1-Organising-and-Querying-Data-Year-7-Grade-7-Middle-17494550
