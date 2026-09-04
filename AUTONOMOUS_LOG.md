@@ -49,6 +49,45 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-04 — Resource Drop: "Programming Foundations" bundle skipped — no persisted full-unit content to combine, would require paid regeneration
+
+Queue: `data/units/RESOURCE_DROP_QUEUE.md`. First unchecked item was the
+"Small bundle packages" section's "Programming Foundations" bundle
+(Algorithms & Programming Logic + Introduction to Programming Python),
+which the queue's own rules require to be built by combining existing
+zips with **no new content generation**.
+
+**Blocked, not completed** — checked the actual filesystem before writing
+any code: `releases/` (where `package_unit.py` reads a unit's full
+7-lesson + assessment + workbook + roadmap + teacher-guide set from) is
+gitignored and does not exist in this fresh container/clone, and
+`git ls-files` confirms the *only* unit content tracked in git anywhere is
+the free Lesson-1/lead-magnet sample zips (`data/units/lead_magnet_source/`,
+`marketing-site/public/downloads/`) — individual lesson `.pptx` files, not
+a sellable bundle's worth of content for either unit. This is the same
+"gitignored `releases/public/` empty on fresh clone" limitation already
+logged repeatedly elsewhere in this file for other jobs; lead magnets got
+a tracked-fallback workaround (`lead_magnet_source/`) built specifically
+for them, but no equivalent exists for full paid units.
+
+The only ways to actually get the zips this item needs: (1) regenerate
+both units via `produce_unit.py`, whose own docstring labels that stage
+"(OpenAI cost!)" — real spend and genuinely new content, exactly what this
+queue item forbids; or (2) download the already-published product files
+back from Gumroad/TES/TPT as the seller — no script in this repo does
+that today, and building it is new automation infrastructure, not a
+same-day "reuse what exists" job. Did neither. No login attempted, nothing
+published, nothing touched on any platform.
+
+Logged the skip in `RESOURCE_DROP_QUEUE.md`'s own Log section (checkbox
+left unmarked — item is not done). **Needs a human decision**: commit a
+persistent copy of each unit's full release zips somewhere a fresh session
+can reach (same pattern as `lead_magnet_source/`), or accept the OpenAI
+regeneration cost for bundle items, or add a real download-existing-product
+step to the publishing scripts. Until one of those exists, both remaining
+bundle items in the queue ("Programming Foundations" and "Staying Safe
+Online") are blocked the same way.
+
 ## 2026-09-02 — Marketing Push: 9 new Pinterest pins posted and individually verified live across 3 units (Databases wave 2, Spreadsheets wave 3, Web Design wave 3)
 
 Task: check each live unit's highest existing Pinterest wave, pick 2-3 units

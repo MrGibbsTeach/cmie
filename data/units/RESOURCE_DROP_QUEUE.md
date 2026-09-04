@@ -26,6 +26,34 @@ standalone lesson (not one that depends on earlier lessons to make sense).
 
 (the job appends a line here each time it completes or skips a cycle)
 
+- 2026-09-04: Attempted the first unchecked item, the "Programming
+  Foundations" bundle (Algorithms & Programming Logic + Introduction to
+  Programming Python). **Skipped — blocked by an environment limitation,
+  not completed, checkbox left unchecked.** This queue item requires
+  "reuse existing zips, no new content generation," but confirmed (fresh
+  container, `find`/`git ls-files`) that no full-unit release files exist
+  anywhere this session can reach for either unit: `releases/` is
+  gitignored and doesn't exist in a fresh clone (same known limitation
+  already logged repeatedly elsewhere in `AUTONOMOUS_LOG.md`), and the only
+  git-tracked unit content is the free Lesson-1/lead-magnet sample zips
+  (`data/units/lead_magnet_source/`, `marketing-site/public/downloads/`) —
+  a handful of individual lesson `.pptx` files, not the full 7-lesson +
+  assessment + workbook + roadmap + teacher-guide set a paid bundle needs.
+  Regenerating either unit via `produce_unit.py` would call the real
+  content pipeline, which `produce_unit.py`'s own docstring flags as
+  "(OpenAI cost!)" — that's new content generation and real spend, exactly
+  what this queue item rules out. The only other route, downloading the
+  already-published product files back from Gumroad/TES/TPT as the seller,
+  isn't something any script in this repo does today, and building that
+  would be new automation infrastructure, not a "no strategic changes"
+  reuse of what's already there. Not attempted: no login, no publish, no
+  files touched on any platform. **Needs a human decision**: either commit
+  a persistent copy of each unit's full release zips somewhere this
+  session can reach (mirroring the `lead_magnet_source/` fallback already
+  built for lead magnets), or accept the OpenAI regeneration cost for this
+  one item, or add a genuine download-existing-product step to the
+  publishing scripts. See `AUTONOMOUS_LOG.md` for the same write-up.
+
 - 2026-08-20: Built + published the Lesson 5 lead magnet for
   year7_algorithms_unit1 ("Debugging: Finding and Fixing Logic Errors").
   TES: draft created successfully (resource 13545171), needs a human
