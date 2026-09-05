@@ -49,6 +49,109 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-05 — Interactive session: reviewed all 4 routines' runs from the past week, fixed 4 real issues found along the way
+
+Not a scheduled routine run -- the business owner asked to review how the
+4 routines ran this week and fix whatever needed fixing. All 4 fired and
+completed on schedule with no platform-side failures; found and fixed
+real issues in what they *do*, not whether they run:
+
+**1. Closed the Resource Drop bundle-queue gap (root cause, not a
+patch).** 2026-09-04's run correctly refused to build the "Programming
+Foundations" bundle because no full-unit content was persisted anywhere
+a fresh cloud container could reach (`releases/` is gitignored and
+ephemeral) and building it would have meant either paid regeneration or
+new download-from-platform infrastructure -- exactly the "needs a human
+decision" case the routine is supposed to flag rather than solve
+unilaterally. Fixed at the root for every future unit:
+`package_unit.py` now also copies each unit's `_PUBLIC.zip` (all 7
+lessons + assessment + workbook + roadmap + teacher guide -- the exact
+content already uploaded live to all 3 marketplaces, so this is zero new
+content generation and near-zero storage, ~0.5-1MB/unit) into the new
+git-tracked `data/units/packaged/`, the same durability pattern
+`data/units/lead_magnet_source/` already uses for lead magnets. Also
+built `make_bundle.py` (didn't exist at all before today -- confirmed no
+tool anywhere in this repo actually combines multiple units' zips into
+one bundle product; `cmie/bundles/bundle_generator.py` only generates
+marketing copy via a paid OpenAI call against a `marketing_assets.json`
+file that doesn't exist in the current pipeline, dead code from the
+shelved AI-series era). It combines each unit's persisted zip under a
+`<unit_id>/` subfolder (so lesson numbering never collides across
+units), writes both a `_PUBLIC.zip` and `_BUNDLE.zip` under the bundle's
+own id, and a template-based (zero-OpenAI-cost) listing markdown.
+Deliberately named its outputs so `publish_tpt.py` / `publish_gumroad.py`
+/ `publish_tes.py --unit <bundle_id>` all resolve it with **no changes
+to any publish script** -- Gumroad/TES already glob
+`{unit_id}_*_PUBLIC.zip` and TPT's `--part bundle` already looks for
+`{unit_id}_v001_BUNDLE.zip`. Smoke-tested end to end with placeholder
+zips (built a real combined zip + listing, verified contents, then
+deleted the test artifacts). **This closes the gap for every unit built
+from today onward** -- it does NOT retroactively fix the two currently-
+queued bundle items (Algorithms/Python Programming, Cyber
+Security/Networks & Hardware all predate this fix and have no persisted
+zip). Left both unchecked in `RESOURCE_DROP_QUEUE.md` with an explicit
+note; **needs a human decision** on whether to backfill those 4 units
+(re-run `package_unit.py` wherever their `releases/public/` content
+still exists, if anywhere does) or accept a one-time regeneration cost,
+or drop the two queue items.
+
+**2. Resource Drop had run out of real work.** With all 3 original
+lead-magnet items done and both bundle items blocked (see above), Friday
+runs would keep re-investigating and re-flagging the same blocked bundle
+item indefinitely. Added 10 new lead-magnet queue entries (one standalone
+lesson per remaining unit without a second lead magnet yet) to
+`RESOURCE_DROP_QUEUE.md` -- real, immediately buildable work for roughly
+the next 10 Fridays.
+
+**3. Fixed a real reliability bug affecting every browser-driven script,
+not just TES.** Root-caused 2026-09-01's `verify_tes_listings.py` timeout
+(the run had to fall back to a 3-minute background retry): the cloud
+sandbox's egress proxy was rejecting 32+ connection attempts to
+`pba.aws.lijit.com` (a third-party ad-tech vendor loaded by TES's page),
+and each rejected attempt still costs a real connect-timeout before the
+page finishes loading -- nothing in this repo has ever blocked those
+requests. Added `block_known_ad_domains()` to
+`cmie/publishing/browser.py` (a ~20-domain list: lijit, doubleclick,
+google-analytics, hotjar, taboola, etc.) and wired it into every
+Playwright context this project creates -- `automation_chrome()`
+(TES/TPT/Gumroad/Pinterest publish flows) plus the four scripts that
+launch their own headless context directly (`verify_tes_listings.py`,
+`verify_tpt_listings.py`, `verify_pinterest_pins.py`,
+`check_revenue.py`). Never touches the target platforms themselves, only
+clearly third-party ad/analytics hostnames -- should make every
+scraping/verification script faster and less prone to proxy-timeout
+flakiness going forward, cloud or local.
+
+**4. Fixed Routine 3's own prompt -- it's been pointing at a path that
+was never real.** Every Marketing Push run since this routine was
+created has had to spend its first several tool calls discovering that
+`07_Marketing/marketing_content.md` (the path in the routine's own
+instructions) doesn't exist in this repo, then falling back to the real
+tracked path, `data/units/marketing/<unit_id>_marketing_content.md` --
+confirmed by re-reading this week's run transcript. Updated the routine's
+prompt directly (via the trigger API) to reference the real path, so
+future runs skip that wasted discovery step every single week.
+
+**5. Made Routine 2 and Routine 4 resilient to the concurrent-duplicate-
+run hazard already flagged open in the 2026-08-28 entry below.** That
+entry root-caused two live duplicate TES resources (13553843/13553844)
+to two scheduled Resource Drop instances racing on the same queue item
+concurrently, each unaware of the other's in-flight work, and flagged
+"needs a human decision" on both which resource to keep (a delete, not
+made here -- **still needs the business owner's call**) and on
+preventing recurrence. This session could not diagnose why the scheduler
+fired twice (that's platform-side, outside this repo), but added a
+concurrency guard to both routines' prompts: immediately before the
+irreversible publish step, re-fetch `origin/main` and check whether this
+exact queue item was already completed or started by a concurrent run in
+the same cycle -- if so, stop without publishing rather than create a
+second live duplicate. Doesn't fix the double-fire itself, but removes
+the actual harm it causes.
+
+**Not fixed, flagged for the business owner**: the live 13553843/13553844
+TES duplicate itself (needs a delete decision, not made autonomously);
+whether to backfill the two blocked bundle-queue units' packaged zips.
+
 ## 2026-09-04 — Resource Drop: "Programming Foundations" bundle skipped — no persisted full-unit content to combine, would require paid regeneration
 
 Queue: `data/units/RESOURCE_DROP_QUEUE.md`. First unchecked item was the

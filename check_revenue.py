@@ -35,7 +35,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 from dotenv import load_dotenv
 
-from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies
+from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies, block_known_ad_domains
 
 load_dotenv()
 
@@ -79,6 +79,7 @@ def _make_context(pw, headless: bool):
     context.add_init_script(
         "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
     )
+    block_known_ad_domains(context)
     return browser, context
 
 

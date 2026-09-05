@@ -55,12 +55,13 @@ def _load_pinterest_cookies() -> list[dict]:
 
 def main() -> None:
     from playwright.sync_api import sync_playwright
-    from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies
+    from cmie.publishing.browser import cloud_launch_kwargs, cloud_context_kwargs, normalize_cookies, block_known_ad_domains
     cookies = _load_pinterest_cookies()
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True, **cloud_launch_kwargs())
         context = browser.new_context(viewport={"width": 1400, "height": 1000}, **cloud_context_kwargs())
+        block_known_ad_domains(context)
         context.add_cookies(normalize_cookies(cookies))
         page = context.new_page()
         page.goto(f"https://www.pinterest.com/{PROFILE_USERNAME}/_created/",

@@ -15,12 +15,51 @@ standalone lesson (not one that depends on earlier lessons to make sense).
 - [x] year7_algorithms_unit1 — Lesson 5 (Debugging: Finding and Fixing Logic Errors) — 2026-08-20
 - [x] year7_cybersecurity_unit1 — Lesson 3 (Spotting Phishing and Social Engineering) — 2026-08-21
 - [x] year7_web_design_unit1 — Lesson 6 (Accessibility and Responsive Design Basics) — 2026-08-28
+- [ ] year7_orientation_unit1 — Lesson 4 (Passwords, Privacy, and Protecting Your Information)
+- [ ] year7_networks_hardware_unit1 — Lesson 4 (How Data Travels Across a Network)
+- [ ] year7_data_representation_unit1 — Lesson 5 (Images as Data: Pixels and Bitmaps)
+- [ ] year7_spreadsheets_unit1 — Lesson 4 (Charts and Graphs: Visualizing Data)
+- [ ] year7_robotics_physical_computing_unit1 — Lesson 4 (Using Sensor Data to Make Decisions)
+- [ ] year7_ux_design_unit1 — Lesson 6 (Accessibility and Inclusive Design)
+- [ ] year7_databases_unit1 — Lesson 5 (Asking Questions with Queries: Sorting, Filtering, and Searching)
+- [ ] year7_digital_systems_unit1 — Lesson 6 (Troubleshooting Common Computer Problems)
+- [ ] year7_game_design_unit1 — Lesson 6 (Playtesting and Iterating on Your Design)
+- [ ] year7_digital_media_unit1 — Lesson 4 (Editing Video: Cuts, Transitions, and Pacing)
+
+Added 2026-09-05 (10 new entries above): the previous 3 entries were the
+only ones queued, and all 3 are done -- with no bundle items buildable
+(see note below), Routine 4 had genuinely run out of completable work.
+Picked one standalone, non-Lesson-1 lesson per remaining unit that
+doesn't have a second lead magnet yet, favoring lessons that don't
+depend on earlier lessons' content to make sense (same criterion the
+existing entries above already used). This gives the Friday job real
+work for ~10 more weeks.
 
 ## Small bundle packages (combine 2-3 existing units, reuse existing zips,
 ## no new content generation, one new listing per bundle)
 
-- [ ] "Programming Foundations" bundle: Algorithms & Programming Logic + Introduction to Programming (Python)
-- [ ] "Staying Safe Online" bundle: Cyber Security & Digital Footprints + Networks & Hardware
+**Updated 2026-09-05**: `make_bundle.py` now exists (combines each unit's
+persisted `data/units/packaged/<unit_id>_v001_PUBLIC.zip` into one bundle
+zip + template listing, then `publish_tpt.py` / `publish_gumroad.py` /
+`publish_tes.py --unit <bundle_id>` publish it like any other unit --
+see the script's own docstring for the full flow). `package_unit.py` now
+persists that packaged zip automatically for every unit built from now
+on, so **any unit produced by Routine 2 from 2026-09-05 onward is
+bundle-ready with no extra step.** The two items below predate that fix,
+so neither Algorithms, Python Programming, Cyber Security, nor Networks
+& Hardware has a persisted zip yet -- `make_bundle.py` will refuse
+clearly (not silently) if attempted. Leave both unchecked until a human
+either (a) backfills those 4 units' packaged zips (re-run
+`package_unit.py --unit <id>` in an environment where its
+`releases/public/<id>_v001/` still exists, if any does), or (b) accepts
+a one-time regeneration cost for them, or (c) decides these two items
+aren't worth pursuing and removes them from the queue. Routine 4 should
+keep skipping past these two (do not re-investigate from scratch every
+week -- this note is the investigation) and work the lead-magnet items
+above instead until this is resolved.
+
+- [ ] "Programming Foundations" bundle: Algorithms & Programming Logic + Introduction to Programming (Python) — blocked, see note above
+- [ ] "Staying Safe Online" bundle: Cyber Security & Digital Footprints + Networks & Hardware — blocked, see note above
 
 ## Log
 

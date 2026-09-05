@@ -34,6 +34,22 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent
 RELEASES_ROOT = PROJECT_ROOT / "releases"
 
+# releases/ is gitignored and ephemeral -- it doesn't exist in a fresh
+# cloud-routine clone, so nothing built here survives past the run that
+# built it. That's fine for the publish scripts (they run in the same
+# container that built it), but it silently starves anything that wants
+# to reuse a unit's already-generated content later without paying to
+# regenerate it -- e.g. the "combine 2-3 existing units into a bundle,
+# reuse existing zips, no new content generation" Resource Drop queue
+# items, which had zero persisted source to work from (found 2026-09-04,
+# see AUTONOMOUS_LOG.md). PACKAGED_ROOT is git-tracked specifically so
+# every unit's full customer-facing content survives across containers,
+# following the same pattern data/units/lead_magnet_source/ already uses
+# for lead-magnet content. Cost is small: one _PUBLIC.zip per unit,
+# ~0.5-1MB (same content already uploaded live to 3 marketplaces, so
+# this is packaging hygiene, not new content generation or new spend).
+PACKAGED_ROOT = PROJECT_ROOT / "data" / "units" / "packaged"
+
 # Only these top-level folders of the public release folder are customer-facing.
 CUSTOMER_FOLDERS = [
     "01_Lesson_Slides",
@@ -229,6 +245,19 @@ def package_unit(
                         f"missing={planned - in_zip}, extra={in_zip - planned}"
                     )
         print("\nAll zips verified: readable, contents match plan.")
+
+        # Persist the full-content bundle zip into the git-tracked
+        # PACKAGED_ROOT so it survives past this container. Only the
+        # _PUBLIC.zip is kept -- it's a superset of every other output
+        # here (all 7 lessons + assessment + workbook + roadmap + teacher
+        # guide), so it alone is enough to rebuild any of the smaller
+        # per-lesson/assessment zips or a multi-unit bundle later.
+        public_zip = out_dir / f"{unit_id}_{version}_PUBLIC.zip"
+        if public_zip.exists():
+            PACKAGED_ROOT.mkdir(parents=True, exist_ok=True)
+            persisted = PACKAGED_ROOT / public_zip.name
+            persisted.write_bytes(public_zip.read_bytes())
+            print(f"\nPersisted for future reuse: {persisted}")
 
     return results
 

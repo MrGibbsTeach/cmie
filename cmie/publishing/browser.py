@@ -225,6 +225,47 @@ def _alternate_local_chromium(exclude: str | None) -> str | None:
 
 _WORKING_CHROMIUM_CACHE = Path.home() / ".cmie_working_chromium.txt"
 
+# Third-party ad/analytics domains with no bearing on any TES/TPT/Gumroad/
+# Pinterest form-fill or scrape flow this project automates. Found live
+# 2026-09-01: verify_tes_listings.py hung and hit its 120s timeout on the
+# TES dashboard because the cloud sandbox's egress proxy was rejecting 32+
+# connection attempts to pba.aws.lijit.com (an ad-tech vendor loaded by
+# TES's page) -- each rejected CONNECT still costs a real connect-timeout
+# before the page gives up and finishes loading. Aborting these requests
+# at the browser level means the page never waits on them, independent of
+# whether any given cloud sandbox's egress proxy happens to allow them.
+_BLOCKED_AD_DOMAINS = (
+    "lijit.com", "doubleclick.net", "googlesyndication.com",
+    "google-analytics.com", "googletagmanager.com", "adnxs.com",
+    "quantserve.com", "scorecardresearch.com", "hotjar.com",
+    "taboola.com", "outbrain.com", "criteo.com", "pubmatic.com",
+    "rubiconproject.com", "openx.net", "indexexchange.com",
+    "casalemedia.com", "amazon-adsystem.com", "bing.com/action",
+    "connect.facebook.net", "snap.licdn.com", "analytics.tiktok.com",
+)
+
+
+def block_known_ad_domains(context) -> None:
+    """Abort requests to known ad/analytics domains on every page opened
+    from this context. Never blocks anything on the target sites
+    themselves (tes.com, teacherspayteachers.com, gumroad.com,
+    pinterest.com) -- only clearly third-party ad-tech hostnames.
+
+    Call this on any Playwright context this project creates, not just
+    automation_chrome()'s -- verify_tes_listings.py, verify_tpt_listings.py
+    and verify_pinterest_pins.py all launch their own headless
+    browser.new_context() directly instead of going through
+    automation_chrome()."""
+
+    def _handler(route):
+        host = route.request.url.split("/")[2].lower() if "://" in route.request.url else ""
+        if any(domain in host for domain in _BLOCKED_AD_DOMAINS):
+            route.abort()
+        else:
+            route.continue_()
+
+    context.route("**/*", _handler)
+
 
 @contextmanager
 def automation_chrome(headless: bool = False, slow_mo: int = 200):
@@ -293,6 +334,7 @@ def automation_chrome(headless: bool = False, slow_mo: int = 200):
                     _WORKING_CHROMIUM_CACHE.write_text(alternate, encoding="utf-8")
                 except Exception:
                     pass
+            block_known_ad_domains(context)
             page = context.new_page()
             try:
                 yield context, page
