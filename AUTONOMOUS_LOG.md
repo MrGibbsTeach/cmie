@@ -127,10 +127,30 @@ being the first-ever bundle-sized/multi-part upload attempt:**
 **Cost of finding these bugs**: 5 stray, never-published TES drafts for
 "Programming Foundations Bundle" accumulated during diagnosis (ids
 13566125-13566129) -- each only ever reached step 1 or step 2 before
-failing, zero customer exposure, zero cost. **Not yet cleaned up --
-flagged to the user rather than deleted unilaterally**, consistent with
-this project's standing no-delete-without-authorization rule (this
-session's one delete, below, was explicitly authorized first).
+failing, zero customer exposure, zero cost. Flagged to the user rather
+than deleted unilaterally, consistent with this project's standing
+no-delete-without-authorization rule; user authorized deleting all 5,
+done and verified (13566125 had already vanished on its own -- TES
+apparently doesn't always persist a step-1-only draft indefinitely --
+the other 4 deleted and confirmed gone via a fresh dashboard reload,
+13566130 unaffected).
+
+**Also this session: recovered the business owner's local `curriculum_mie`
+clone from real `.git` corruption** (missing blobs, broken tree links --
+almost certainly OneDrive syncing files inside `.git`, a known-bad
+pattern for a git repo living in a synced folder). Backed up every
+locally-modified/gitignored file first (credentials, session cookies,
+`cmie.db`, and everything `git status` showed as modified) to a sibling
+folder, deleted the corrupted clone, cloned fresh from `origin/main`, and
+restored the backed-up files on top. Only one of the ~26
+originally-flagged "modified" files turned out to be a real, uncommitted
+change once diffed against a clean checkout -- `REVENUE.md`, which holds
+a genuine hand-entered 2026-08-19 revenue correction (6 real TPT orders,
+$31.44 USD actual earnings vs. the stale $13.45 figure) that was never
+committed. Restored as-is, left uncommitted for the user to review/commit
+themselves rather than assumed. The other ~25 files' reported diffs were
+apparently artifacts of the corruption itself (a corrupted cache-tree can
+make `git status` report false modifications) -- not real lost work.
 
 **Deleted TES resource `13553844`** (the duplicate Web Design Lesson 6
 lead magnet flagged open since 2026-08-28), per the user's explicit
