@@ -38,28 +38,27 @@ work for ~10 more weeks.
 ## Small bundle packages (combine 2-3 existing units, reuse existing zips,
 ## no new content generation, one new listing per bundle)
 
-**Updated 2026-09-05**: `make_bundle.py` now exists (combines each unit's
-persisted `data/units/packaged/<unit_id>_v001_PUBLIC.zip` into one bundle
-zip + template listing, then `publish_tpt.py` / `publish_gumroad.py` /
-`publish_tes.py --unit <bundle_id>` publish it like any other unit --
-see the script's own docstring for the full flow). `package_unit.py` now
-persists that packaged zip automatically for every unit built from now
-on, so **any unit produced by Routine 2 from 2026-09-05 onward is
-bundle-ready with no extra step.** The two items below predate that fix,
-so neither Algorithms, Python Programming, Cyber Security, nor Networks
-& Hardware has a persisted zip yet -- `make_bundle.py` will refuse
-clearly (not silently) if attempted. Leave both unchecked until a human
-either (a) backfills those 4 units' packaged zips (re-run
-`package_unit.py --unit <id>` in an environment where its
-`releases/public/<id>_v001/` still exists, if any does), or (b) accepts
-a one-time regeneration cost for them, or (c) decides these two items
-aren't worth pursuing and removes them from the queue. Routine 4 should
-keep skipping past these two (do not re-investigate from scratch every
-week -- this note is the investigation) and work the lead-magnet items
-above instead until this is resolved.
+**Resolved 2026-09-06.** All 13 live units' `releases/public/<id>_v001/`
+content still existed on the business owner's local machine (built there
+originally, before either the cloud sandbox's ephemeral `releases/` or
+the git-tracked `data/units/packaged/` persistence existed) -- backfilled
+all 13 via `package_unit.py --unit <id> --force` locally, zero
+regeneration cost. Both bundles below built with `make_bundle.py` and
+published live on Gumroad ($19.99 AUD each) and TES (£14.99 each) the
+same session. **TPT still pending** for both -- blocked in this
+interactive session by Claude Code's own auto-mode safety classifier
+(harness-level, unrelated to this project's rules), needs to be finished
+by a human running the commands logged below. Found and fixed 3 real
+bugs in `publish_tes.py` along the way (stale positional `<select>`
+locator, a file-scan wait keyed to the wrong signal, and a "Publish now"
+button that needed a settle delay after the confirm checkbox) -- see
+`AUTONOMOUS_LOG.md`'s 2026-09-06 entry for full detail. Any unit
+produced by Routine 2 from 2026-09-05 onward is automatically
+bundle-ready (no extra step) since `package_unit.py` now persists every
+unit's zip as it's built.
 
-- [ ] "Programming Foundations" bundle: Algorithms & Programming Logic + Introduction to Programming (Python) — blocked, see note above
-- [ ] "Staying Safe Online" bundle: Cyber Security & Digital Footprints + Networks & Hardware — blocked, see note above
+- [x] "Programming Foundations" bundle: Algorithms & Programming Logic + Introduction to Programming (Python) — Gumroad live 2026-09-06 (`focuslabdigital.gumroad.com/l/lfpgti`, $19.99 AUD), TES live 2026-09-06 (resource `13566130`, £14.99); TPT pending, human needs to run: `TPT_BUNDLE_PRICE=44.99 python publish_tpt.py --unit programming_foundations_bundle --part bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish`
+- [x] "Staying Safe Online" bundle: Cyber Security & Digital Footprints + Networks & Hardware — Gumroad live 2026-09-06 (`focuslabdigital.gumroad.com/l/xteifx`, $19.99 AUD), TES live 2026-09-06 (resource `13566132`, £14.99); TPT pending, human needs to run: `TPT_BUNDLE_PRICE=44.99 python publish_tpt.py --unit staying_safe_online_bundle --part bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish`
 
 ## Log
 

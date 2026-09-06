@@ -49,6 +49,104 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-06 — Interactive session: backfilled and published both bundle-queue items on Gumroad + TES, found and fixed 3 real TES automation bugs, deleted an authorized TES duplicate
+
+Not a scheduled routine run -- continuation of the 2026-09-05 review
+session, acting on the 3 open decisions it flagged.
+
+**Bundle backfill, free.** All 13 live units' `releases/public/<id>_v001/`
+content still existed on this machine (built here originally, well
+before the cloud sandbox's ephemeral `releases/` or the new
+`data/units/packaged/` persistence existed) -- ran `package_unit.py
+--unit <id> --force` for all 13, no OpenAI cost, no regeneration. Only
+`year7_digital_media_unit1` (built entirely in a cloud container
+2026-09-01) has no local copy and stays unbackfilled -- not blocking
+anything since it isn't part of either queued bundle.
+
+**Both bundles built and published, user-approved pricing ($19.99 AUD /
+£14.99 GBP -- ~23-25% off buying the 2 units separately at $12.99/£9.99
+each):**
+- Programming Foundations (Algorithms + Python Programming): Gumroad
+  live (`focuslabdigital.gumroad.com/l/lfpgti`, verified via API --
+  `published: true`, `file_info` shows the 1.07MB zip genuinely
+  attached), TES live (resource `13566130`, verified via
+  `verify_tes_listings.py`).
+- Staying Safe Online (Cyber Security + Networks & Hardware): Gumroad
+  live (`focuslabdigital.gumroad.com/l/xteifx`, same verification), TES
+  live (resource `13566132`, one-shot success with no stray drafts --
+  the fixes below held).
+
+**TPT: not completed, blocked by Claude Code's own auto-mode safety
+classifier** (a harness-level layer, independent of this project's own
+authorization) -- it denied the `publish_tpt.py --publish` command
+outright before it ran, even after the user explicitly approved a retry
+once. Per the tool's own instructions this needs a human, not another
+workaround attempt. Exact commands to finish (both use the bundle_id as
+a pseudo unit_id, which `make_bundle.py`'s output already supports with
+zero further changes needed):
+```
+TPT_BUNDLE_PRICE=44.99 python publish_tpt.py --unit programming_foundations_bundle --part bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish
+TPT_BUNDLE_PRICE=44.99 python publish_tpt.py --unit staying_safe_online_bundle --part bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish
+```
+(`$44.99` = the same ~25% discount logic applied to TPT's existing
+$59.98-if-bought-separately combined price; TPT's markdown listing path
+has no price field of its own, hence the env var override --
+`make_bundle.py`'s own printed next-steps originally said
+`TPT_DEFAULT_PRICE`, which was simply the wrong variable name -- fixed
+in the script after finding the real one, `TPT_BUNDLE_PRICE`, by reading
+`publish_tpt.py`'s actual bundle-price code path.)
+
+**3 real bugs found and fixed in `publish_tes.py`, all surfaced by this
+being the first-ever bundle-sized/multi-part upload attempt:**
+1. `_step2_add_files()`'s resource-type dropdown used
+   `page.locator("select").nth(2)` -- a positional index that happened to
+   land on the right element for every single-unit upload tried before,
+   but resolved to the footer's `#siteCountry` country-selector instead
+   for this bundle. A live dump of every `<select>` on the page found the
+   real one has a stable `id="mainType"` at position 1, with
+   `#siteCountry` actually at position 2 -- `nth(2)` was only ever
+   correct by accident, dependent on how many `<select>` elements happen
+   to render before it. Fixed by targeting `#mainType` directly.
+2. The same function's file-upload wait checked for the uploaded
+   filename to appear as visible text, but TES never actually displays
+   the filename at that stage -- it shows a persistent "Scanning your
+   file..." status label instead (confirmed via a live diagnostic dump).
+   The wait never completed, so it always fell through to whatever the
+   fixed prior 5s delay left in the DOM. Fixed to wait for the "What type
+   of resource is it?" heading instead, which reliably appears once the
+   real dropdown has rendered.
+3. `_step5_publish()`'s "Publish now" button stayed disabled for a full
+   60s of polling immediately after checking the copyright confirmation
+   box, twice in a row -- but worked instantly in a standalone diagnostic
+   that happened to spend a few extra seconds on the page first before
+   checking the same box. Added a 3s settle delay before checking the box
+   as cheap insurance (each failed attempt leaves a stray unfinished
+   draft) -- held clean on the next attempt and the following bundle's
+   first-ever try.
+
+**Cost of finding these bugs**: 5 stray, never-published TES drafts for
+"Programming Foundations Bundle" accumulated during diagnosis (ids
+13566125-13566129) -- each only ever reached step 1 or step 2 before
+failing, zero customer exposure, zero cost. **Not yet cleaned up --
+flagged to the user rather than deleted unilaterally**, consistent with
+this project's standing no-delete-without-authorization rule (this
+session's one delete, below, was explicitly authorized first).
+
+**Deleted TES resource `13553844`** (the duplicate Web Design Lesson 6
+lead magnet flagged open since 2026-08-28), per the user's explicit
+authorization this session. Followed the documented TES delete mechanics
+(client-side-deferred delete; the real server DELETE only fires on the
+Undo toast's own close, so waited for that rather than reloading early).
+Verified via a fresh reload: `13553844` gone, `13553843` (the one kept)
+still live and unaffected, dashboard resource count dropped from 43 to
+42.
+
+**Not touched**: the two blocked-then-unblocked bundle items are
+otherwise fully resolved; `data/units/packaged/` now holds all 13
+backfillable units' zips, closing the persistence gap permanently, not
+just for these two bundles.
+
+
 ## 2026-09-05 — Interactive session: reviewed all 4 routines' runs from the past week, fixed 4 real issues found along the way
 
 Not a scheduled routine run -- the business owner asked to review how the

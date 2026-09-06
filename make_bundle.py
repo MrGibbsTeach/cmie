@@ -24,15 +24,24 @@ already uses for a single unit's _PUBLIC.zip vs _BUNDLE.zip):
     releases/artifacts/<bundle-id>_v001_BUNDLE.zip
         (each source unit's customer files under a <unit_id>/ subfolder,
         so lesson numbering/filenames from different units never collide)
+    releases/<bundle-id>/listings/unit/{tpt,gumroad,tes}_listing.md
+        (title/description in the exact format each publish script's own
+        listing reader expects)
     data/units/marketing/<bundle-id>_listing.md
-        (template-based title/description/whats-included)
+        (human-readable reference copy with prices noted -- not read by
+        any publish script)
 
 Treating <bundle-id> as a pseudo unit_id means the existing publish
 scripts work completely unmodified: publish_gumroad.py and
 publish_tes.py both resolve their zip by globbing
-releases/artifacts/{unit_id}_*_PUBLIC.zip, and publish_tpt.py's
+releases/artifacts/{unit_id}_*_PUBLIC.zip and their listing at
+releases/{unit_id}/listings/unit/*_listing.md, and publish_tpt.py's
 --part bundle looks for {unit_id}_v001_BUNDLE.zip -- so
-`--unit <bundle-id>` on any of the three just works.
+`--unit <bundle-id>` on any of the three just works, no --zip or
+copy-pasted listing text needed. Exception: TPT's price still comes from
+the TPT_BUNDLE_PRICE env var (its markdown listing path has no price
+field) -- override it for the bundle call, see the script's own printed
+next-steps.
 
 Requires each unit to already have data/units/packaged/<unit_id>_v001_PUBLIC.zip
 (written automatically by package_unit.py's New Unit Production step for
@@ -111,7 +120,21 @@ def build_bundle_zip(bundle_id: str, unit_ids: list[str], version: str = "v001")
 
 
 def build_listing(bundle_id: str, title: str, unit_ids: list[str],
-                   price_aud: str | None, price_gbp: str | None) -> Path:
+                   price_aud: str | None, price_gbp: str | None) -> dict[str, Path]:
+    """Writes releases/<bundle_id>/listings/unit/{tpt,gumroad,tes}_listing.md
+    in the exact format each publish script's own _read_listing()/
+    read_tpt_listing() already expects (line 1 = "# Title", the rest =
+    description) -- so `--unit <bundle_id>` on any of the three publish
+    scripts resolves title/description with zero code changes, the same
+    way the zip resolves via the _PUBLIC.zip/_BUNDLE.zip naming above.
+    Also writes a human-readable copy to data/units/marketing/ for
+    reference (not read by any publish script).
+
+    TPT's markdown listing path has no price field of its own --
+    publish_tpt.py's `--part bundle` reads price from the TPT_BUNDLE_PRICE
+    env var (default $12.99, calibrated for a single unit) -- override it
+    explicitly for a multi-unit bundle rather than relying on that default.
+    """
     configs = [_load_unit_config(u) for u in unit_ids]
 
     included_lines = []
@@ -125,47 +148,70 @@ def build_listing(bundle_id: str, title: str, unit_ids: list[str],
 
     n_units = len(unit_ids)
     n_lessons = sum(len(cfg.get("topics", [])) for cfg in configs)
+    display_title = f"{title} — {n_units}-Unit Digital Technologies Bundle ({n_lessons} Lessons Total)"
+    short_desc = (
+        f"Save time and money with this {n_units}-unit bundle: "
+        + " + ".join(cfg.get("title", cfg["unit_id"]).split(":")[0] for cfg in configs)
+        + f". {n_lessons} ready-to-teach lessons, full assessment packs, "
+        "student workbooks, and teacher guides -- no prep required."
+    )
+    why_line = (
+        f"Bundling these {n_units} units together costs less than buying each "
+        "unit's bundle individually -- same content, no prep difference, "
+        "just fewer separate purchases and a lower total price."
+    )
+
+    body_lines = [
+        short_desc,
+        "",
+        "What's included:",
+        "",
+        *included_lines,
+        "",
+        "Lesson outcomes covered:",
+        "",
+        *outcome_lines,
+        "",
+        "Why bundle over buying separately:",
+        why_line,
+    ]
+
+    listing_text = "\n".join([f"# {display_title}", "", *body_lines])
+
+    RELEASES_ROOT = ARTIFACTS_ROOT.parent
+    bundle_unit_root = RELEASES_ROOT / bundle_id / "listings" / "unit"
+    bundle_unit_root.mkdir(parents=True, exist_ok=True)
+    written = {}
+    for platform in ("tpt_listing.md", "gumroad_listing.md", "tes_listing.md"):
+        p = bundle_unit_root / platform
+        p.write_text(listing_text, encoding="utf-8")
+        written[platform] = p
+
+    # Human-readable reference copy, with the actual prices noted (the
+    # per-platform files above deliberately don't embed price -- each
+    # publish script sources price from its own --price arg or env var).
     price_line = ""
     if price_aud:
         price_line += f"AUD ${price_aud}"
     if price_gbp:
         price_line += (" / " if price_line else "") + f"GBP £{price_gbp}"
-
-    lines = [
+    ref_lines = [
         f"# Bundle listing — {title}",
         "",
         f"Bundle ID: `{bundle_id}`",
-        f"Price: {price_line or '[SET PRICE]'}",
+        f"Price: {price_line or '[SET PRICE]'} (TPT price set separately via TPT_BUNDLE_PRICE env var)",
         f"Zip: releases/artifacts/{bundle_id}_v001_BUNDLE.zip",
         "",
-        "## Title",
-        f"{title} — {n_units}-Unit Digital Technologies Bundle ({n_lessons} Lessons Total)",
+        f"## {display_title}",
         "",
-        "## Short description",
-        (
-            f"Save time and money with this {n_units}-unit bundle: "
-            + " + ".join(cfg.get("title", cfg["unit_id"]).split(":")[0] for cfg in configs)
-            + f". {n_lessons} ready-to-teach lessons, full assessment packs, "
-            "student workbooks, and teacher guides -- no prep required."
-        ),
-        "",
-        "## What's included",
-        *included_lines,
-        "",
-        "## Lesson outcomes covered",
-        *outcome_lines,
-        "",
-        "## Why bundle over buying separately",
-        f"Bundling these {n_units} units together costs less than buying each "
-        "unit's bundle individually -- same content, no prep difference, "
-        "just fewer separate purchases and a lower total price.",
+        *body_lines,
         "",
     ]
-
     MARKETING_ROOT.mkdir(parents=True, exist_ok=True)
-    out_path = MARKETING_ROOT / f"{bundle_id}_listing.md"
-    out_path.write_text("\n".join(lines), encoding="utf-8")
-    return out_path
+    ref_path = MARKETING_ROOT / f"{bundle_id}_listing.md"
+    ref_path.write_text("\n".join(ref_lines), encoding="utf-8")
+    written["reference"] = ref_path
+    return written
 
 
 def main() -> None:
@@ -191,21 +237,26 @@ def main() -> None:
         print(f"\nERROR: {e}")
         sys.exit(1)
 
-    listing_path = build_listing(args.bundle_id, args.title, args.units,
-                                  args.price_aud, args.price_gbp)
+    listing_paths = build_listing(args.bundle_id, args.title, args.units,
+                                   args.price_aud, args.price_gbp)
 
     print(f"Bundle zip built : {zip_path} ({zip_path.stat().st_size:,} bytes)")
     print(f"                   (+ matching _BUNDLE.zip alongside it, for TPT)")
-    print(f"Listing written  : {listing_path}")
+    print(f"Listings written : releases/{args.bundle_id}/listings/unit/"
+          "{tpt,gumroad,tes}_listing.md")
+    print(f"Reference copy   : {listing_paths['reference']}")
     print(
         f"\nNext step -- publish with the existing scripts, using --unit {args.bundle_id} "
-        "(the bundle id doubles as a pseudo unit_id so each script's normal "
-        "zip auto-discovery just finds it):\n"
-        f"  python publish_tpt.py --unit {args.bundle_id} --part bundle --tags \"...\" --publish\n"
+        "(the bundle id doubles as a pseudo unit_id, so each script's normal "
+        "zip AND listing auto-discovery both just find it -- no --zip or "
+        "manual copy-paste needed):\n"
+        f"  TPT_BUNDLE_PRICE=<USD price> python publish_tpt.py --unit {args.bundle_id} "
+        "--part bundle --tags \"...\" --publish\n"
+        "    (TPT's markdown listing path has no price field of its own -- "
+        "it always reads TPT_BUNDLE_PRICE, calibrated for a single unit "
+        "in .env, so override it for this one call)\n"
         f"  python publish_gumroad.py --unit {args.bundle_id} --price {args.price_aud or '<AUD>'}\n"
-        f"  python publish_tes.py --unit {args.bundle_id} --price {args.price_gbp or '<GBP>'} --publish\n"
-        "(copy title/description text from the listing file above into each "
-        "platform's form -- these scripts don't read the .md file directly.)"
+        f"  python publish_tes.py --unit {args.bundle_id} --price {args.price_gbp or '<GBP>'} --publish"
     )
 
 

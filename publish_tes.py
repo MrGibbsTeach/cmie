@@ -253,10 +253,35 @@ def _step2_add_files(page, zip_path: Path, resource_type: str = DEFAULT_RESOURCE
     fc.value.set_files(str(zip_path))
     log.info(f"Uploading: {zip_path.name}")
 
-    # Wait for the upload progress bar to finish before continuing.
-    page.wait_for_timeout(5000)
+    # The resource-type <select> only exists in the DOM once TES's upload
+    # UI progresses far enough to show "What type of resource is it?" --
+    # a fixed 5s wait worked for every unit tried so far (~0.5-0.9MB zips)
+    # but is a race, not a real completion signal: a 1.07MB bundle zip
+    # (first here bigger than a single unit) surfaced it for real -- the
+    # fixed wait elapsed before that section rendered, so
+    # `select("select").nth(2)` fell through to matching the footer's
+    # country-selector <select> instead (confirmed via a debug screenshot
+    # showing the drop zone still empty at that point, found 2026-09-06).
+    # TES shows a persistent "Scanning your file..." status label during
+    # and after upload -- it does NOT ever display the filename itself in
+    # this section (confirmed via a live diagnostic dump), so wait for the
+    # "What type of resource is it?" heading instead, which reliably
+    # appears once the resource-type <select> it precedes has rendered.
+    page.get_by_text("What type of resource is it?").first.wait_for(state="visible", timeout=60000)
+    page.wait_for_timeout(500)
 
-    type_select = page.locator("select").nth(2)
+    # Was `page.locator("select").nth(2)` -- a positional index that
+    # happened to land on the real resource-type <select> for every
+    # single-unit upload tried so far, but resolved to the footer's
+    # #siteCountry <select> instead when publishing a bundle (found
+    # 2026-09-06: a live dump of every <select> on this page showed the
+    # real one at position 1 with a stable id="mainType", not position 2 --
+    # #siteCountry was actually at position 2, meaning nth(2) was only ever
+    # correct by accident, dependent on however many <select> elements
+    # happen to render earlier on a given upload). Target the real id
+    # directly so this can't drift again regardless of what else is on
+    # the page.
+    type_select = page.locator("#mainType")
     type_select.select_option(label=resource_type)
     log.info(f"Resource type set: {resource_type}")
     page.wait_for_timeout(500)
@@ -328,12 +353,37 @@ def _step5_publish(page) -> None:
     policy of proceeding with live publishing backed by post-publish
     integrity checks (verify_tes_listings.py) rather than a manual
     pre-publish gate."""
+    # Found 2026-09-06: checking #confirm immediately on arriving at step 5
+    # reliably left "Publish now" disabled for a first-ever bundle publish
+    # (reproduced twice), while manually exploring the same page first (a
+    # standalone diagnostic with several seconds of prints/locator queries
+    # before checking the box) worked first try with the identical
+    # content. Most likely explanation: the page's own JS needs a moment
+    # after step 5 loads to bind the checkbox's change handler that
+    # enables the button, and checking instantly can race it. A few
+    # seconds' settle delay is cheap insurance against repeating a failed
+    # publish attempt (each of which leaves a stray unfinished draft).
+    page.wait_for_timeout(3000)
+
     confirm_box = page.locator("#confirm")
     confirm_box.check(timeout=10000)
     log.info("Checked copyright confirmation box.")
-    page.wait_for_timeout(500)
 
-    page.get_by_role("button", name="Publish now").first.click(timeout=10000)
+    # "Publish now" stays disabled for longer than a fixed 500ms wait on at
+    # least some resources (found 2026-09-06 publishing a first-ever
+    # bundle: still disabled after 10s of retries even with the checkbox
+    # visibly checked) -- likely gated on the same kind of background
+    # scan TES runs during file upload ("Tes uses tools to detect
+    # plagiarised content" is shown directly above this button). Poll for
+    # the real enabled state instead of assuming a short fixed wait covers
+    # it, same "wait for the real signal" fix as step 2's file-scan wait.
+    publish_btn = page.get_by_role("button", name="Publish now").first
+    publish_btn.wait_for(state="visible", timeout=10000)
+    for _ in range(24):  # up to ~60s
+        if publish_btn.is_enabled():
+            break
+        page.wait_for_timeout(2500)
+    publish_btn.click(timeout=10000)
     page.wait_for_load_state("domcontentloaded", timeout=20000)
     page.wait_for_timeout(3000)
     log.info(f"Clicked 'Publish now'. Landed on: {page.url}")
