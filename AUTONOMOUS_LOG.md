@@ -49,6 +49,70 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-08 — Scheduled New Unit Production: resumed in-flight "Digital Media & Multimedia Production", TPT still blocked, no new topic started
+
+`data/units/UPCOMING_QUEUE.md`'s first unchecked entry is "Digital Media &
+Multimedia Production", already in-flight since 2026-09-01 (Gumroad + TES
+live, TPT the only gap). Per the queue file's own instruction, resumed this
+item rather than starting a new topic.
+
+Confirmed no concurrent run had touched it first: `git fetch origin main`
+showed no new commits before doing anything, and this file / the queue file
+were re-checked against `origin/main` before the one irreversible step
+attempted below (TPT publish) — nothing to report there.
+
+**Rebuild**: this cloud session had no local build artifacts from the
+2026-09-01 run (ephemeral `releases/`), so re-ran
+`produce_unit.py --unit-config data/units/year7_digital_media_unit1.json`
+fresh — pipeline, QA, thumbnail, and packaging all completed cleanly (QA:
+no AI-leftover language, no `- -` artifacts). This does re-generate lesson
+content via OpenAI each time a fresh cloud session picks this item back up
+(cost, not just time) — worth a human decision on whether to persist
+in-progress `releases/` content to git for in-flight queue items, not just
+finished `_PUBLIC.zip` files, to avoid paying for regeneration mid-flight.
+
+**Spot-checked real content** (not just automated QA, per standing
+instruction and the 2026-07-19 incident): read lesson 1 ("What Is Digital
+Media?") and lesson 4 ("Editing Video: Cuts & Pacing") slide JSON in full,
+and the assessment task markdown. All technically accurate, well-scoped,
+age-appropriate, and on-topic; no leftover AI-generation phrasing. Viewed
+the regenerated thumbnail image directly — renders cleanly, en dash intact
+(the 2026-09-01 Linux-font fallback fix held up on a fresh container).
+
+**Gumroad + TES re-verified, not re-published** (re-publishing would risk
+a duplicate TES draft, and Gumroad's own duplicate-title guard would just
+refuse it anyway): `verify_gumroad_listings.py --keyword "Digital Media"`
+→ 1 product checked, `[OK]`, still published
+(`https://focuslabdigital.gumroad.com/l/xmhbi`).
+`verify_tes_listings.py --keyword "Digital Media"` → 1 resource checked,
+`[OK]` (resource `13559319`). Both confirm the 2026-09-01 publish is still
+live and clean.
+
+**TPT attempt — same accepted limitation, not a new bug**:
+`publish_tpt.py --unit year7_digital_media_unit1 --part all --publish`.
+`TPT_SESSION_JSON` loaded successfully but the logged-in check still
+failed; debug screenshot shows the plain logged-out TPT homepage (not a
+Cloudflare challenge screen this time, but the same end result — no valid
+session). Matches the 2026-08-24 accepted platform limitation exactly: a
+disposable cloud browser can't carry the real-usage trust TPT's Cloudflare
+check wants, so cookie validity alone doesn't help. No `TPT_EMAIL`/
+`TPT_PASSWORD` fallback attempted (deliberately disabled per standing
+policy — blind form-login has triggered bot detection before). Stopped
+after one attempt, did not retry.
+
+**Committed**: `data/units/packaged/year7_digital_media_unit1_v001_PUBLIC.zip`
+(this run's packaged output), so the next session doesn't have to pay for
+regeneration again just to re-attempt the TPT step. No other files
+changed — `releases/` build output stays untracked/ephemeral as usual.
+
+**Not marking `[x]`** — TPT remains the one gap. This item is still
+in-flight, not abandoned; no new topic started this cycle, per the queue
+file's own instruction to finish this one first. Needs a human running
+`publish_tpt.py --unit year7_digital_media_unit1 --part all --publish`
+locally (or from an active session at the always-on machine) to close it
+out — then add the bundle URL to `bundle_urls.json` and fill in the
+marketing-content placeholder before the next cycle picks a new topic.
+
 ## 2026-09-07 — Scheduled review: business_review.py + integrity checks across TPT/Gumroad/TES, no new issues found
 
 Report-only scheduled run. `pip install -r requirements.txt` first, as
