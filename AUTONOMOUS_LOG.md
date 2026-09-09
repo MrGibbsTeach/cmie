@@ -271,6 +271,107 @@ otherwise fully resolved; `data/units/packaged/` now holds all 13
 backfillable units' zips, closing the persistence gap permanently, not
 just for these two bundles.
 
+## 2026-09-09 — Marketing Push: 3 new Pinterest pins posted and verified live for Digital Systems wave 3; Game Design and Python Programming wave 3 drafted but blocked by a newly-hit Pinterest 50-draft account cap
+
+Task: check each live unit's highest existing Pinterest wave (path used:
+`data/units/marketing/<unit_id>_marketing_content.md`, the real git-tracked
+location — the task prompt's own path has already been corrected to this in
+a prior session per the 2026-09-05 entry above), pick 2-3 units most due for
+a fresh wave, draft 3 distinct-angle pins each, post via
+`publish_pinterest.py --unit <id> --wave N`, verify live.
+
+**Selection.** Read every live unit's highest wave heading across all 13
+TPT-live units (`bundle_urls.json`; `year7_digital_media_unit1` again
+excluded — still not TPT-live per the 2026-09-08 entry). algorithms/
+cybersecurity/data_representation sit at wave 3 (2026-08-22/26); databases/
+spreadsheets/web_design got fresh waves 2026-09-02; networks_hardware/
+robotics at wave 2 (2026-08-26). The stalest group by far: digital_systems,
+game_design, orientation, python_programming, ux_design — all still on
+wave 2, posted 2026-08-22, 18 days stale with no wave since. Picked three
+from that group with the richest unused-lesson material for a genuinely
+distinct third angle: **digital_systems**, **game_design**, and
+**python_programming** (left orientation/ux_design for a future wave —
+no other signal to break the tie).
+
+**Drafted new waves**, each following the established 3-pin pattern from
+prior sessions (unused-lesson deep dive, non-specialist pain-point angle,
+dedicated capstone-project pin), angles checked distinct from every prior
+wave in that unit's own file:
+- `year7_digital_systems_unit1` — wave 3: RAM vs storage (Lesson 3, unused),
+  "you don't need a CS degree" (new pain-point angle, distinct from wave 2's
+  "stop building from scratch"), capstone (Lesson 7, designing a computer
+  setup — not previously given its own pin).
+- `year7_game_design_unit1` — wave 3: playtesting & iterating (Lesson 6,
+  unused), "you don't need to know how to code" (new angle, distinct from
+  wave 2's engagement pain point), capstone (Lesson 7, dedicated pin — wave
+  2's "value stack" pin only mentioned it in passing).
+- `year7_python_programming_unit1` — wave 3: loops (Lesson 5, unused),
+  "you don't need a coding background" (new angle, distinct from wave 2's
+  value-stack and term-3 pins), capstone (Lesson 7, dedicated pin).
+
+**Pre-flight**: confirmed `PINTEREST_SESSION_JSON` and `GUMROAD_TOKEN` both
+present; `pip install -r requirements.txt` (not preinstalled this
+container); pip pulled playwright 1.62.0 which doesn't match the
+container's preinstalled Chromium (revision 1194) — matches the
+already-documented mismatch from the 2026-07-31 entries — but this
+project's own `cloud_launch_kwargs()` already handles it (passes
+`executable_path` at `$PLAYWRIGHT_BROWSERS_PATH/chromium`), confirmed
+working with a real launch, no code change needed here. Ran `--dry-run` for
+all three units first; all three parsed and filled cleanly.
+
+**Posted live**: `publish_pinterest.py --unit year7_digital_systems_unit1
+--wave 3` — all 3 pins logged "Submitted". Verified individually (not
+trusting the log line, per longstanding practice in this file): reloaded
+each pin's own URL and checked `document.title` plus the outbound TPT link.
+**All 3 confirmed live**, titles and links (Pinterest's own
+`?utm_source=Pinterest&utm_medium=organic` suffix on the base URL) matching
+the source markdown exactly. Updated that unit's wave-3 heading to record
+this.
+
+**Game Design and Python Programming — NOT posted, real blocker found and
+verified, not just retried blindly.** `publish_pinterest.py --unit
+year7_game_design_unit1 --wave 3` failed twice in a row on the very first
+pin: the title field stayed disabled after the image upload, timing out
+after 30s. Wrote a one-off diagnostic script (not committed) to screenshot
+the pin-creation page after an image upload with no other input — the tool
+itself shows "You have reached the limit of 50 drafts", blocking any new
+pin/image upload account-wide until the draft count drops. Confirmed via a
+second diagnostic that this is a real account-state issue, not a
+content/image problem specific to Game Design: the account's own
+pin-creation-tool sidebar lists 50 stray, never-cleaned-up autosave draft
+entries (going back through this project's Pinterest history — titles from
+Cyber Security, Data Representation, Digital Citizenship wave content), all
+showing "13/30 days until expiry". **Important nuance**: this is a
+*separate* internal draft-autosave queue, not the account's live pins — the
+3 Digital Systems pins that posted successfully in this same run also show
+up in that same draft sidebar (as leftover autosave copies) *and* are
+independently confirmed live on the account's own Created page with
+matching titles/links, so the draft-cap issue blocks new uploads without
+retroactively undoing anything already published.
+
+**Did not delete any drafts** — clearing them would very plausibly fix this
+(there's no other visible way to free a slot short of publishing or
+discarding an existing draft), but the hard boundary in this file is "never
+delete anything on any platform," Pinterest included, and 50 old autosave
+entries are still something on the platform, not local repo cruft. Left
+Game Design's and Python Programming's wave-3 pin copy fully drafted in
+their marketing-content files, headed "NOT YET POSTED — blocked by the
+Pinterest account's 50-draft-slot cap," ready to post as soon as the queue
+is cleared and no redrafting needed.
+
+**Needs a human decision**: clear (or let expire — the listed entries show
+13-30 day countdowns, so this may partly self-resolve, but 50 held steady
+across this run, so don't count on it fully clearing before the next
+scheduled Marketing Push) enough of the 50 stray Pinterest drafts to get
+under the cap, so future waves for Game Design, Python Programming, and any
+other unit posted after them in a batch aren't blocked the same way. Worth
+noting this may have silently capped or delayed other units' pins in past
+runs too — worth a spot check next time someone's at the account directly.
+
+Nothing deleted, no off-brand products touched, no pricing/platform/
+strategy changes — only Pinterest wave content drafted, one unit's 3 pins
+posted and verified, and wave-heading status updates (including marking two
+units' work explicitly not-yet-posted rather than claiming success).
 
 ## 2026-09-05 — Interactive session: reviewed all 4 routines' runs from the past week, fixed 4 real issues found along the way
 
