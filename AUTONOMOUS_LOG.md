@@ -49,6 +49,55 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-11 — Scheduled Resource Drop: Lesson 4 lead magnet for year7_orientation_unit1 (TES live, TPT blocked on a missing thumbnail asset, not the usual session-expiry limit)
+
+`data/units/RESOURCE_DROP_QUEUE.md`'s first unchecked entry: year7_orientation_unit1
+— Lesson 4, "Passwords, Privacy, and Protecting Your Information" (a
+standalone lesson, doesn't depend on the other orientation lessons — matches
+the queue's own selection criterion). Concurrency check (`git fetch origin
+main`, diffed the queue file against `origin/main`) found no other run had
+already claimed or published this item.
+
+Source-file gap and how it was worked around: `make_lead_magnet.py` needs a
+`01_Lesson_Slides/` folder either under a local `releases/public/` tree
+(doesn't exist — fresh container, `releases/` gitignored) or under the
+tracked `data/units/lead_magnet_source/` fallback (only covers the 3 units
+that already have a second lead magnet: algorithms, cybersecurity,
+web_design — orientation predates that fallback and was never backfilled
+into it). It does, however, have a persisted full-unit zip at
+`data/units/packaged/year7_orientation_unit1_v001_PUBLIC.zip` (added by the
+2026-09-06 bundle-gap fix, which made `package_unit.py` persist every unit's
+zip going forward) that contains the identical `01_Lesson_Slides/` layout.
+Extracted that zip locally into `releases/public/year7_orientation_unit1_v001/`
+(ephemeral, gitignored, not committed) and added a one-line
+`06_Listings/unit/tpt_listing.md` sourced from the unit's own existing
+`title` field in `year7_orientation_unit1.json` (no new content generated —
+reused metadata already in the repo) so the lead magnet's CTA slide would
+carry the correct unit title instead of a fallback slug-cased guess.
+
+Built via `make_lead_magnet.py --unit year7_orientation_unit1 --lesson 4`.
+TES: `publish_lead_magnets.py --unit year7_orientation_unit1 --lesson 4
+--platform tes --publish` ran the full flow end-to-end (login, description,
+file upload, categories, "Share for free" licence, copyright box, "Publish
+now") and landed on the `.../published` URL for resource **13571207**.
+`verify_tes_listings.py --keyword "Passwords, Privacy" --lead-magnet-lesson 4`
+confirmed exactly one matching resource, `[OK]`, no duplicate this time.
+
+TPT: attempted (per standing instruction not to skip it pre-emptively), but
+`publish_to_tpt()` raised `FileNotFoundError` before any login/navigation —
+no thumbnail exists for `year7_orientation_unit1` in either
+`releases/thumbnails/` or the tracked `data/units/lead_magnet_source/thumbnails/`,
+and TPT requires one (its own auto-generation fails for zip/pptx uploads).
+This is a different failure mode than the usual accepted TPT session-expiry
+limit — genuinely missing asset, nothing to retry or log as "expected." A
+human needs to add `year7_orientation_unit1_thumbnail.png` to
+`data/units/lead_magnet_source/thumbnails/` (matching the pattern the other
+3 units already use) and then run `python publish_lead_magnets.py --unit
+year7_orientation_unit1 --lesson 4 --platform tpt`.
+
+Queue item marked `[x]` with today's date. No files deleted, no off-brand
+products touched, no strategic changes.
+
 ## 2026-09-08 — Scheduled New Unit Production: resumed in-flight "Digital Media & Multimedia Production", TPT still blocked, no new topic started
 
 `data/units/UPCOMING_QUEUE.md`'s first unchecked entry is "Digital Media &

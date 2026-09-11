@@ -15,7 +15,7 @@ standalone lesson (not one that depends on earlier lessons to make sense).
 - [x] year7_algorithms_unit1 — Lesson 5 (Debugging: Finding and Fixing Logic Errors) — 2026-08-20
 - [x] year7_cybersecurity_unit1 — Lesson 3 (Spotting Phishing and Social Engineering) — 2026-08-21
 - [x] year7_web_design_unit1 — Lesson 6 (Accessibility and Responsive Design Basics) — 2026-08-28
-- [ ] year7_orientation_unit1 — Lesson 4 (Passwords, Privacy, and Protecting Your Information)
+- [x] year7_orientation_unit1 — Lesson 4 (Passwords, Privacy, and Protecting Your Information) — 2026-09-11
 - [ ] year7_networks_hardware_unit1 — Lesson 4 (How Data Travels Across a Network)
 - [ ] year7_data_representation_unit1 — Lesson 5 (Images as Data: Pixels and Bitmaps)
 - [ ] year7_spreadsheets_unit1 — Lesson 4 (Charts and Graphs: Visualizing Data)
@@ -63,6 +63,40 @@ unit's zip as it's built.
 ## Log
 
 (the job appends a line here each time it completes or skips a cycle)
+
+- 2026-09-11: Built + published the Lesson 4 lead magnet for
+  year7_orientation_unit1 ("Passwords, Privacy, and Protecting Your
+  Information" — a standalone, broadly-relatable conceptual lesson that
+  doesn't depend on the other orientation lessons). Concurrency check
+  (`git fetch origin main`) found no other run had touched this item first.
+  Source note: this unit had no `releases/public/` tree locally (fresh
+  container, `releases/` gitignored, and this unit predates the
+  `lead_magnet_source/` tracked-subset fallback that the previous 3 lead
+  magnets used) — but `data/units/packaged/year7_orientation_unit1_v001_PUBLIC.zip`
+  (the full-unit zip `package_unit.py` now persists per the 2026-09-06
+  bundle-gap fix) contains the exact same `01_Lesson_Slides/` layout
+  `make_lead_magnet.py` expects, so it was extracted locally into
+  `releases/public/year7_orientation_unit1_v001/` (ephemeral, gitignored,
+  not committed) with a one-line `06_Listings/unit/tpt_listing.md` added
+  from the unit's own existing title in `year7_orientation_unit1.json` (no
+  new content generated, just reused existing metadata) so the CTA slide's
+  title would read correctly. TES: `--publish` run completed successfully
+  end-to-end (login, upload, categories, "Share for free" licence,
+  copyright box, "Publish now") and landed on the `.../published` URL for
+  resource **13571207** — genuinely live. `verify_tes_listings.py
+  --lead-magnet-lesson 4` confirmed exactly one matching resource, `[OK]`,
+  no duplicate. TPT: blocked, but for a **different reason than the usual
+  session-expiry limit** — `publish_to_tpt()` raised
+  `FileNotFoundError` before attempting any login, because no thumbnail
+  exists for this unit in either `releases/thumbnails/` or the tracked
+  `data/units/lead_magnet_source/thumbnails/` (TPT requires one; the 3
+  units with a second lead magnet already live all have a tracked
+  thumbnail, orientation never got one backfilled). Not a bug in this
+  cycle's run — genuinely missing asset, nothing to retry. A human needs
+  to add `year7_orientation_unit1_thumbnail.png` to
+  `data/units/lead_magnet_source/thumbnails/` (matching the other 3
+  units' pattern) and then run `python publish_lead_magnets.py --unit
+  year7_orientation_unit1 --lesson 4 --platform tpt`.
 
 - 2026-09-04: Attempted the first unchecked item, the "Programming
   Foundations" bundle (Algorithms & Programming Logic + Introduction to
