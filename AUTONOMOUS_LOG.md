@@ -49,6 +49,48 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-14 — Scheduled review: business_review.py + integrity checks across TPT/Gumroad/TES, no new issues found
+
+Report-only scheduled run. `pip install -r requirements.txt` first, as
+usual for a fresh cloud container.
+
+**Revenue (`business_review.py --save`, saved to BUSINESS_REVIEW.md):**
+- TPT: ERROR — session expired. Confirmed same accepted Cloudflare
+  limitation documented above (2026-08-24): a fresh/disposable browser
+  fails TPT's bot challenge regardless of cookie validity. No login
+  workaround attempted, per standing instruction.
+- Gumroad: A$0.00 net, 0 sales.
+- TES: £0.30 net, 1 sale.
+- Combined (not currency-converted): A$0 + £0.30.
+- Catalog: 13 live units (unchanged since 2026-09-07 review): year7_algorithms_unit1,
+  year7_cybersecurity_unit1, year7_data_representation_unit1,
+  year7_databases_unit1, year7_digital_systems_unit1,
+  year7_game_design_unit1, year7_networks_hardware_unit1,
+  year7_orientation_unit1, year7_python_programming_unit1,
+  year7_robotics_physical_computing_unit1, year7_spreadsheets_unit1,
+  year7_ux_design_unit1, year7_web_design_unit1.
+
+**Integrity checks:**
+- `verify_tpt_listings.py --unit <id>` run for all 13 live units: all 13
+  failed with "not logged in to TPT (no valid session found)" /
+  `Could not extract Chrome cookies: 'DBUS_SESSION_BUS_ADDRESS'` — the
+  same accepted platform limit confirmed 2026-08-24, not a new bug. No
+  login workaround or retry attempted, per standing instruction.
+- `verify_gumroad_listings.py`: checked 15 products matching "Unit 1" (of
+  21 total). All 15 `[OK]` — no empty descriptions, unrendered markdown,
+  stray HTML, or title/keyword mismatches found.
+- `verify_tes_listings.py`: 39 resources total on the TES dashboard, 24
+  matching "Unit 1" checked. All 24 `[OK]` — no corruption signals found.
+  This checker only matches "Unit 1"-named resources, so it does not
+  re-check the AI-series items carrying the previously logged open
+  issues (the 13432831/13432796 duplicate, the permanently-broken
+  13445828, the presenter-placeholder cosmetic bug) — those are
+  unchanged since last logged and still awaiting human decision, see
+  "Open items" above.
+
+**No new integrity issues found.** No fixes, deletions, or edits made —
+report-only per standing instructions.
+
 ## 2026-09-11 — Scheduled Resource Drop: Lesson 4 lead magnet for year7_orientation_unit1 (TES live, TPT blocked on a missing thumbnail asset, not the usual session-expiry limit)
 
 `data/units/RESOURCE_DROP_QUEUE.md`'s first unchecked entry: year7_orientation_unit1

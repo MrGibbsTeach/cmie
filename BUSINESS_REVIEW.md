@@ -1,4 +1,4 @@
-# Business Review — 2026-09-07 01:06 UTC
+# Business Review — 2026-09-14 01:05 UTC
 
 ## Revenue
 - **TPT**: ERROR — TPT session expired (.tpt_session.json no longer valid). Refresh it manually once: python publish_tpt.py --save-session (automated form login is disabled here — it has triggered TPT bot detection and an account lock before).
@@ -22,14 +22,14 @@
 - year7_web_design_unit1
 
 ## Recent activity (last 8 commits)
+- 2026-09-11 Resource Drop: Lesson 4 lead magnet for year7_orientation_unit1, TES live
+- 2026-09-09 Marketing Push: Digital Systems Pinterest wave 3 live; Game Design/Python Programming wave 3 drafted but blocked by account draft cap
+- 2026-09-08 New Unit Production: resume Digital Media unit, TPT still blocked (accepted limitation)
+- 2026-09-07 Scheduled review: business_review.py + integrity checks, no new issues
 - 2026-09-06 Log stray TES draft cleanup and local git repo recovery
 - 2026-09-06 Backfill packaged zips, publish both queued bundles, fix 3 TES bugs
 - 2026-09-05 Fix Resource Drop bundle gap, add ad-domain blocking, restock queue
 - 2026-09-04 Resource Drop: log Programming Foundations bundle as blocked, not built
-- 2026-09-02 Marketing Push: post Pinterest wave 2/3 for Databases, Spreadsheets, Web Design
-- 2026-09-01 New Unit Production: Digital Media unit live on Gumroad + TES, TPT pending
-- 2026-09-01 Generate marketing content for Digital Media Unit 1
-- 2026-09-01 Fix thumbnail font fallback: add Linux fonts so cloud builds don't render tofu
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).
