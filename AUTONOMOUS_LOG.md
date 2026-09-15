@@ -49,6 +49,79 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-15 — Scheduled New Unit Production: resumed in-flight "Digital Media & Multimedia Production" again, TPT still blocked by the same accepted Cloudflare limit, no new topic started
+
+`data/units/UPCOMING_QUEUE.md`'s first unchecked entry is still "Digital
+Media & Multimedia Production" — in-flight since 2026-09-01, Gumroad + TES
+live since then, TPT the sole remaining gap across three consecutive
+scheduled cycles now (2026-09-01, 2026-09-08, this run). Per the queue
+file's own instruction, resumed this item rather than starting a new topic.
+
+**Concurrency check** (the irreversible-step precaution this job's
+instructions call for): `git fetch origin main` before touching anything —
+no new commits since this session's checkout, and the queue file on
+`origin/main` is identical to local. No concurrent run had claimed or
+published this item first.
+
+**Did not rebuild via `produce_unit.py`** this cycle. The packaged output
+from the 2026-09-08 run
+(`data/units/packaged/year7_digital_media_unit1_v001_PUBLIC.zip`) is
+already committed and unchanged, so there was no need to pay for a fresh
+OpenAI regeneration just to re-verify content that hasn't changed.
+**Spot-checked real content directly from that zip** (not just relying on
+the prior run's automated QA): read lesson 2 ("Planning a Story: Scripts,
+Storyboards, and Shot Lists") slide-by-slide via `python-pptx` and the
+full `Assessment_Task.docx` via `python-docx` — both technically accurate,
+well-scoped, age-appropriate, and on-topic, no AI-leftover phrasing. This
+covers different lessons than the 2026-09-01/09-08 spot-checks (lessons
+1/4 + assessment), so the sampled coverage across the unit keeps growing
+rather than re-checking the same two lessons every cycle.
+
+**Gumroad + TES re-verified, still live, not re-published** (matches
+2026-09-08's reasoning — re-publishing risks a duplicate TES draft, and
+Gumroad's duplicate-title guard would refuse it anyway):
+- `verify_gumroad_listings.py --keyword "Digital Media"` → 1 product,
+  `[OK]`, still published at
+  `https://focuslabdigital.gumroad.com/l/xmhbi`.
+- `verify_tes_listings.py --keyword "Digital Media"` → 1 resource, `[OK]`,
+  resource `13559319`.
+- Also ran both checkers across the full catalog while in there: Gumroad
+  15/15 `[OK]` (of 21 total products), TES 24/24 `[OK]` (of 39 total
+  resources) matching "Unit 1". No new integrity issues found anywhere.
+
+**TPT attempt — cheaper pre-check this time, same result as every prior
+attempt**: rather than re-running the full `produce_unit.py` pipeline
+again just to reach the same login wall, wrote a small standalone script
+that calls the exact same `_load_session()` + `_is_logged_in()` path
+`upload_unit()` calls first (verified by reading `cmie/publishing/tpt.py`
+— `_login()` is the very first thing `upload_unit()` does, before any
+file/listing access), so it's a faithful proxy for the real publish
+attempt without spending OpenAI money to get there. Result: `TPT_SESSION_JSON`
+loaded successfully (`session loaded: True`) but `_is_logged_in()` still
+returned `False` — screenshot shows the plain logged-out TPT homepage
+("Log In | Sign Up" in the header), not a Cloudflare challenge screen,
+identical to the 2026-09-01 and 2026-09-08 signature. This is the same
+accepted platform limitation documented 2026-08-24: a disposable cloud
+browser can't carry the real-usage trust TPT's Cloudflare check wants, so
+cookie validity alone never fixes it. No `TPT_EMAIL`/`TPT_PASSWORD`
+fallback attempted (deliberately disabled — blind form-login has
+triggered bot detection before). Stopped after one attempt, did not
+retry, no full-content rebuild triggered by this dead end.
+
+**Not marking `[x]`** — TPT remains the one gap, unchanged for three
+consecutive scheduled cycles (2026-09-01, 2026-09-08, 2026-09-15) now, all
+hitting the identical failure signature. This item is still in-flight, not
+abandoned; no new topic started this cycle. Flagging this one more
+explicitly than the last two entries: at this point it's a queue item that
+has sat one platform short of complete for two full weeks purely because
+the cloud container structurally cannot pass TPT's Cloudflare check — the
+next actual progress on this queue item can only come from a human running
+`python publish_tpt.py --unit year7_digital_media_unit1 --part all
+--publish` locally (or from an active session at the always-on machine),
+then adding the bundle URL to `bundle_urls.json` and filling in the
+marketing-content placeholder. No files deleted, no off-brand products
+touched, no strategic or pricing changes.
+
 ## 2026-09-14 — Scheduled review: business_review.py + integrity checks across TPT/Gumroad/TES, no new issues found
 
 Report-only scheduled run. `pip install -r requirements.txt` first, as

@@ -34,6 +34,27 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
 
 (the job appends a line here each time it completes or skips a cycle)
 
+- 2026-09-15: Continuation of the in-flight "Digital Media & Multimedia
+  Production" item — TPT is still the only remaining piece, blocked by the
+  same accepted Cloudflare/disposable-browser limitation as the last two
+  cycles (2026-09-01, 2026-09-08). Concurrency check against
+  `origin/main` found no concurrent run. Did not rebuild via
+  `produce_unit.py` (no content change, no need to pay for regeneration);
+  instead spot-checked real content straight from the already-committed
+  packaged zip (lesson 2 slides + the assessment task, both clean) and
+  re-verified Gumroad + TES are still live and clean, both for this unit
+  specifically and across the full catalog (15/15 Gumroad, 24/24 TES
+  matching "Unit 1" — no integrity issues found anywhere). Confirmed the
+  TPT block with a lightweight login-only check (same code path
+  `upload_unit()` calls first) rather than a full rebuild: session loads
+  but `_is_logged_in()` still returns false, plain logged-out homepage, not
+  a Cloudflare challenge screen — identical signature to the prior two
+  cycles. No login workaround attempted, per standing policy. **Not
+  marking `[x]`** — see `AUTONOMOUS_LOG.md`'s 2026-09-15 entry for full
+  detail. This is now three consecutive scheduled cycles blocked on the
+  identical TPT step; needs a human running `publish_tpt.py --unit
+  year7_digital_media_unit1 --part all --publish` locally to close it out.
+
 - 2026-09-08: Continuation of the in-flight "Digital Media & Multimedia
   Production" item — TPT is the only remaining piece (Gumroad + TES were
   already live). This cloud session has no local build artifacts from the
