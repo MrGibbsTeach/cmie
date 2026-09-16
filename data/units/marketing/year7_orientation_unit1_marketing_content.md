@@ -92,3 +92,28 @@ New angles for the second Pinterest posting batch — wave 1 leaned entirely on 
 **Description**: This isn't only a first-week resource — it's a complete digital citizenship and digital-skills foundation any Year 7 student can work through, any time of year. 7 lessons, editable slides, workbook, and assessment pack included. #digitaltechnologies #newstudent #teacherspayteachers #y7
 
 **Link**: https://www.teacherspayteachers.com/Product/Digital-Technologies-Orientation-Unit-1-Getting-Started-for-the-Year-Year-7-17077293
+
+## Pinterest pins — wave 3 (2026-09-16, drafted — not yet posted)
+
+New angles for the third Pinterest posting batch — wave 1 leaned on back-to-school/Week-1 framing, wave 2 covered passwords & privacy (L4), a "build it yourself" pain point, and an evergreen reframe. This wave pivots to three previously-unused lessons: file organisation (L3), the digital skills check-in (L6, as a diagnostic-assessment angle), and netiquette (L5).
+
+### Pin 1 (standout lesson — file organisation)
+**Title** (62 chars): The Digital Skill Most Students Never Learn: File Organisation
+
+**Description**: Most students have never been taught how to name a file, use a folder structure, or find their own work again. This ready-to-teach lesson fixes that early, before it costs a whole year of lost assignments. Part of a complete 7-lesson Digital Technologies Orientation unit. #digitalskills #fileorganisation #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Digital-Technologies-Orientation-Unit-1-Getting-Started-for-the-Year-Year-7-17077293
+
+### Pin 2 (diagnostic angle — digital skills check-in)
+**Title** (61 chars): Know Your New Class's Digital Skills Before You Teach a Thing
+
+**Description**: A ready-to-teach diagnostic lesson that gets a real read on your new class's digital skills and interests — before you plan the rest of the term around guesswork. Part of a complete 7-lesson orientation unit with workbook and assessment pack. #digitaltechnologies #diagnosticassessment #y7 #backtoschool
+
+**Link**: https://www.teacherspayteachers.com/Product/Digital-Technologies-Orientation-Unit-1-Getting-Started-for-the-Year-Year-7-17077293
+
+### Pin 3 (standout lesson — netiquette)
+**Title** (61 chars): Teach Netiquette Before the First Group-Chat Argument Happens
+
+**Description**: Group chats, comments, shared docs — students are communicating online constantly, usually without ever being taught how. This ready-to-teach netiquette lesson gets ahead of it. Part of a complete 7-lesson Digital Technologies Orientation unit. #netiquette #digitalcitizenship #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Digital-Technologies-Orientation-Unit-1-Getting-Started-for-the-Year-Year-7-17077293

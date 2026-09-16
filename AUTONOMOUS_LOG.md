@@ -49,6 +49,94 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-16 — Marketing Push: drafted wave 3 for 3 more units, but posting fully blocked account-wide — the 2026-09-09 Pinterest 50-draft cap has not cleared
+
+Task: check each live unit's highest existing Pinterest wave
+(`data/units/marketing/<unit_id>_marketing_content.md`), pick 2-3 units most
+due for a fresh wave, draft 3 distinct-angle pins each, post via
+`publish_pinterest.py --unit <id> --wave N`, verify live.
+
+**Selection.** Read the wave heading of every one of the 13 TPT-live units
+(`bundle_urls.json`; `year7_digital_media_unit1` excluded again — still no
+real bundle URL in its marketing file, TPT still not live for it per
+2026-09-15). Wave-3-or-higher units (algorithms/cybersecurity/
+data_representation/digital_systems at wave 3; databases/spreadsheets/
+web_design got wave 2 or 3 on 2026-09-02) are all fresher than the
+wave-2-only group. Within that group, **ux_design** and **orientation** are
+the stalest — both last touched 2026-08-22, 25 days with no new wave, and
+were explicitly left out of the last two Marketing Push rounds (2026-08-26,
+2026-09-09) for lack of a tiebreaker. Picked those two plus
+**networks_hardware** (wave 2 since 2026-08-26, 21 days stale, richest
+unused-lesson material of the remaining wave-2 units: network security,
+troubleshooting, and the Lesson 7 capstone were all still unused).
+`year7_game_design_unit1` and `year7_python_programming_unit1` were
+deliberately *not* picked for a new wave — they already have a fully
+drafted, unposted wave 3 from 2026-09-09 sitting in their files; drafting a
+wave 4 on top of a wave that was never actually shown to anyone would skip
+an audience, not reach a new one.
+
+**Drafted new waves**, each following the established 3-pin pattern
+(standout unused lesson, capstone, distinct pain point), angles checked
+against every prior wave in that unit's own file to avoid repeats:
+- `year7_ux_design_unit1` — wave 3: accessibility & inclusive design
+  (Lesson 6, unused), capstone (Lesson 7, dedicated pin — not previously
+  given its own pin), "teach UX without being a designer yourself" (new
+  pain-point angle, distinct from wave 2's "stop building it yourself").
+- `year7_orientation_unit1` — wave 3: file organisation (Lesson 3, unused),
+  the digital-skills check-in reframed as a diagnostic-assessment angle
+  (Lesson 6, unused), netiquette (Lesson 5, unused).
+- `year7_networks_hardware_unit1` — wave 3: network security basics
+  (Lesson 5, unused), capstone (Lesson 7, dedicated pin), troubleshooting
+  as a hands-on-skill angle (Lesson 6, unused).
+
+**Posting — blocked, confirmed via a fresh diagnostic, not assumed from
+last time.** `pip install -r requirements.txt` (not preinstalled this
+container; pulled a playwright version that doesn't match the container's
+preinstalled Chromium revision 1194, same known mismatch as every prior
+session — `cloud_launch_kwargs()` already handles it, no code change
+needed). `--dry-run` for `year7_ux_design_unit1 --wave 3` failed on the
+very first pin: title field stayed disabled after image upload, timing out
+after 30s — the identical signature from the 2026-09-09 entry. Rather than
+assume it's the same cause, wrote a one-off diagnostic script (not
+committed) to load the pin-creation tool and read the page body directly:
+confirms **"Pin drafts (50)"** in the sidebar, "Create new" button disabled,
+Title field shows placeholder text but is not editable. Screenshot
+confirms visually. This is the *same* account-wide 50-draft cap found a
+week ago on 2026-09-09 — **it has not cleared or been cleared**. The
+previously-listed stray drafts are aging down (screenshot shows "6 days
+until expiry" on several vs. 13-30 days seen on 2026-09-09) but the count
+has stayed pinned at exactly 50, meaning something is refilling the queue
+at roughly the rate old entries expire, or expiry isn't actually removing
+them from the count. Did not retry beyond this one confirmation — same
+root cause as last time, no new information to gain from repeating it
+across all 3 units.
+
+**Did not attempt to post anything this run** — not the 3 new waves
+drafted here, and not the still-pending `year7_game_design_unit1` /
+`year7_python_programming_unit1` wave 3 from 2026-09-09, which are also
+still blocked by this same cap (re-confirmed by the same diagnostic; no
+point running each unit's own dry-run separately when the block is
+account-level, not content-specific). **Did not delete any drafts** — the
+hard boundary against deleting anything on any platform still applies, and
+that's the only way to free a slot short of publishing one.
+
+**Needs a human decision, now flagged for the second time**: this is a
+full week with zero Pinterest posting capacity across two consecutive
+scheduled Marketing Push runs (2026-09-09, this one), with 5 units'
+worth of fully-drafted, verified-good wave-3 content (game_design,
+python_programming, ux_design, orientation, networks_hardware) sitting
+ready and unable to go live. Someone needs to go into the Pinterest
+account directly and clear enough of the 50 stray autosave drafts to get
+under the cap — this cannot be resolved from inside a scheduled run given
+the "never delete" boundary. Once cleared, all 5 units' wave-3 pins can be
+posted with `publish_pinterest.py --unit <id> --wave 3` (game_design and
+python_programming already have their copy from 2026-09-09; the other
+three were drafted in this run) with no new content-drafting needed.
+
+Nothing deleted, no off-brand products touched, no pricing/platform/
+strategy changes — only new Pinterest wave content drafted and one
+blocker re-confirmed and escalated more clearly than last time.
+
 ## 2026-09-15 — Scheduled New Unit Production: resumed in-flight "Digital Media & Multimedia Production" again, TPT still blocked by the same accepted Cloudflare limit, no new topic started
 
 `data/units/UPCOMING_QUEUE.md`'s first unchecked entry is still "Digital
