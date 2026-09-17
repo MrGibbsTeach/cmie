@@ -179,6 +179,27 @@ def build_listing(bundle_id: str, title: str, unit_ids: list[str],
     listing_text = "\n".join([f"# {display_title}", "", *body_lines])
 
     RELEASES_ROOT = ARTIFACTS_ROOT.parent
+
+    # TPT hard-requires a cover image to accept a submission (see
+    # publish_tpt.py's known "Please upload at least the main cover image"
+    # validation message) -- this script never generated one, which meant
+    # every bundle built here would silently fail TPT auto-publish with no
+    # matching error text on the page (found live 2026-09-17, both
+    # Programming Foundations and Staying Safe Online bundles blocked on
+    # this). Generate it here so the gap can't recur for future bundles.
+    from cmie.publishing.thumbnail import generate_thumbnail
+    thumbnail_path = generate_thumbnail(
+        display_title,
+        {**configs[0], "unit_id": bundle_id},
+        RELEASES_ROOT / "thumbnails",
+        includes=[
+            f"{n_lessons} fully planned lessons across {n_units} units",
+            f"{n_units} assessment packs + rubrics",
+            f"{n_units} student workbooks",
+            f"{n_units} teacher guides + unit roadmaps",
+        ],
+    )
+
     bundle_unit_root = RELEASES_ROOT / bundle_id / "listings" / "unit"
     bundle_unit_root.mkdir(parents=True, exist_ok=True)
     written = {}

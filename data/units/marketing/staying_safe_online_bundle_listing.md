@@ -1,7 +1,7 @@
 # Bundle listing — Staying Safe Online Bundle
 
 Bundle ID: `staying_safe_online_bundle`
-Price: AUD $19.99 / GBP £14.99 (TPT price set separately via TPT_DEFAULT_PRICE env var)
+Price: AUD $19.99 / GBP £14.99 (TPT price set separately via TPT_BUNDLE_PRICE env var)
 Zip: releases/artifacts/staying_safe_online_bundle_v001_BUNDLE.zip
 
 ## Staying Safe Online Bundle — 2-Unit Digital Technologies Bundle (14 Lessons Total)

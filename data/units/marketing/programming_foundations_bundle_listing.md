@@ -1,7 +1,7 @@
 # Bundle listing — Programming Foundations Bundle
 
 Bundle ID: `programming_foundations_bundle`
-Price: AUD $19.99 / GBP £14.99 (TPT price set separately via TPT_DEFAULT_PRICE env var)
+Price: AUD $19.99 / GBP £14.99 (TPT price set separately via TPT_BUNDLE_PRICE env var)
 Zip: releases/artifacts/programming_foundations_bundle_v001_BUNDLE.zip
 
 ## Programming Foundations Bundle — 2-Unit Digital Technologies Bundle (14 Lessons Total)
