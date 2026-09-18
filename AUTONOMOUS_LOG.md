@@ -49,6 +49,57 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-18 — Resource Drop: Lesson 4 lead magnet for year7_networks_hardware_unit1, TES live, TPT blocked (missing thumbnail)
+
+Task: `data/units/RESOURCE_DROP_QUEUE.md`, first unchecked item —
+year7_networks_hardware_unit1 Lesson 4 ("How Data Travels Across a
+Network"), a standalone conceptual lesson that doesn't depend on Lessons
+1-3's hardware-selection content.
+
+**Concurrency check.** `git fetch origin main` before publishing showed no
+change since this run started — no other run had touched this item.
+
+**Environment.** Fresh container had no `pip` packages installed at all
+(`ModuleNotFoundError: No module named 'pptx'`); ran
+`pip install -r requirements.txt` before anything else would import.
+
+**Source.** Same shape as the 2026-09-11 orientation-unit cycle: no
+`releases/public/` tree locally (gitignored, ephemeral), but
+`data/units/packaged/year7_networks_hardware_unit1_v001_PUBLIC.zip` (the
+persisted full-unit zip `package_unit.py` writes) has the exact
+`01_Lesson_Slides/` layout `make_lead_magnet.py` needs. Extracted it to
+`releases/public/year7_networks_hardware_unit1_v001/` (not committed) and
+added a one-line `06_Listings/unit/tpt_listing.md` from the unit's existing
+title in `year7_networks_hardware_unit1.json` — no new content generated.
+
+**Built:** `make_lead_magnet.py --unit year7_networks_hardware_unit1
+--lesson 4` → `year7_networks_hardware_unit1_lesson04_FREE_v001.zip`.
+
+**TES:** `publish_lead_magnets.py --platform tes --publish` completed
+end-to-end (login, upload, categories, "Share for free" licence, copyright
+box, "Publish now"), landed on the `.../published` URL for resource
+**13578710** — genuinely live. `verify_tes_listings.py --keyword "Data
+Travels" --lead-magnet-lesson 4` found exactly one matching resource (no
+duplicate); its "could not find £0.00" flag is the same already-documented
+static-check limitation noted in the 2026-08-21/08-28 entries (TES's
+Licence step defaults to showing the "Sell my resource" tab on reload
+regardless of the saved price) — the publish log's own "Selected 'Share
+for free' tab" line is the reliable confirmation.
+
+**TPT:** blocked, but for the same non-session-expiry reason as the
+2026-09-11 orientation cycle — `publish_to_tpt()` raised `FileNotFoundError`
+before any login attempt because no thumbnail exists for this unit in
+either `releases/thumbnails/` or `data/units/lead_magnet_source/thumbnails/`
+(confirmed via `find` across the whole repo — genuinely missing asset, not
+retried). **Needs a human**: add
+`year7_networks_hardware_unit1_thumbnail.png` to
+`data/units/lead_magnet_source/thumbnails/`, then run
+`python publish_lead_magnets.py --unit year7_networks_hardware_unit1
+--lesson 4 --platform tpt`.
+
+Marked the queue item done (2026-09-18). No files deleted, no off-brand
+products touched, no strategic changes.
+
 ## 2026-09-16 — Marketing Push: drafted wave 3 for 3 more units, but posting fully blocked account-wide — the 2026-09-09 Pinterest 50-draft cap has not cleared
 
 Task: check each live unit's highest existing Pinterest wave

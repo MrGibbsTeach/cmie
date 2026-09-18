@@ -16,7 +16,7 @@ standalone lesson (not one that depends on earlier lessons to make sense).
 - [x] year7_cybersecurity_unit1 — Lesson 3 (Spotting Phishing and Social Engineering) — 2026-08-21
 - [x] year7_web_design_unit1 — Lesson 6 (Accessibility and Responsive Design Basics) — 2026-08-28
 - [x] year7_orientation_unit1 — Lesson 4 (Passwords, Privacy, and Protecting Your Information) — 2026-09-11
-- [ ] year7_networks_hardware_unit1 — Lesson 4 (How Data Travels Across a Network)
+- [x] year7_networks_hardware_unit1 — Lesson 4 (How Data Travels Across a Network) — 2026-09-18
 - [ ] year7_data_representation_unit1 — Lesson 5 (Images as Data: Pixels and Bitmaps)
 - [ ] year7_spreadsheets_unit1 — Lesson 4 (Charts and Graphs: Visualizing Data)
 - [ ] year7_robotics_physical_computing_unit1 — Lesson 4 (Using Sensor Data to Make Decisions)
@@ -63,6 +63,43 @@ unit's zip as it's built.
 ## Log
 
 (the job appends a line here each time it completes or skips a cycle)
+
+- 2026-09-18: Built + published the Lesson 4 lead magnet for
+  year7_networks_hardware_unit1 ("How Data Travels Across a Network" —
+  a standalone conceptual lesson that doesn't depend on Lessons 1-3's
+  hardware-selection content). Concurrency check (`git fetch origin main`)
+  found no other run had touched this item first. Source note: same
+  situation as the 2026-09-11 orientation-unit cycle — no `releases/public/`
+  tree existed locally (fresh container), but
+  `data/units/packaged/year7_networks_hardware_unit1_v001_PUBLIC.zip` (the
+  full-unit zip `package_unit.py` persists) contains the exact
+  `01_Lesson_Slides/` layout `make_lead_magnet.py` expects, so it was
+  extracted locally into `releases/public/year7_networks_hardware_unit1_v001/`
+  (ephemeral, gitignored, not committed) with a one-line
+  `06_Listings/unit/tpt_listing.md` added from the unit's own title in
+  `year7_networks_hardware_unit1.json` (no new content generated). Also had
+  to `pip install -r requirements.txt` in this fresh container before
+  `python-pptx` etc. were importable. TES: `--publish` run completed
+  successfully end-to-end (login, upload, categories, "Share for free"
+  licence, copyright box, "Publish now") and landed on the `.../published`
+  URL for resource **13578710** — genuinely live.
+  `verify_tes_listings.py --keyword "Data Travels" --lead-magnet-lesson 4`
+  found exactly one matching resource (no duplicate); its "could not find
+  £0.00" finding is the already-documented inherent limitation of that
+  static check (TES's Licence step always renders the "Sell my resource"
+  tab by default on reload), not a real mispricing signal — the publish
+  log's own "Selected 'Share for free' tab" line is the reliable
+  confirmation. TPT: blocked for the same non-bug reason as the
+  2026-09-11 orientation cycle — `publish_to_tpt()` raised
+  `FileNotFoundError` before attempting any login because no thumbnail
+  exists for this unit in either `releases/thumbnails/` or the tracked
+  `data/units/lead_magnet_source/thumbnails/` (confirmed via `find`, no
+  such file anywhere in the repo). Not the usual session-expiry limit,
+  not retried. A human needs to add
+  `year7_networks_hardware_unit1_thumbnail.png` to
+  `data/units/lead_magnet_source/thumbnails/` and then run
+  `python publish_lead_magnets.py --unit year7_networks_hardware_unit1
+  --lesson 4 --platform tpt`.
 
 - 2026-09-11: Built + published the Lesson 4 lead magnet for
   year7_orientation_unit1 ("Passwords, Privacy, and Protecting Your
