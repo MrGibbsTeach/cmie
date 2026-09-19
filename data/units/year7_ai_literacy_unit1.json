@@ -1,0 +1,17 @@
+{
+  "unit_id": "year7_ai_literacy_unit1",
+  "title": "Artificial Intelligence Literacy: Unit 1 – Understanding How AI Works and Its Impact",
+  "year_level": "Lower Secondary",
+  "subject": "Digital Technologies",
+  "version": "v001",
+  "topics": [
+    { "title": "What Is Artificial Intelligence? Defining AI, Machine Learning, and Automation" },
+    { "title": "How Machines \"Learn\": Training Data, Patterns, and Prediction" },
+    { "title": "AI in Everyday Life: Recommendation Systems, Voice Assistants, and Smart Devices" },
+    { "title": "Bias in AI: How Training Data Shapes Fair (and Unfair) Outcomes" },
+    { "title": "Generative AI and Prompting: Working Effectively with AI Tools" },
+    { "title": "AI Ethics and Limits: Privacy, Misinformation, and Academic Integrity" },
+    { "title": "The Future of AI: Careers, Emerging Applications, and Responsible Innovation" }
+  ],
+  "lesson_videos": {}
+}

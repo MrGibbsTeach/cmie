@@ -52,3 +52,12 @@ _Note: figures are in each platform's native currency. TPT pays in USD, Gumroad 
 _Correction 2026-08-19: the previous entry read "$13.45 USD, 1 sale" — that figure was the **earnings** on a single order (339960853), not total revenue, and it missed the other 5 orders entirely._
 
 _Correction 2026-09-17: added 7 orders (2026-08-19 through 2026-09-13) from a user-shared TPT dashboard screenshot that `check_revenue.py` had never captured — this file was silently a month stale. `check_revenue.py`'s TPT session reliability is still not fixed; see review notes for 2026-09-17. Re-run `python check_revenue.py --save` once the session is confirmed working so this file stops needing manual patching._
+
+## 2026-09-19 — Flagship full-curriculum bundle launched (no sales yet, catalogue value note)
+
+New product: **"The Complete Digital Technologies Curriculum"** (`complete_digital_technologies_curriculum`) — 14 units / 98 lessons combining the whole existing catalog plus one newly-built unit (Artificial Intelligence Literacy, filling the one real strand gap against a 12-strand full-coverage curriculum). Live on all 3 platforms same day:
+- TPT: $199.00 — https://www.teacherspayteachers.com/Product/The-Complete-Digital-Technologies-Curriculum-Full-Year-Bundle-14-Units-98-17692631
+- Gumroad: A$299.00, `published: true` verified via API — https://focuslabdigital.gumroad.com/l/jdedx
+- TES: £149.00, TES-PAID licence, verified live via direct public-page load — https://www.tes.com/teaching-resource/resource-13579629
+
+No sales yet (published today). This realizes the 2026-08-27 standing flag ("build a full-curriculum bundle offer... $150-500") — see project memory for full build detail and one open item (a stray draft duplicate on TES from a follow-up metadata-fix attempt, not deleted per standing no-delete-without-authorization policy).
