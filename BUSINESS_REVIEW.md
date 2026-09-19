@@ -1,4 +1,4 @@
-# Business Review — 2026-08-31 01:08 UTC
+# Business Review — 2026-09-14 01:05 UTC
 
 ## Revenue
 - **TPT**: ERROR — TPT session expired (.tpt_session.json no longer valid). Refresh it manually once: python publish_tpt.py --save-session (automated form login is disabled here — it has triggered TPT bot detection and an account lock before).
@@ -22,14 +22,14 @@
 - year7_web_design_unit1
 
 ## Recent activity (last 8 commits)
-- 2026-08-28 Log root cause of the 13553843/13553844 TES duplicate: concurrent runs
-- 2026-08-28 Resource Drop: publish Lesson 6 lead magnet for year7_web_design_unit1
-- 2026-08-27 Point free-sample marketing links at the email-gated landing pages
-- 2026-08-27 Un-ignore .env.local.example (docs, not a secret)
-- 2026-08-27 Add marketing-site: email-gated lead magnets + blog, and a blog draft generator
-- 2026-08-26 Finish Databases unit: TPT + Gumroad live, queue marked complete
-- 2026-08-26 Merge branch 'main' of https://github.com/MrGibbsTeach/cmie
-- 2026-08-26 Marketing Push: post 9 Pinterest pins across 3 units (2 unblocked backlog waves + 1 new wave), verify each pin live individually
+- 2026-09-11 Resource Drop: Lesson 4 lead magnet for year7_orientation_unit1, TES live
+- 2026-09-09 Marketing Push: Digital Systems Pinterest wave 3 live; Game Design/Python Programming wave 3 drafted but blocked by account draft cap
+- 2026-09-08 New Unit Production: resume Digital Media unit, TPT still blocked (accepted limitation)
+- 2026-09-07 Scheduled review: business_review.py + integrity checks, no new issues
+- 2026-09-06 Log stray TES draft cleanup and local git repo recovery
+- 2026-09-06 Backfill packaged zips, publish both queued bundles, fix 3 TES bugs
+- 2026-09-05 Fix Resource Drop bundle gap, add ad-domain blocking, restock queue
+- 2026-09-04 Resource Drop: log Programming Foundations bundle as blocked, not built
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).

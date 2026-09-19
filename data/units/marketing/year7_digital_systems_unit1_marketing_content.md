@@ -90,3 +90,28 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Description**: Explaining hardware, CPU, memory, and OS basics well takes real prep time. This complete 7-lesson Digital Systems unit already has it built — slides, workbook, roadmap, and assessment pack ready to teach. #teacherspayteachers #digitaltech #middleschoolcs
 
 **Link**: https://www.teacherspayteachers.com/Product/Digital-Systems-Unit-1-How-Computers-Actually-Work-Year-7-Grade-7-Middle-17047072
+
+## Pinterest pins — wave 3 (posted 2026-09-09, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
+
+New angles for the third Pinterest posting batch, distinct from wave 1's generic bundle/lesson-pack/free-sample promos and wave 2's troubleshooting/term-3/build-from-scratch angles: an unused-lesson deep dive (Lesson 3, Memory and Storage), a non-specialist pain point, and a dedicated capstone-project pin (Lesson 7).
+
+### Pin 1 (standout lesson — RAM vs storage, Lesson 3, unused in prior waves)
+**Title** (56 chars): RAM vs Storage: The Digital Systems Lesson That Clicks
+
+**Description**: Students mix up RAM and storage constantly — this ready-to-teach lesson finally makes the difference stick. Part of a complete 7-lesson Digital Systems unit covering hardware, the CPU, operating systems, and troubleshooting. #digitaltechnologies #computerscience #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Digital-Systems-Unit-1-How-Computers-Actually-Work-Year-7-Grade-7-Middle-17047072
+
+### Pin 2 (pain point — non-specialist, new angle)
+**Title** (56 chars): You Don't Need a Computer Science Degree to Teach This
+
+**Description**: Hardware, CPU, memory, operating systems — all explained at a level any Digital Technologies teacher can confidently deliver, no CS background required. Complete 7-lesson unit with slides, workbook, and assessment pack included. #digitaltechnologies #middleschoolcs #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Digital-Systems-Unit-1-How-Computers-Actually-Work-Year-7-Grade-7-Middle-17047072
+
+### Pin 3 (capstone project, Lesson 7)
+**Title** (55 chars): The Capstone Project: Designing a Real Computer Setup
+
+**Description**: Lesson 7 puts it all together — students design a complete computer setup for a real-world scenario, applying everything from hardware to operating systems. The final project in a complete 7-lesson Digital Systems unit. #digitaltechnologies #computerscience #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Digital-Systems-Unit-1-How-Computers-Actually-Work-Year-7-Grade-7-Middle-17047072

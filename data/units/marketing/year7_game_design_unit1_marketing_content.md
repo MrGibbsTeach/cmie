@@ -90,3 +90,28 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Description**: Everything to teach a complete Game Design unit: 7 lesson decks from design basics to a finished Scratch game, a student workbook, unit roadmap, and full assessment pack with rubric. #gamedesign #digitaltechnologies #scratchcoding
 
 **Link**: https://www.teacherspayteachers.com/Product/Game-Design-Unit-1-Designing-and-Building-Your-First-Game-Year-7-Grade-7-17047398
+
+## Pinterest pins — wave 3 (drafted 2026-09-09, NOT YET POSTED — blocked by the Pinterest account's 50-draft-slot cap hit mid-run; see AUTONOMOUS_LOG.md 2026-09-09 entry. Post with `publish_pinterest.py --unit year7_game_design_unit1 --wave 3` once the account is under the cap, then verify live and update this heading.)
+
+New angles for the third Pinterest posting batch, distinct from wave 1's generic bundle/lesson-pack/free-sample promos and wave 2's Scratch-sprites/engagement/value-stack angles: an unused-lesson deep dive (Lesson 6, Playtesting and Iterating), a non-specialist pain point, and a dedicated capstone-project pin (Lesson 7).
+
+### Pin 1 (standout lesson — playtesting & iterating, Lesson 6, unused in prior waves)
+**Title** (60 chars): Playtesting & Iterating: The Lesson That Teaches Real Design
+
+**Description**: Real game designers playtest and iterate constantly — this ready-to-teach lesson gets students doing the same with their own Scratch game. Part of a complete 7-lesson Game Design unit ending in a finished student project. #gamedesign #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Game-Design-Unit-1-Designing-and-Building-Your-First-Game-Year-7-Grade-7-17047398
+
+### Pin 2 (pain point — non-specialist, new angle)
+**Title** (55 chars): You Don't Need to Know How to Code to Teach Game Design
+
+**Description**: Scratch's block-based coding means any Digital Technologies teacher can run this unit confidently — no programming background required. Complete 7-lesson Game Design unit with slides, workbook, and assessment pack included. #gamedesign #teacherspayteachers #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Game-Design-Unit-1-Designing-and-Building-Your-First-Game-Year-7-Grade-7-17047398
+
+### Pin 3 (capstone project, Lesson 7)
+**Title** (55 chars): The Capstone: Students Design and Build a Complete Game
+
+**Description**: Lesson 7 is the payoff — students design and build a complete, playable Scratch game from scratch, applying mechanics, interactivity, and playtesting from the whole unit. #gamedesign #scratchcoding #digitaltechnologies
+
+**Link**: https://www.teacherspayteachers.com/Product/Game-Design-Unit-1-Designing-and-Building-Your-First-Game-Year-7-Grade-7-17047398

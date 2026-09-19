@@ -90,3 +90,28 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Description**: A complete, ready-to-teach Introduction to Programming unit for Term 3: variables, input/output, if statements, loops, functions, and a final Python project. Slides, workbook, and assessment pack included. #term3planning #python #digitaltechnologies #y7
 
 **Link**: https://www.teacherspayteachers.com/Product/Introduction-to-Programming-Unit-1-Writing-Your-First-Python-Programs-Year-17047311
+
+## Pinterest pins — wave 3 (drafted 2026-09-09, NOT YET POSTED — blocked by the Pinterest account's 50-draft-slot cap hit mid-run; see AUTONOMOUS_LOG.md 2026-09-09 entry. Post with `publish_pinterest.py --unit year7_python_programming_unit1 --wave 3` once the account is under the cap, then verify live and update this heading.)
+
+New angles for the third Pinterest posting batch, distinct from wave 1's generic bundle/lesson-pack/free-sample promos and wave 2's if-statements/value-stack/term-3 angles: an unused-lesson deep dive (Lesson 5, Loops), a non-specialist pain point, and a dedicated capstone-project pin (Lesson 7).
+
+### Pin 1 (standout lesson — loops, Lesson 5, unused in prior waves)
+**Title** (57 chars): Loops in Python: The Lesson That Removes the Repetition
+
+**Description**: Repeating actions with loops is where Python really starts to click for beginners — this ready-to-teach lesson makes it click. Part of a complete 7-lesson Introduction to Programming unit ending in a real Python project. #pythonforkids #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Introduction-to-Programming-Unit-1-Writing-Your-First-Python-Programs-Year-17047311
+
+### Pin 2 (pain point — non-specialist, new angle)
+**Title** (50 chars): You Don't Need a Coding Background to Teach Python
+
+**Description**: Variables, input/output, if statements, loops, and functions — all scaffolded for a first-time Python class, no computer science degree required. Complete 7-lesson unit with slides, workbook, and assessment pack included. #python #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Introduction-to-Programming-Unit-1-Writing-Your-First-Python-Programs-Year-17047311
+
+### Pin 3 (capstone project, Lesson 7)
+**Title** (46 chars): The Capstone: Solving a Real Problem in Python
+
+**Description**: Lesson 7 is where it comes together — students apply variables, conditionals, loops, and functions to write a working Python program solving a real problem. The final project in a complete 7-lesson unit. #python #digitaltechnologies #computerscience
+
+**Link**: https://www.teacherspayteachers.com/Product/Introduction-to-Programming-Unit-1-Writing-Your-First-Python-Programs-Year-17047311

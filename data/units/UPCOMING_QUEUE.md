@@ -34,6 +34,56 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
 
 (the job appends a line here each time it completes or skips a cycle)
 
+- 2026-09-15: Continuation of the in-flight "Digital Media & Multimedia
+  Production" item — TPT is still the only remaining piece, blocked by the
+  same accepted Cloudflare/disposable-browser limitation as the last two
+  cycles (2026-09-01, 2026-09-08). Concurrency check against
+  `origin/main` found no concurrent run. Did not rebuild via
+  `produce_unit.py` (no content change, no need to pay for regeneration);
+  instead spot-checked real content straight from the already-committed
+  packaged zip (lesson 2 slides + the assessment task, both clean) and
+  re-verified Gumroad + TES are still live and clean, both for this unit
+  specifically and across the full catalog (15/15 Gumroad, 24/24 TES
+  matching "Unit 1" — no integrity issues found anywhere). Confirmed the
+  TPT block with a lightweight login-only check (same code path
+  `upload_unit()` calls first) rather than a full rebuild: session loads
+  but `_is_logged_in()` still returns false, plain logged-out homepage, not
+  a Cloudflare challenge screen — identical signature to the prior two
+  cycles. No login workaround attempted, per standing policy. **Not
+  marking `[x]`** — see `AUTONOMOUS_LOG.md`'s 2026-09-15 entry for full
+  detail. This is now three consecutive scheduled cycles blocked on the
+  identical TPT step; needs a human running `publish_tpt.py --unit
+  year7_digital_media_unit1 --part all --publish` locally to close it out.
+
+- 2026-09-08: Continuation of the in-flight "Digital Media & Multimedia
+  Production" item — TPT is the only remaining piece (Gumroad + TES were
+  already live). This cloud session has no local build artifacts from the
+  2026-09-01 run, so rebuilt fresh via `produce_unit.py` (new AI-generated
+  content, same config/topics — costs OpenAI money each time this happens;
+  worth a human note that ephemeral cloud sessions regenerate content
+  rather than reusing it). Spot-checked the new content directly (not just
+  automated QA): lesson 1 ("What Is Digital Media?"), lesson 4 ("Editing
+  Video: Cuts & Pacing"), and the assessment task are all technically
+  accurate, well-scoped, and on-topic; thumbnail renders cleanly (the
+  2026-09-01 en-dash font fix held up). Re-verified Gumroad
+  (`verify_gumroad_listings.py --keyword "Digital Media"`) and TES
+  (`verify_tes_listings.py --keyword "Digital Media"`) — both still
+  `[OK]`/clean, nothing re-published (would risk a duplicate TES draft).
+  **TPT attempt**: `publish_tpt.py --unit year7_digital_media_unit1 --part
+  all --publish` — `TPT_SESSION_JSON` loaded but the logged-in check still
+  failed (plain logged-out TPT homepage, not a Cloudflare challenge screen
+  this time). Same accepted platform limitation documented in
+  `AUTONOMOUS_LOG.md` (2026-08-24): a disposable cloud browser can't carry
+  the aged trust TPT's Cloudflare check wants, so a "valid" session cookie
+  still gets rejected. No login-workaround attempted, per standing policy.
+  Committed this run's packaged zip (`data/units/packaged/year7_digital_media_unit1_v001_PUBLIC.zip`)
+  so a future session doesn't have to regenerate content again just to
+  reach the TPT step. **Not marking `[x]`** — TPT is still the one
+  remaining piece; a human running `publish_tpt.py` locally (or from an
+  active session at the always-on machine) is what finishes this. No new
+  topic started, per this file's own instruction to finish this item
+  first.
+
 - 2026-09-01: Started "Digital Media & Multimedia Production"
   (`year7_digital_media_unit1`) — config written, built + QA-verified +
   packaged successfully via `produce_unit.py` (7 lessons, assessment,

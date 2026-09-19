@@ -49,6 +49,414 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-18 — Resource Drop: Lesson 4 lead magnet for year7_networks_hardware_unit1, TES live, TPT blocked (missing thumbnail)
+
+Task: `data/units/RESOURCE_DROP_QUEUE.md`, first unchecked item —
+year7_networks_hardware_unit1 Lesson 4 ("How Data Travels Across a
+Network"), a standalone conceptual lesson that doesn't depend on Lessons
+1-3's hardware-selection content.
+
+**Concurrency check.** `git fetch origin main` before publishing showed no
+change since this run started — no other run had touched this item.
+
+**Environment.** Fresh container had no `pip` packages installed at all
+(`ModuleNotFoundError: No module named 'pptx'`); ran
+`pip install -r requirements.txt` before anything else would import.
+
+**Source.** Same shape as the 2026-09-11 orientation-unit cycle: no
+`releases/public/` tree locally (gitignored, ephemeral), but
+`data/units/packaged/year7_networks_hardware_unit1_v001_PUBLIC.zip` (the
+persisted full-unit zip `package_unit.py` writes) has the exact
+`01_Lesson_Slides/` layout `make_lead_magnet.py` needs. Extracted it to
+`releases/public/year7_networks_hardware_unit1_v001/` (not committed) and
+added a one-line `06_Listings/unit/tpt_listing.md` from the unit's existing
+title in `year7_networks_hardware_unit1.json` — no new content generated.
+
+**Built:** `make_lead_magnet.py --unit year7_networks_hardware_unit1
+--lesson 4` → `year7_networks_hardware_unit1_lesson04_FREE_v001.zip`.
+
+**TES:** `publish_lead_magnets.py --platform tes --publish` completed
+end-to-end (login, upload, categories, "Share for free" licence, copyright
+box, "Publish now"), landed on the `.../published` URL for resource
+**13578710** — genuinely live. `verify_tes_listings.py --keyword "Data
+Travels" --lead-magnet-lesson 4` found exactly one matching resource (no
+duplicate); its "could not find £0.00" flag is the same already-documented
+static-check limitation noted in the 2026-08-21/08-28 entries (TES's
+Licence step defaults to showing the "Sell my resource" tab on reload
+regardless of the saved price) — the publish log's own "Selected 'Share
+for free' tab" line is the reliable confirmation.
+
+**TPT:** blocked, but for the same non-session-expiry reason as the
+2026-09-11 orientation cycle — `publish_to_tpt()` raised `FileNotFoundError`
+before any login attempt because no thumbnail exists for this unit in
+either `releases/thumbnails/` or `data/units/lead_magnet_source/thumbnails/`
+(confirmed via `find` across the whole repo — genuinely missing asset, not
+retried). **Needs a human**: add
+`year7_networks_hardware_unit1_thumbnail.png` to
+`data/units/lead_magnet_source/thumbnails/`, then run
+`python publish_lead_magnets.py --unit year7_networks_hardware_unit1
+--lesson 4 --platform tpt`.
+
+Marked the queue item done (2026-09-18). No files deleted, no off-brand
+products touched, no strategic changes.
+
+## 2026-09-16 — Marketing Push: drafted wave 3 for 3 more units, but posting fully blocked account-wide — the 2026-09-09 Pinterest 50-draft cap has not cleared
+
+Task: check each live unit's highest existing Pinterest wave
+(`data/units/marketing/<unit_id>_marketing_content.md`), pick 2-3 units most
+due for a fresh wave, draft 3 distinct-angle pins each, post via
+`publish_pinterest.py --unit <id> --wave N`, verify live.
+
+**Selection.** Read the wave heading of every one of the 13 TPT-live units
+(`bundle_urls.json`; `year7_digital_media_unit1` excluded again — still no
+real bundle URL in its marketing file, TPT still not live for it per
+2026-09-15). Wave-3-or-higher units (algorithms/cybersecurity/
+data_representation/digital_systems at wave 3; databases/spreadsheets/
+web_design got wave 2 or 3 on 2026-09-02) are all fresher than the
+wave-2-only group. Within that group, **ux_design** and **orientation** are
+the stalest — both last touched 2026-08-22, 25 days with no new wave, and
+were explicitly left out of the last two Marketing Push rounds (2026-08-26,
+2026-09-09) for lack of a tiebreaker. Picked those two plus
+**networks_hardware** (wave 2 since 2026-08-26, 21 days stale, richest
+unused-lesson material of the remaining wave-2 units: network security,
+troubleshooting, and the Lesson 7 capstone were all still unused).
+`year7_game_design_unit1` and `year7_python_programming_unit1` were
+deliberately *not* picked for a new wave — they already have a fully
+drafted, unposted wave 3 from 2026-09-09 sitting in their files; drafting a
+wave 4 on top of a wave that was never actually shown to anyone would skip
+an audience, not reach a new one.
+
+**Drafted new waves**, each following the established 3-pin pattern
+(standout unused lesson, capstone, distinct pain point), angles checked
+against every prior wave in that unit's own file to avoid repeats:
+- `year7_ux_design_unit1` — wave 3: accessibility & inclusive design
+  (Lesson 6, unused), capstone (Lesson 7, dedicated pin — not previously
+  given its own pin), "teach UX without being a designer yourself" (new
+  pain-point angle, distinct from wave 2's "stop building it yourself").
+- `year7_orientation_unit1` — wave 3: file organisation (Lesson 3, unused),
+  the digital-skills check-in reframed as a diagnostic-assessment angle
+  (Lesson 6, unused), netiquette (Lesson 5, unused).
+- `year7_networks_hardware_unit1` — wave 3: network security basics
+  (Lesson 5, unused), capstone (Lesson 7, dedicated pin), troubleshooting
+  as a hands-on-skill angle (Lesson 6, unused).
+
+**Posting — blocked, confirmed via a fresh diagnostic, not assumed from
+last time.** `pip install -r requirements.txt` (not preinstalled this
+container; pulled a playwright version that doesn't match the container's
+preinstalled Chromium revision 1194, same known mismatch as every prior
+session — `cloud_launch_kwargs()` already handles it, no code change
+needed). `--dry-run` for `year7_ux_design_unit1 --wave 3` failed on the
+very first pin: title field stayed disabled after image upload, timing out
+after 30s — the identical signature from the 2026-09-09 entry. Rather than
+assume it's the same cause, wrote a one-off diagnostic script (not
+committed) to load the pin-creation tool and read the page body directly:
+confirms **"Pin drafts (50)"** in the sidebar, "Create new" button disabled,
+Title field shows placeholder text but is not editable. Screenshot
+confirms visually. This is the *same* account-wide 50-draft cap found a
+week ago on 2026-09-09 — **it has not cleared or been cleared**. The
+previously-listed stray drafts are aging down (screenshot shows "6 days
+until expiry" on several vs. 13-30 days seen on 2026-09-09) but the count
+has stayed pinned at exactly 50, meaning something is refilling the queue
+at roughly the rate old entries expire, or expiry isn't actually removing
+them from the count. Did not retry beyond this one confirmation — same
+root cause as last time, no new information to gain from repeating it
+across all 3 units.
+
+**Did not attempt to post anything this run** — not the 3 new waves
+drafted here, and not the still-pending `year7_game_design_unit1` /
+`year7_python_programming_unit1` wave 3 from 2026-09-09, which are also
+still blocked by this same cap (re-confirmed by the same diagnostic; no
+point running each unit's own dry-run separately when the block is
+account-level, not content-specific). **Did not delete any drafts** — the
+hard boundary against deleting anything on any platform still applies, and
+that's the only way to free a slot short of publishing one.
+
+**Needs a human decision, now flagged for the second time**: this is a
+full week with zero Pinterest posting capacity across two consecutive
+scheduled Marketing Push runs (2026-09-09, this one), with 5 units'
+worth of fully-drafted, verified-good wave-3 content (game_design,
+python_programming, ux_design, orientation, networks_hardware) sitting
+ready and unable to go live. Someone needs to go into the Pinterest
+account directly and clear enough of the 50 stray autosave drafts to get
+under the cap — this cannot be resolved from inside a scheduled run given
+the "never delete" boundary. Once cleared, all 5 units' wave-3 pins can be
+posted with `publish_pinterest.py --unit <id> --wave 3` (game_design and
+python_programming already have their copy from 2026-09-09; the other
+three were drafted in this run) with no new content-drafting needed.
+
+Nothing deleted, no off-brand products touched, no pricing/platform/
+strategy changes — only new Pinterest wave content drafted and one
+blocker re-confirmed and escalated more clearly than last time.
+
+## 2026-09-15 — Scheduled New Unit Production: resumed in-flight "Digital Media & Multimedia Production" again, TPT still blocked by the same accepted Cloudflare limit, no new topic started
+
+`data/units/UPCOMING_QUEUE.md`'s first unchecked entry is still "Digital
+Media & Multimedia Production" — in-flight since 2026-09-01, Gumroad + TES
+live since then, TPT the sole remaining gap across three consecutive
+scheduled cycles now (2026-09-01, 2026-09-08, this run). Per the queue
+file's own instruction, resumed this item rather than starting a new topic.
+
+**Concurrency check** (the irreversible-step precaution this job's
+instructions call for): `git fetch origin main` before touching anything —
+no new commits since this session's checkout, and the queue file on
+`origin/main` is identical to local. No concurrent run had claimed or
+published this item first.
+
+**Did not rebuild via `produce_unit.py`** this cycle. The packaged output
+from the 2026-09-08 run
+(`data/units/packaged/year7_digital_media_unit1_v001_PUBLIC.zip`) is
+already committed and unchanged, so there was no need to pay for a fresh
+OpenAI regeneration just to re-verify content that hasn't changed.
+**Spot-checked real content directly from that zip** (not just relying on
+the prior run's automated QA): read lesson 2 ("Planning a Story: Scripts,
+Storyboards, and Shot Lists") slide-by-slide via `python-pptx` and the
+full `Assessment_Task.docx` via `python-docx` — both technically accurate,
+well-scoped, age-appropriate, and on-topic, no AI-leftover phrasing. This
+covers different lessons than the 2026-09-01/09-08 spot-checks (lessons
+1/4 + assessment), so the sampled coverage across the unit keeps growing
+rather than re-checking the same two lessons every cycle.
+
+**Gumroad + TES re-verified, still live, not re-published** (matches
+2026-09-08's reasoning — re-publishing risks a duplicate TES draft, and
+Gumroad's duplicate-title guard would refuse it anyway):
+- `verify_gumroad_listings.py --keyword "Digital Media"` → 1 product,
+  `[OK]`, still published at
+  `https://focuslabdigital.gumroad.com/l/xmhbi`.
+- `verify_tes_listings.py --keyword "Digital Media"` → 1 resource, `[OK]`,
+  resource `13559319`.
+- Also ran both checkers across the full catalog while in there: Gumroad
+  15/15 `[OK]` (of 21 total products), TES 24/24 `[OK]` (of 39 total
+  resources) matching "Unit 1". No new integrity issues found anywhere.
+
+**TPT attempt — cheaper pre-check this time, same result as every prior
+attempt**: rather than re-running the full `produce_unit.py` pipeline
+again just to reach the same login wall, wrote a small standalone script
+that calls the exact same `_load_session()` + `_is_logged_in()` path
+`upload_unit()` calls first (verified by reading `cmie/publishing/tpt.py`
+— `_login()` is the very first thing `upload_unit()` does, before any
+file/listing access), so it's a faithful proxy for the real publish
+attempt without spending OpenAI money to get there. Result: `TPT_SESSION_JSON`
+loaded successfully (`session loaded: True`) but `_is_logged_in()` still
+returned `False` — screenshot shows the plain logged-out TPT homepage
+("Log In | Sign Up" in the header), not a Cloudflare challenge screen,
+identical to the 2026-09-01 and 2026-09-08 signature. This is the same
+accepted platform limitation documented 2026-08-24: a disposable cloud
+browser can't carry the real-usage trust TPT's Cloudflare check wants, so
+cookie validity alone never fixes it. No `TPT_EMAIL`/`TPT_PASSWORD`
+fallback attempted (deliberately disabled — blind form-login has
+triggered bot detection before). Stopped after one attempt, did not
+retry, no full-content rebuild triggered by this dead end.
+
+**Not marking `[x]`** — TPT remains the one gap, unchanged for three
+consecutive scheduled cycles (2026-09-01, 2026-09-08, 2026-09-15) now, all
+hitting the identical failure signature. This item is still in-flight, not
+abandoned; no new topic started this cycle. Flagging this one more
+explicitly than the last two entries: at this point it's a queue item that
+has sat one platform short of complete for two full weeks purely because
+the cloud container structurally cannot pass TPT's Cloudflare check — the
+next actual progress on this queue item can only come from a human running
+`python publish_tpt.py --unit year7_digital_media_unit1 --part all
+--publish` locally (or from an active session at the always-on machine),
+then adding the bundle URL to `bundle_urls.json` and filling in the
+marketing-content placeholder. No files deleted, no off-brand products
+touched, no strategic or pricing changes.
+
+## 2026-09-14 — Scheduled review: business_review.py + integrity checks across TPT/Gumroad/TES, no new issues found
+
+Report-only scheduled run. `pip install -r requirements.txt` first, as
+usual for a fresh cloud container.
+
+**Revenue (`business_review.py --save`, saved to BUSINESS_REVIEW.md):**
+- TPT: ERROR — session expired. Confirmed same accepted Cloudflare
+  limitation documented above (2026-08-24): a fresh/disposable browser
+  fails TPT's bot challenge regardless of cookie validity. No login
+  workaround attempted, per standing instruction.
+- Gumroad: A$0.00 net, 0 sales.
+- TES: £0.30 net, 1 sale.
+- Combined (not currency-converted): A$0 + £0.30.
+- Catalog: 13 live units (unchanged since 2026-09-07 review): year7_algorithms_unit1,
+  year7_cybersecurity_unit1, year7_data_representation_unit1,
+  year7_databases_unit1, year7_digital_systems_unit1,
+  year7_game_design_unit1, year7_networks_hardware_unit1,
+  year7_orientation_unit1, year7_python_programming_unit1,
+  year7_robotics_physical_computing_unit1, year7_spreadsheets_unit1,
+  year7_ux_design_unit1, year7_web_design_unit1.
+
+**Integrity checks:**
+- `verify_tpt_listings.py --unit <id>` run for all 13 live units: all 13
+  failed with "not logged in to TPT (no valid session found)" /
+  `Could not extract Chrome cookies: 'DBUS_SESSION_BUS_ADDRESS'` — the
+  same accepted platform limit confirmed 2026-08-24, not a new bug. No
+  login workaround or retry attempted, per standing instruction.
+- `verify_gumroad_listings.py`: checked 15 products matching "Unit 1" (of
+  21 total). All 15 `[OK]` — no empty descriptions, unrendered markdown,
+  stray HTML, or title/keyword mismatches found.
+- `verify_tes_listings.py`: 39 resources total on the TES dashboard, 24
+  matching "Unit 1" checked. All 24 `[OK]` — no corruption signals found.
+  This checker only matches "Unit 1"-named resources, so it does not
+  re-check the AI-series items carrying the previously logged open
+  issues (the 13432831/13432796 duplicate, the permanently-broken
+  13445828, the presenter-placeholder cosmetic bug) — those are
+  unchanged since last logged and still awaiting human decision, see
+  "Open items" above.
+
+**No new integrity issues found.** No fixes, deletions, or edits made —
+report-only per standing instructions.
+
+## 2026-09-11 — Scheduled Resource Drop: Lesson 4 lead magnet for year7_orientation_unit1 (TES live, TPT blocked on a missing thumbnail asset, not the usual session-expiry limit)
+
+`data/units/RESOURCE_DROP_QUEUE.md`'s first unchecked entry: year7_orientation_unit1
+— Lesson 4, "Passwords, Privacy, and Protecting Your Information" (a
+standalone lesson, doesn't depend on the other orientation lessons — matches
+the queue's own selection criterion). Concurrency check (`git fetch origin
+main`, diffed the queue file against `origin/main`) found no other run had
+already claimed or published this item.
+
+Source-file gap and how it was worked around: `make_lead_magnet.py` needs a
+`01_Lesson_Slides/` folder either under a local `releases/public/` tree
+(doesn't exist — fresh container, `releases/` gitignored) or under the
+tracked `data/units/lead_magnet_source/` fallback (only covers the 3 units
+that already have a second lead magnet: algorithms, cybersecurity,
+web_design — orientation predates that fallback and was never backfilled
+into it). It does, however, have a persisted full-unit zip at
+`data/units/packaged/year7_orientation_unit1_v001_PUBLIC.zip` (added by the
+2026-09-06 bundle-gap fix, which made `package_unit.py` persist every unit's
+zip going forward) that contains the identical `01_Lesson_Slides/` layout.
+Extracted that zip locally into `releases/public/year7_orientation_unit1_v001/`
+(ephemeral, gitignored, not committed) and added a one-line
+`06_Listings/unit/tpt_listing.md` sourced from the unit's own existing
+`title` field in `year7_orientation_unit1.json` (no new content generated —
+reused metadata already in the repo) so the lead magnet's CTA slide would
+carry the correct unit title instead of a fallback slug-cased guess.
+
+Built via `make_lead_magnet.py --unit year7_orientation_unit1 --lesson 4`.
+TES: `publish_lead_magnets.py --unit year7_orientation_unit1 --lesson 4
+--platform tes --publish` ran the full flow end-to-end (login, description,
+file upload, categories, "Share for free" licence, copyright box, "Publish
+now") and landed on the `.../published` URL for resource **13571207**.
+`verify_tes_listings.py --keyword "Passwords, Privacy" --lead-magnet-lesson 4`
+confirmed exactly one matching resource, `[OK]`, no duplicate this time.
+
+TPT: attempted (per standing instruction not to skip it pre-emptively), but
+`publish_to_tpt()` raised `FileNotFoundError` before any login/navigation —
+no thumbnail exists for `year7_orientation_unit1` in either
+`releases/thumbnails/` or the tracked `data/units/lead_magnet_source/thumbnails/`,
+and TPT requires one (its own auto-generation fails for zip/pptx uploads).
+This is a different failure mode than the usual accepted TPT session-expiry
+limit — genuinely missing asset, nothing to retry or log as "expected." A
+human needs to add `year7_orientation_unit1_thumbnail.png` to
+`data/units/lead_magnet_source/thumbnails/` (matching the pattern the other
+3 units already use) and then run `python publish_lead_magnets.py --unit
+year7_orientation_unit1 --lesson 4 --platform tpt`.
+
+Queue item marked `[x]` with today's date. No files deleted, no off-brand
+products touched, no strategic changes.
+
+## 2026-09-08 — Scheduled New Unit Production: resumed in-flight "Digital Media & Multimedia Production", TPT still blocked, no new topic started
+
+`data/units/UPCOMING_QUEUE.md`'s first unchecked entry is "Digital Media &
+Multimedia Production", already in-flight since 2026-09-01 (Gumroad + TES
+live, TPT the only gap). Per the queue file's own instruction, resumed this
+item rather than starting a new topic.
+
+Confirmed no concurrent run had touched it first: `git fetch origin main`
+showed no new commits before doing anything, and this file / the queue file
+were re-checked against `origin/main` before the one irreversible step
+attempted below (TPT publish) — nothing to report there.
+
+**Rebuild**: this cloud session had no local build artifacts from the
+2026-09-01 run (ephemeral `releases/`), so re-ran
+`produce_unit.py --unit-config data/units/year7_digital_media_unit1.json`
+fresh — pipeline, QA, thumbnail, and packaging all completed cleanly (QA:
+no AI-leftover language, no `- -` artifacts). This does re-generate lesson
+content via OpenAI each time a fresh cloud session picks this item back up
+(cost, not just time) — worth a human decision on whether to persist
+in-progress `releases/` content to git for in-flight queue items, not just
+finished `_PUBLIC.zip` files, to avoid paying for regeneration mid-flight.
+
+**Spot-checked real content** (not just automated QA, per standing
+instruction and the 2026-07-19 incident): read lesson 1 ("What Is Digital
+Media?") and lesson 4 ("Editing Video: Cuts & Pacing") slide JSON in full,
+and the assessment task markdown. All technically accurate, well-scoped,
+age-appropriate, and on-topic; no leftover AI-generation phrasing. Viewed
+the regenerated thumbnail image directly — renders cleanly, en dash intact
+(the 2026-09-01 Linux-font fallback fix held up on a fresh container).
+
+**Gumroad + TES re-verified, not re-published** (re-publishing would risk
+a duplicate TES draft, and Gumroad's own duplicate-title guard would just
+refuse it anyway): `verify_gumroad_listings.py --keyword "Digital Media"`
+→ 1 product checked, `[OK]`, still published
+(`https://focuslabdigital.gumroad.com/l/xmhbi`).
+`verify_tes_listings.py --keyword "Digital Media"` → 1 resource checked,
+`[OK]` (resource `13559319`). Both confirm the 2026-09-01 publish is still
+live and clean.
+
+**TPT attempt — same accepted limitation, not a new bug**:
+`publish_tpt.py --unit year7_digital_media_unit1 --part all --publish`.
+`TPT_SESSION_JSON` loaded successfully but the logged-in check still
+failed; debug screenshot shows the plain logged-out TPT homepage (not a
+Cloudflare challenge screen this time, but the same end result — no valid
+session). Matches the 2026-08-24 accepted platform limitation exactly: a
+disposable cloud browser can't carry the real-usage trust TPT's Cloudflare
+check wants, so cookie validity alone doesn't help. No `TPT_EMAIL`/
+`TPT_PASSWORD` fallback attempted (deliberately disabled per standing
+policy — blind form-login has triggered bot detection before). Stopped
+after one attempt, did not retry.
+
+**Committed**: `data/units/packaged/year7_digital_media_unit1_v001_PUBLIC.zip`
+(this run's packaged output), so the next session doesn't have to pay for
+regeneration again just to re-attempt the TPT step. No other files
+changed — `releases/` build output stays untracked/ephemeral as usual.
+
+**Not marking `[x]`** — TPT remains the one gap. This item is still
+in-flight, not abandoned; no new topic started this cycle, per the queue
+file's own instruction to finish this one first. Needs a human running
+`publish_tpt.py --unit year7_digital_media_unit1 --part all --publish`
+locally (or from an active session at the always-on machine) to close it
+out — then add the bundle URL to `bundle_urls.json` and fill in the
+marketing-content placeholder before the next cycle picks a new topic.
+
+## 2026-09-07 — Scheduled review: business_review.py + integrity checks across TPT/Gumroad/TES, no new issues found
+
+Report-only scheduled run. `pip install -r requirements.txt` first, as
+usual for a fresh cloud container.
+
+**Revenue (`business_review.py --save`, saved to BUSINESS_REVIEW.md):**
+- TPT: ERROR — session expired. Confirmed same accepted Cloudflare
+  limitation documented above (2026-08-24): a fresh/disposable browser
+  fails TPT's bot challenge regardless of cookie validity. No login
+  workaround attempted, per standing instruction.
+- Gumroad: A$0.00 net, 0 sales.
+- TES: £0.30 net, 1 sale.
+- Combined (not currency-converted): A$0 + £0.30.
+- Catalog: 13 live units (unchanged from 2026-08-31 review): year7_algorithms_unit1,
+  year7_cybersecurity_unit1, year7_data_representation_unit1,
+  year7_databases_unit1, year7_digital_systems_unit1,
+  year7_game_design_unit1, year7_networks_hardware_unit1,
+  year7_orientation_unit1, year7_python_programming_unit1,
+  year7_robotics_physical_computing_unit1, year7_spreadsheets_unit1,
+  year7_ux_design_unit1, year7_web_design_unit1.
+
+**Integrity checks:**
+- `verify_tpt_listings.py --unit <id>` run for all 13 live units: all 13
+  failed with "not logged in to TPT (no valid session found)" /
+  `Could not extract Chrome cookies: 'DBUS_SESSION_BUS_ADDRESS'` — the
+  same accepted platform limit, not a new bug. No workaround attempted.
+- `verify_gumroad_listings.py`: checked 15 products matching "Unit 1" (of
+  21 total). All 15 `[OK]` — no empty descriptions, unrendered markdown,
+  stray HTML, or title/keyword mismatches found.
+- `verify_tes_listings.py`: 38 resources total on the TES dashboard, 24
+  matching "Unit 1" checked. All 24 `[OK]` — no corruption signals found.
+  This checker only matches "Unit 1"-named resources, so it does not
+  re-check the AI-series items carrying the previously logged open
+  issues (the 13432831/13432796 duplicate, the permanently-broken
+  13445828, the presenter-placeholder cosmetic bug) — those are
+  unchanged since last logged and still awaiting human decision, see
+  "Open items" above.
+
+**No new integrity issues found.** No fixes, deletions, or edits made —
+report-only per standing instructions.
+
 ## 2026-09-06 — Interactive session: backfilled and published both bundle-queue items on Gumroad + TES, found and fixed 3 real TES automation bugs, deleted an authorized TES duplicate
 
 Not a scheduled routine run -- continuation of the 2026-09-05 review
@@ -166,6 +574,107 @@ otherwise fully resolved; `data/units/packaged/` now holds all 13
 backfillable units' zips, closing the persistence gap permanently, not
 just for these two bundles.
 
+## 2026-09-09 — Marketing Push: 3 new Pinterest pins posted and verified live for Digital Systems wave 3; Game Design and Python Programming wave 3 drafted but blocked by a newly-hit Pinterest 50-draft account cap
+
+Task: check each live unit's highest existing Pinterest wave (path used:
+`data/units/marketing/<unit_id>_marketing_content.md`, the real git-tracked
+location — the task prompt's own path has already been corrected to this in
+a prior session per the 2026-09-05 entry above), pick 2-3 units most due for
+a fresh wave, draft 3 distinct-angle pins each, post via
+`publish_pinterest.py --unit <id> --wave N`, verify live.
+
+**Selection.** Read every live unit's highest wave heading across all 13
+TPT-live units (`bundle_urls.json`; `year7_digital_media_unit1` again
+excluded — still not TPT-live per the 2026-09-08 entry). algorithms/
+cybersecurity/data_representation sit at wave 3 (2026-08-22/26); databases/
+spreadsheets/web_design got fresh waves 2026-09-02; networks_hardware/
+robotics at wave 2 (2026-08-26). The stalest group by far: digital_systems,
+game_design, orientation, python_programming, ux_design — all still on
+wave 2, posted 2026-08-22, 18 days stale with no wave since. Picked three
+from that group with the richest unused-lesson material for a genuinely
+distinct third angle: **digital_systems**, **game_design**, and
+**python_programming** (left orientation/ux_design for a future wave —
+no other signal to break the tie).
+
+**Drafted new waves**, each following the established 3-pin pattern from
+prior sessions (unused-lesson deep dive, non-specialist pain-point angle,
+dedicated capstone-project pin), angles checked distinct from every prior
+wave in that unit's own file:
+- `year7_digital_systems_unit1` — wave 3: RAM vs storage (Lesson 3, unused),
+  "you don't need a CS degree" (new pain-point angle, distinct from wave 2's
+  "stop building from scratch"), capstone (Lesson 7, designing a computer
+  setup — not previously given its own pin).
+- `year7_game_design_unit1` — wave 3: playtesting & iterating (Lesson 6,
+  unused), "you don't need to know how to code" (new angle, distinct from
+  wave 2's engagement pain point), capstone (Lesson 7, dedicated pin — wave
+  2's "value stack" pin only mentioned it in passing).
+- `year7_python_programming_unit1` — wave 3: loops (Lesson 5, unused),
+  "you don't need a coding background" (new angle, distinct from wave 2's
+  value-stack and term-3 pins), capstone (Lesson 7, dedicated pin).
+
+**Pre-flight**: confirmed `PINTEREST_SESSION_JSON` and `GUMROAD_TOKEN` both
+present; `pip install -r requirements.txt` (not preinstalled this
+container); pip pulled playwright 1.62.0 which doesn't match the
+container's preinstalled Chromium (revision 1194) — matches the
+already-documented mismatch from the 2026-07-31 entries — but this
+project's own `cloud_launch_kwargs()` already handles it (passes
+`executable_path` at `$PLAYWRIGHT_BROWSERS_PATH/chromium`), confirmed
+working with a real launch, no code change needed here. Ran `--dry-run` for
+all three units first; all three parsed and filled cleanly.
+
+**Posted live**: `publish_pinterest.py --unit year7_digital_systems_unit1
+--wave 3` — all 3 pins logged "Submitted". Verified individually (not
+trusting the log line, per longstanding practice in this file): reloaded
+each pin's own URL and checked `document.title` plus the outbound TPT link.
+**All 3 confirmed live**, titles and links (Pinterest's own
+`?utm_source=Pinterest&utm_medium=organic` suffix on the base URL) matching
+the source markdown exactly. Updated that unit's wave-3 heading to record
+this.
+
+**Game Design and Python Programming — NOT posted, real blocker found and
+verified, not just retried blindly.** `publish_pinterest.py --unit
+year7_game_design_unit1 --wave 3` failed twice in a row on the very first
+pin: the title field stayed disabled after the image upload, timing out
+after 30s. Wrote a one-off diagnostic script (not committed) to screenshot
+the pin-creation page after an image upload with no other input — the tool
+itself shows "You have reached the limit of 50 drafts", blocking any new
+pin/image upload account-wide until the draft count drops. Confirmed via a
+second diagnostic that this is a real account-state issue, not a
+content/image problem specific to Game Design: the account's own
+pin-creation-tool sidebar lists 50 stray, never-cleaned-up autosave draft
+entries (going back through this project's Pinterest history — titles from
+Cyber Security, Data Representation, Digital Citizenship wave content), all
+showing "13/30 days until expiry". **Important nuance**: this is a
+*separate* internal draft-autosave queue, not the account's live pins — the
+3 Digital Systems pins that posted successfully in this same run also show
+up in that same draft sidebar (as leftover autosave copies) *and* are
+independently confirmed live on the account's own Created page with
+matching titles/links, so the draft-cap issue blocks new uploads without
+retroactively undoing anything already published.
+
+**Did not delete any drafts** — clearing them would very plausibly fix this
+(there's no other visible way to free a slot short of publishing or
+discarding an existing draft), but the hard boundary in this file is "never
+delete anything on any platform," Pinterest included, and 50 old autosave
+entries are still something on the platform, not local repo cruft. Left
+Game Design's and Python Programming's wave-3 pin copy fully drafted in
+their marketing-content files, headed "NOT YET POSTED — blocked by the
+Pinterest account's 50-draft-slot cap," ready to post as soon as the queue
+is cleared and no redrafting needed.
+
+**Needs a human decision**: clear (or let expire — the listed entries show
+13-30 day countdowns, so this may partly self-resolve, but 50 held steady
+across this run, so don't count on it fully clearing before the next
+scheduled Marketing Push) enough of the 50 stray Pinterest drafts to get
+under the cap, so future waves for Game Design, Python Programming, and any
+other unit posted after them in a batch aren't blocked the same way. Worth
+noting this may have silently capped or delayed other units' pins in past
+runs too — worth a spot check next time someone's at the account directly.
+
+Nothing deleted, no off-brand products touched, no pricing/platform/
+strategy changes — only Pinterest wave content drafted, one unit's 3 pins
+posted and verified, and wave-heading status updates (including marking two
+units' work explicitly not-yet-posted rather than claiming success).
 
 ## 2026-09-05 — Interactive session: reviewed all 4 routines' runs from the past week, fixed 4 real issues found along the way
 

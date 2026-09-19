@@ -90,3 +90,28 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Description**: User stories, design criteria, wireframing, accessibility — a real UX design progression, already planned. This 7-lesson unit has the slides, workbook, and assessment pack ready to go. #uxdesign #teacherspayteachers #digitaltech
 
 **Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+## Pinterest pins — wave 3 (2026-09-16, drafted — not yet posted)
+
+New angles for the third Pinterest posting batch — wave 1 was generic bundle/lesson-pack/free-sample promo, wave 2 covered paper prototyping (L5), the value stack, and a "build it yourself" pain point. This wave pivots to a previously-unused standout lesson (accessibility), a dedicated capstone pin (L7, not previously given its own pin), and a distinct non-specialist pain point.
+
+### Pin 1 (standout lesson — accessibility & inclusive design)
+**Title** (67 chars): Accessibility & Inclusive Design: The UX Lesson Every Student Needs
+
+**Description**: Where should the button go, and how big does the tap target need to be? This ready-to-teach lesson covers accessibility and inclusive design principles Year 7 students can apply immediately. Part of a complete 7-lesson UX & Interface Design unit with workbook and assessment pack. #accessibility #uxdesign #inclusivedesign #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+### Pin 2 (capstone project)
+**Title** (53 chars): The UX Capstone: Students Design a Real App Interface
+
+**Description**: The final lesson has students design a real app interface for a real scenario — user stories, wireframes, and accessibility choices all coming together. Comes complete with the other 6 lessons, a student workbook, unit roadmap, and full assessment pack with rubric. #uxdesign #projectbasedlearning #appdesign #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
+
+### Pin 3 (pain point — non-designer teacher)
+**Title** (49 chars): Teach UX Design Without Being a Designer Yourself
+
+**Description**: You don't need a design portfolio to teach this well — user stories, design criteria, wireframing, and accessibility are broken down into clear, ready-to-teach lessons with a student workbook and full assessment pack already built. #uxdesign #digitaltechnologies #teacherspayteachers
+
+**Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
