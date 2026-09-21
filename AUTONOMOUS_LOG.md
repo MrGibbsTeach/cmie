@@ -49,6 +49,67 @@ session, not just when asked.
 
 (entries below this line, newest first)
 
+## 2026-09-21 — Scheduled review: business_review.py + integrity checks — new TES sale since last check, everything else steady
+
+Report-only scheduled run (`business_review.py --save`, then
+`verify_tpt_listings.py --unit <id>` per live unit,
+`verify_gumroad_listings.py`, `verify_tes_listings.py`). Fresh container:
+`pip install -r requirements.txt` first, as usual.
+
+**Revenue.** First `business_review.py --save` pass errored on TES
+("TES login failed... check releases/debug_tes_login_error.png" — the
+same misleading-message code path noted in the 2026-08-28 entry, since
+`releases/` never exists in this container). Re-ran `check_revenue.py
+--platform tes --headless` directly and it succeeded on the very next
+attempt using the same `.tes_session.json`, and `verify_tes_listings.py`
+also logged in fine moments later — confirms this was the known
+intermittent TES-login flake (same pattern as 2026-08-28), not a new
+break. Re-ran `business_review.py --save` once more so the saved
+`BUSINESS_REVIEW.md` carries the real numbers instead of the flake:
+- **TPT**: ERROR — session expired, the accepted Cloudflare limitation
+  (2026-08-24). No login workaround attempted.
+- **Gumroad**: A$0.00 net, 0 sales (API check via `GUMROAD_TOKEN`).
+- **TES**: **£6.29 net, 2 sales** — up from the £0.30 / 1 sale figure
+  confirmed 2026-09-17 from the user's own dashboard screenshot ("data up
+  to date as of 16 Sep 2026"). The TES balance widget itself shows
+  "Updated: 18 Sep 2026 11:07", so a new sale landed between 16 and 18
+  Sep, worth ~£5.99 net. Tried to pin down which resource: the
+  dashboard's "Resource popularity" widget and the visible
+  `resource-management/uploads` table only show downloads/views, not
+  per-sale earnings, and the CSV sales-data export is a JS-triggered
+  download, not a plain link — `check_revenue.py`'s `by_product`
+  extraction came back empty. **Could not identify the specific resource
+  or exact sale date/amount from the automated check** — the user's own
+  TES dashboard (Sales tab, or the CSV export) has the detail this script
+  can't currently reach.
+- Catalog: 13 live units, unchanged since 2026-09-07.
+
+**Integrity checks:**
+- `verify_tpt_listings.py --unit <id>` for all 13 live units: all 13 failed
+  with "not logged in to TPT (no valid session found)" /
+  `Could not extract Chrome cookies: 'DBUS_SESSION_BUS_ADDRESS'` — same
+  accepted platform limit as every prior cloud run. No workaround
+  attempted.
+- `verify_gumroad_listings.py`: checked 15 products matching "Unit 1" (of
+  22 total in the store, up from 21 on 2026-09-14 — consistent with the
+  2026-09-19 flagship-bundle launch already logged, not a new item). All
+  15 `[OK]`, no corruption signals.
+- `verify_tes_listings.py`: 41 resources total on the dashboard (up from
+  39 on 2026-09-14, same reason — the 2026-09-18 lead magnet and
+  2026-09-19 bundle launch), 24 matching "Unit 1" checked. All 24 `[OK]`.
+  As always, this keyword filter doesn't re-touch the AI-series items
+  carrying the already-logged open issues below; the resource-management
+  table only renders ~10 rows per page (newest first) in this session, so
+  the older duplicate/broken IDs weren't independently re-confirmed this
+  run either way — no evidence of change, just not re-checked.
+
+**No new integrity issues found.** No fixes, deletions, or edits made.
+Carried-forward open items (TES AI-series presenter-placeholder cosmetic
+bug, TES duplicate pair 13432831/13432796, permanently-broken TES resource
+13445828, off-brand Gumroad products, shelved AI-series Units 3-8 still
+live on TES) are all unchanged and still awaiting a human decision — see
+`BUSINESS_REVIEW.md`.
+
 ## 2026-09-18 — Resource Drop: Lesson 4 lead magnet for year7_networks_hardware_unit1, TES live, TPT blocked (missing thumbnail)
 
 Task: `data/units/RESOURCE_DROP_QUEUE.md`, first unchecked item —
