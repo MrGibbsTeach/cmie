@@ -8,7 +8,7 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
 
 - [x] Robotics & Physical Computing — done 2026-08-22 (year7_robotics_physical_computing_unit1)
 - [x] Databases: Organising and Querying Data — done 2026-08-26 (year7_databases_unit1)
-- [ ] Digital Media & Multimedia Production (video/audio editing, digital storytelling)
+- [x] Digital Media & Multimedia Production (video/audio editing, digital storytelling) — done 2026-09-21 (year7_digital_media_unit1, TPT finished — see log below)
 
 ## Format for each unit (matches the existing 10-unit catalog)
 
@@ -33,6 +33,31 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
 ## Log
 
 (the job appends a line here each time it completes or skips a cycle)
+
+- 2026-09-21: **Finished from a local session** — confirmed the "TPT
+  blocked in cloud containers by Cloudflare" limitation is genuinely
+  container-specific, not account-specific: this local session had
+  already run 12 unrelated TPT publishes earlier the same day with zero
+  issue. No `releases/public/year7_digital_media_unit1_v001/` tree
+  existed locally (fresh working tree since the last cloud run), but
+  `data/units/packaged/year7_digital_media_unit1_v001_PUBLIC.zip` had the
+  full customer content persisted, so it was extracted locally rather
+  than regenerated (zero OpenAI cost). No per-lesson raw JSON persists
+  outside a pipeline run, so per-lesson/assessment/bundle TPT listings
+  were rebuilt from `listing_generator.py`'s own builder functions using
+  just each lesson's title from the unit config (`_build_lesson_listing_lines`,
+  `_build_unit_listing_lines`, `generate_assessment_listing`) — same
+  building blocks every other live unit's listing used, just without the
+  richer essential-question/objectives text that only exists mid-pipeline.
+  Built the 7 lesson + assessment + bundle zips via `package_unit.py` and
+  a thumbnail via `thumbnail.py`, then `publish_tpt.py --part all
+  --publish`. All 9 parts live; lesson03 failed once ("Please upload a
+  downloadable file") and succeeded on the script's built-in retry —
+  verified via `verify_tpt_listings.py --keyword "Capturing Footage"` that
+  this did NOT leave a duplicate (exactly 1 product found), matching the
+  project's standing rule to always verify a retry-after-failure rather
+  than assume it's clean. Bundle URL added to `bundle_urls.json`. Digital
+  Media is now live on all 3 platforms.
 
 - 2026-09-15: Continuation of the in-flight "Digital Media & Multimedia
   Production" item — TPT is still the only remaining piece, blocked by the
