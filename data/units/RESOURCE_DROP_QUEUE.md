@@ -57,8 +57,65 @@ produced by Routine 2 from 2026-09-05 onward is automatically
 bundle-ready (no extra step) since `package_unit.py` now persists every
 unit's zip as it's built.
 
-- [x] "Programming Foundations" bundle: Algorithms & Programming Logic + Introduction to Programming (Python) — Gumroad live 2026-09-06 (`focuslabdigital.gumroad.com/l/lfpgti`, $19.99 AUD), TES live 2026-09-06 (resource `13566130`, £14.99); TPT pending, human needs to run: `TPT_BUNDLE_PRICE=44.99 python publish_tpt.py --unit programming_foundations_bundle --part bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish`
-- [x] "Staying Safe Online" bundle: Cyber Security & Digital Footprints + Networks & Hardware — Gumroad live 2026-09-06 (`focuslabdigital.gumroad.com/l/xteifx`, $19.99 AUD), TES live 2026-09-06 (resource `13566132`, £14.99); TPT pending, human needs to run: `TPT_BUNDLE_PRICE=44.99 python publish_tpt.py --unit staying_safe_online_bundle --part bundle --tags "Lessons, Activities, Career and Technical Education, Critical Thinking and Problem Solving" --publish`
+- [x] "Programming Foundations" bundle: Algorithms & Programming Logic + Introduction to Programming (Python) — Gumroad live 2026-09-06 (`focuslabdigital.gumroad.com/l/lfpgti`, $19.99 AUD), TES live 2026-09-06 (resource `13566130`, £14.99); **TPT live 2026-09-21, $44.99** — https://www.teacherspayteachers.com/Product/Programming-Foundations-Bundle-2-Unit-Digital-Technologies-Bundle-14-Lessons-17707144 (title shows truncated at TPT's 80-char field limit, missing the closing "Total)" — cosmetic, root cause fixed in `make_bundle.py` for all bundles built afterward, not worth re-publishing this one over)
+- [x] "Staying Safe Online" bundle: Cyber Security & Digital Footprints + Networks & Hardware — Gumroad live 2026-09-06 (`focuslabdigital.gumroad.com/l/xteifx`, $19.99 AUD), TES live 2026-09-06 (resource `13566132`, £14.99); **TPT live 2026-09-21, $44.99** — https://www.teacherspayteachers.com/Product/Staying-Safe-Online-Bundle-2-Unit-Digital-Technologies-Bundle-14-Lessons-17707152 (same title-truncation cosmetic issue as above)
+
+## 10 more 2-unit bundles (2026-09-21) — TPT live, Gumroad/TES not yet published
+
+Built strategically per user direction: pair units so each bundle maps to a
+real strand of the Australian Curriculum v9 Digital Technologies syllabus
+(Knowledge and Understanding; Processes and Production Skills), cross-mapped
+to CSTA (US) and KS3 Computing (UK) so the same bundle reads as on-curriculum
+in all 3 markets — timed for the AU Term 1 2027 planning window (AU teachers
+plan Nov–Jan for a late-Jan start) which is active now (today: 2026-09-21),
+while also fitting US/UK back-to-school and new-semester search intent.
+All 10 built via `make_bundle.py` (reuses existing packaged unit zips, zero
+new content generation), all live on **TPT at $44.99** the same session:
+
+1. **Start of Year Digital Technologies** (Orientation + Digital Systems) — the flagship of the 10, direct "start of the year" match — https://www.teacherspayteachers.com/Product/Start-of-Year-Digital-Technologies-Year-7-2-Unit-Bundle-14-Lessons-17707184
+2. **Data & Databases** (Data Representation + Databases) — https://www.teacherspayteachers.com/Product/Data-Databases-Year-7-2-Unit-Bundle-14-Lessons-17707194
+3. **Web Design & UX** (Web Design + UX Design) — https://www.teacherspayteachers.com/Product/Web-Design-UX-Year-7-2-Unit-Bundle-14-Lessons-17707204
+4. **Game Design & Coding** (Game Design + Python Programming) — https://www.teacherspayteachers.com/Product/Game-Design-Coding-Year-7-2-Unit-Bundle-14-Lessons-17707217
+5. **Robotics & Algorithms** (Robotics & Physical Computing + Algorithms) — https://www.teacherspayteachers.com/Product/Robotics-Algorithms-Year-7-2-Unit-Bundle-14-Lessons-17707229
+6. **AI Literacy & Cyber Security** (AI Literacy + Cyber Security) — https://www.teacherspayteachers.com/Product/AI-Literacy-Cyber-Security-Yr-7-2-Unit-Bundle-14-Lessons-17707248
+7. **Digital Media & UX Design** (Digital Media + UX Design) — https://www.teacherspayteachers.com/Product/Digital-Media-UX-Design-Year-7-2-Unit-Bundle-14-Lessons-17707262
+8. **Data Skills & AI Literacy** (Spreadsheets & Data Analysis + AI Literacy) — https://www.teacherspayteachers.com/Product/Data-Skills-AI-Literacy-Year-7-2-Unit-Bundle-14-Lessons-17707274
+9. **Computer Systems & Networks** (Digital Systems + Networks & Hardware) — https://www.teacherspayteachers.com/Product/Computer-Systems-Networks-Yr-7-2-Unit-Bundle-14-Lessons-17707285
+10. **Creative Media & Game Design** (Digital Media + Game Design) — https://www.teacherspayteachers.com/Product/Creative-Media-Game-Design-Yr-7-2-Unit-Bundle-14-Lessons-17707298
+
+Unit reuse across bundles is deliberate (e.g. Digital Systems appears in
+bundles 1 and 9, AI Literacy in 6 and 8) — same standard TPT practice as any
+seller building multiple bundles off one catalog; no unit had to be
+duplicated in content, only re-packaged.
+
+**Two real bugs found and fixed in `make_bundle.py` while building these**
+(both apply to every bundle built from now on, including the 2 already-live
+ones above, which weren't re-published to fix retroactively):
+1. **Title truncation**: TPT's product-name field silently cuts off past 80
+   chars. The old title format (`"{title} — N-Unit Digital Technologies
+   Bundle (N Lessons Total)"`) ran to ~88 chars for a typical bundle name,
+   so both `programming_foundations_bundle` and `staying_safe_online_bundle`
+   shipped with the closing `Total)` cut off. Shortened the format and
+   dropped the em dash (also rendered wrong in TPT's field) — new bundles'
+   titles fit comfortably under 80 chars.
+2. **False "cheaper than buying separately" claim**: the template's
+   "Why bundle over buying separately" copy claimed the bundle costs less
+   than buying each unit's bundle individually. At $44.99 that's false — two
+   separate unit-bundles cost $25.98 ($12.99 x2), and even the full à la
+   carte lesson price for 2 units is ~$42. Removed the savings claim
+   entirely; replaced with a "Why this bundle" section pitching convenience
+   (one download vs two) and a genuine "Curriculum alignment" section citing
+   the actual ACARA v9 strand names plus CSTA/KS3 mapping. This means the 2
+   already-live bundles above still carry the old, now-inaccurate "costs
+   less" claim in their TPT listing — worth a human call on whether to
+   correct those live descriptions.
+
+**Not yet done for these 10**: Gumroad and TES publishing (existing 2-unit
+bundles went to all 3 platforms; these 10 only went to TPT per this
+session's explicit instruction to prioritize TPT). `publish_gumroad.py
+--unit <bundle_id> --price 19.99` and `publish_tes.py --unit <bundle_id>
+--price 14.99 --publish` will work unmodified for all 10 (same pseudo
+unit_id resolution as the 2 existing bundles) whenever that's wanted.
 
 ## Log
 

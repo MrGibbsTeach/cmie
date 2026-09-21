@@ -148,17 +148,40 @@ def build_listing(bundle_id: str, title: str, unit_ids: list[str],
 
     n_units = len(unit_ids)
     n_lessons = sum(len(cfg.get("topics", [])) for cfg in configs)
-    display_title = f"{title} — {n_units}-Unit Digital Technologies Bundle ({n_lessons} Lessons Total)"
+    # TPT silently truncates the product-name field at 80 chars (found
+    # 2026-09-21 -- the old "{title} -- N-Unit Digital Technologies Bundle
+    # (N Lessons Total)" format ran to ~88 chars and shipped live titles
+    # cut off mid-word, e.g. "...(14 Lessons" with no closing paren). Kept
+    # short and ASCII-only (TPT's title field also mangled the em dash).
+    display_title = f"{title} | {n_units}-Unit Bundle, {n_lessons} Lessons"
+    # Deliberately no "save money" / "cheaper than buying separately" claim
+    # here -- at this bundle's price point that isn't always true (found
+    # 2026-09-21: two units bought as separate unit-bundles can cost less
+    # than this bundle), so the value pitch is complete-package convenience
+    # and curriculum coverage, never a discount claim the price doesn't
+    # actually back up.
     short_desc = (
-        f"Save time and money with this {n_units}-unit bundle: "
+        f"A {n_units}-unit, {n_lessons}-lesson Digital Technologies bundle for "
+        "the start of the school year (Term 1 in Australia; back-to-school/new "
+        "semester in the US and UK): "
         + " + ".join(cfg.get("title", cfg["unit_id"]).split(":")[0] for cfg in configs)
         + f". {n_lessons} ready-to-teach lessons, full assessment packs, "
-        "student workbooks, and teacher guides -- no prep required."
+        "student workbooks, unit roadmaps, and teacher guides in one download "
+        "-- no prep required."
     )
     why_line = (
-        f"Bundling these {n_units} units together costs less than buying each "
-        "unit's bundle individually -- same content, no prep difference, "
-        "just fewer separate purchases and a lower total price."
+        "One download instead of hunting down two separate units -- consistent "
+        "formatting, sequencing, and assessment style across both, so planning "
+        "the term takes one purchase, not several."
+    )
+    curriculum_line = (
+        "Aligned to the Australian Curriculum v9 Digital Technologies strands "
+        "(Knowledge and Understanding; Processes and Production Skills -- "
+        "investigating and defining, generating and designing, producing and "
+        "implementing, evaluating, collaborating and managing) and mapped to "
+        "equivalent US (CSTA K-12 CS Standards) and UK (KS3 Computing National "
+        "Curriculum) strands, so it fits a standard scope-and-sequence in any "
+        "of the three curricula. Suits Year 7 / Grade 7, Middle School / KS3."
     )
 
     body_lines = [
@@ -172,7 +195,10 @@ def build_listing(bundle_id: str, title: str, unit_ids: list[str],
         "",
         *outcome_lines,
         "",
-        "Why bundle over buying separately:",
+        "Curriculum alignment:",
+        curriculum_line,
+        "",
+        "Why this bundle:",
         why_line,
     ]
 
