@@ -106,6 +106,8 @@ def build_search_plan(unit_id: str) -> list[dict]:
     # wording has drifted from the current config.
     subtitle = re.split(r"[–—-]", buggy_short)[-1].strip()
 
+    disambiguate = subtitle[:20] if subtitle else correct_short[:20]
+
     plan = []
     for i, topic in enumerate(topics, start=1):
         lesson_title = topic["title"] if isinstance(topic, dict) else topic
@@ -115,6 +117,14 @@ def build_search_plan(unit_id: str) -> list[dict]:
             "kind": "lesson",
             "lesson_num": i,
             "search_keyword": lesson_title[:16],
+            # Some lesson-title prefixes are generic enough to collide
+            # across units (found 2026-09-21: "Designing a Data" matches
+            # both Databases' "Designing a Database" and Data
+            # Representation's "Designing a Data Encoding Scheme").
+            # Disambiguate by the unit's own subtitle fragment, which the
+            # bug never touched and is still present in every affected
+            # product's live title.
+            "disambiguate": disambiguate,
             "correct_short": correct_short,
         })
 
@@ -127,10 +137,9 @@ def build_search_plan(unit_id: str) -> list[dict]:
         # every lesson product too (they all still carry the same buggy
         # "Unit 1 - Subtitle" segment) -- search the generic "Assessment
         # Pack" phrase instead (small, fixed result set across the whole
-        # catalog) and disambiguate locally by the unit-specific subtitle
-        # fragment, which the bug never touched.
+        # catalog) and disambiguate locally the same way.
         "search_keyword": "Assessment Pack",
-        "disambiguate": subtitle[:20] if subtitle else correct_short[:20],
+        "disambiguate": disambiguate,
         "correct_short": correct_short,
     })
     return plan
@@ -199,24 +208,42 @@ def main() -> None:
         _login(page, context, email, password)
 
         for item in full_plan:
-            def _search(keyword: str) -> list[dict]:
+            def _search(keyword: str, require_disambiguate: bool = True, require_startswith: bool = False) -> list[dict]:
                 raw = find_unit_product_urls(page, keyword)
                 # Never touch lead-magnet ("FREE Sample") products --
                 # different title format entirely, unaffected by this bug.
                 out = [p for p in raw if "free" not in p["t"].lower()]
-                if item["kind"] == "assessment":
+                if require_disambiguate:
                     out = [p for p in out if item["disambiguate"] in p["t"]]
+                if require_startswith:
+                    out = [p for p in out if p["t"].startswith(keyword)]
                 return out
 
             matches = _search(item["search_keyword"])
             # Lesson-title wording can drift further than a short prefix
             # survives (found 2026-09-21: config "Debugging: Finding and
             # Fixing Logic Errors" vs live "Debugging Logic Errors") --
-            # retry once with just the first word before giving up.
+            # retry once with just the first word before giving up. Still
+            # requires disambiguate -- a short first word alone
+            # (`.includes()` matches anywhere in the title, not just the
+            # start) is dangerous without it: "Adding" alone matched
+            # Digital Media's unrelated ".. and Adding Music or Sound
+            # Effects" lesson, found live 2026-09-21 via dry-run before
+            # any edit was made.
             if len(matches) == 0 and item["kind"] == "lesson":
                 first_word = item["search_keyword"].split(":")[0].split(" ")[0]
                 if first_word and first_word != item["search_keyword"]:
                     matches = _search(first_word)
+            # A title truncated hard enough to drop even the unit
+            # subtitle (found 2026-09-21 on 3 AI Literacy lessons, whose
+            # own topic titles run close to 80 chars alone) means the
+            # disambiguate filter can never match -- retry once without
+            # it, but require the match to START with the full-length
+            # keyword (never the short first-word fallback) as the
+            # substitute safety net, so an incidental mid-title substring
+            # can never qualify.
+            if len(matches) == 0:
+                matches = _search(item["search_keyword"], require_disambiguate=False, require_startswith=True)
 
             if len(matches) != 1:
                 status = f"SKIPPED ({len(matches)} non-free matches for '{item['search_keyword']}')"
