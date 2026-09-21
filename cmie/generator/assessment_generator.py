@@ -22,7 +22,8 @@ def ensure_openai_client() -> OpenAI:
     """
     Return an OpenAI client. Assumes OPENAI_API_KEY is set in environment.
     """
-    return OpenAI()
+    from cmie.cost_tracker import wrap_client
+    return wrap_client(OpenAI(), context="assessment generation")
 
 
 def _load_json(path: Path) -> Dict[str, Any]:

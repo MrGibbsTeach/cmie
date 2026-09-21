@@ -29,7 +29,8 @@ def ensure_openai_client() -> OpenAI:
     """
     Return an OpenAI client. Requires OPENAI_API_KEY in environment.
     """
-    return OpenAI()
+    from cmie.cost_tracker import wrap_client
+    return wrap_client(OpenAI(), context="lesson generation")
 
 
 # Control characters other than \n and \t. \x0b (vertical tab) and \x0c

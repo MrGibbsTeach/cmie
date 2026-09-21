@@ -6,7 +6,8 @@ from openai import OpenAI
 
 
 def ensure_openai_client() -> OpenAI:
-    return OpenAI()
+    from cmie.cost_tracker import wrap_client
+    return wrap_client(OpenAI(), context="marketing generation")
 
 
 def _collect_lesson_summaries(lessons_dir: Path) -> List[Dict[str, Any]]:
