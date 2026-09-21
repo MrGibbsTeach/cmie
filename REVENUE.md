@@ -61,3 +61,16 @@ New product: **"The Complete Digital Technologies Curriculum"** (`complete_digit
 - TES: £149.00, TES-PAID licence, verified live via direct public-page load — https://www.tes.com/teaching-resource/resource-13579629
 
 No sales yet (published today). This realizes the 2026-08-27 standing flag ("build a full-curriculum bundle offer... $150-500") — see project memory for full build detail and one open item (a stray draft duplicate on TES from a follow-up metadata-fix attempt, not deleted per standing no-delete-without-authorization policy).
+
+## 2026-09-21 — Mid-tier 2-unit bundle line: 12 live on TPT at $44.99 (no sales yet)
+
+Fills the price gap between single-unit bundles ($12.99) and the $199
+flagship: finished the 2 previously-pending 2-unit bundles (Programming
+Foundations, Staying Safe Online — built 2026-09-06, TPT publish had been
+blocked by the harness's auto-mode classifier in that session) and built 10
+more from scratch, all reusing existing packaged unit content (zero new
+OpenAI generation cost). All 12 now live on TPT at $44.99 — full list and
+strategy (ACARA v9 strand pairing, AU Term 1 2027 timing) in
+`data/units/RESOURCE_DROP_QUEUE.md`'s "10 more 2-unit bundles" section.
+No sales yet (published today). Gumroad/TES not yet done for the 10 new
+ones — TPT was this session's explicit priority.
