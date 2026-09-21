@@ -35,8 +35,19 @@ def _slug_to_title(slug: str) -> str:
 
 
 def extract_unit_short_title(unit_title: str) -> str:
+    # Real unit titles follow "<Topic Name>: Unit N - <Subtitle>" (e.g.
+    # "Algorithms & Programming Logic: Unit 1 - Thinking Like a
+    # Programmer") -- the topic name before the colon is the actual
+    # searchable keyword, not the "Unit N - ..." part after it. This used
+    # to take split(":")[-1], which dropped the topic name entirely and
+    # shipped live lesson/assessment listings titled just "Unit 1 -
+    # Thinking Like a Programmer" with no mention of what the unit is
+    # about (found 2026-09-21, confirmed live on the real TPT dashboard --
+    # affects most of the catalog since most titles use this colon
+    # format; titles with no colon, e.g. "Digital Media Unit 1 - ...",
+    # were never affected).
     if ":" in unit_title:
-        return unit_title.split(":")[-1].strip()
+        return unit_title.split(":")[0].strip()
     return unit_title.strip()
 
 
