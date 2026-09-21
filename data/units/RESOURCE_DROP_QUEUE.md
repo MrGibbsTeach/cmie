@@ -110,12 +110,38 @@ ones above, which weren't re-published to fix retroactively):
    less" claim in their TPT listing — worth a human call on whether to
    correct those live descriptions.
 
-**Not yet done for these 10**: Gumroad and TES publishing (existing 2-unit
-bundles went to all 3 platforms; these 10 only went to TPT per this
-session's explicit instruction to prioritize TPT). `publish_gumroad.py
---unit <bundle_id> --price 19.99` and `publish_tes.py --unit <bundle_id>
---price 14.99 --publish` will work unmodified for all 10 (same pseudo
-unit_id resolution as the 2 existing bundles) whenever that's wanted.
+**Gumroad + TES done 2026-09-21 (same session, on request)** — all 10 now
+live on all 3 platforms, $44.99 USD (TPT) / $19.99 AUD (Gumroad) / £14.99
+GBP (TES):
+
+| Bundle | Gumroad | TES |
+|---|---|---|
+| Start of Year Digital Technologies | `focuslabdigital.gumroad.com/l/adwpm` | resource `13582679` |
+| Data & Databases | `l/trnve` | `13582682` |
+| Web Design & UX | `l/igewsf` | `13582683` |
+| Game Design & Coding | `l/zdqiia` | `13582684` |
+| Robotics & Algorithms | `l/kcmrfk` | `13582686` |
+| AI Literacy & Cyber Security | `l/tfjtb` | `13582689` |
+| Digital Media & UX Design | `l/vxgpfn` | `13582690` |
+| Data Skills & AI Literacy | `l/qeqvo` | `13582691` |
+| Computer Systems & Networks | `l/yxsdh` | `13582693` |
+| Creative Media & Game Design | `l/duhaor` | `13582694` |
+
+Gumroad: all 10 confirmed via the publish script's own post-upload reload
+check (`Verified after reload: <bundle>_v001_PUBLIC | ZIP... | Download`),
+no manual publish step needed (Gumroad products are live on creation).
+TES: `.tes_session.json` had expired: the first call (`start_of_year_bundle`)
+fell back to form login (`TES_EMAIL`/`TES_PASSWORD`) and refreshed the
+session file, all 9 after that used the refreshed session directly. All 10
+completed the full 5-step wizard through "Publish now" and landed on the
+`.../published` URL — genuinely live, not drafts. TES word-trims titles at
+60 chars at a word boundary (`_truncate_at_word_boundary`, pre-existing,
+not a bug) — 6 of the 10 titles run past that and show trimmed (e.g. "...14
+Lessons" loses "Lessons"); reads fine, not worth shortening retroactively.
+No spot-check re-verification run afterward (`verify_gumroad_listings.py` /
+`verify_tes_listings.py`) — the publish scripts' own inline post-write
+checks were treated as sufficient given all 10 succeeded identically on both
+platforms with no anomalies.
 
 ## Log
 

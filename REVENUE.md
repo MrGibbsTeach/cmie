@@ -72,5 +72,7 @@ more from scratch, all reusing existing packaged unit content (zero new
 OpenAI generation cost). All 12 now live on TPT at $44.99 — full list and
 strategy (ACARA v9 strand pairing, AU Term 1 2027 timing) in
 `data/units/RESOURCE_DROP_QUEUE.md`'s "10 more 2-unit bundles" section.
-No sales yet (published today). Gumroad/TES not yet done for the 10 new
-ones — TPT was this session's explicit priority.
+No sales yet (published today). **Update same day**: Gumroad and TES done
+for all 10 new bundles too — full catalog of 12 two-unit bundles is now
+live on all 3 platforms ($44.99 TPT / $19.99 AUD Gumroad / £14.99 GBP TES).
+IDs/URLs for the Gumroad + TES side in `data/units/RESOURCE_DROP_QUEUE.md`.
