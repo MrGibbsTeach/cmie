@@ -15,8 +15,8 @@ standalone lesson (not one that depends on earlier lessons to make sense).
 - [x] year7_algorithms_unit1 — Lesson 5 (Debugging: Finding and Fixing Logic Errors) — 2026-08-20
 - [x] year7_cybersecurity_unit1 — Lesson 3 (Spotting Phishing and Social Engineering) — 2026-08-21
 - [x] year7_web_design_unit1 — Lesson 6 (Accessibility and Responsive Design Basics) — 2026-08-28
-- [x] year7_orientation_unit1 — Lesson 4 (Passwords, Privacy, and Protecting Your Information) — 2026-09-11
-- [x] year7_networks_hardware_unit1 — Lesson 4 (How Data Travels Across a Network) — 2026-09-18
+- [x] year7_orientation_unit1 — Lesson 4 (Passwords, Privacy, and Protecting Your Information) — 2026-09-11, **TPT finished 2026-09-21** (was blocked on a missing thumbnail, generated it and published — https://www.teacherspayteachers.com/Product/Passwords-Privacy-and-Protecting-Your-Information-Lesson-4-FREE-Sample-17708696)
+- [x] year7_networks_hardware_unit1 — Lesson 4 (How Data Travels Across a Network) — 2026-09-18, **TPT finished 2026-09-21** (same missing-thumbnail fix — https://www.teacherspayteachers.com/Product/How-Data-Travels-Across-a-Network-Lesson-4-FREE-Sample-Networks-Hardware-17708703)
 - [ ] year7_data_representation_unit1 — Lesson 5 (Images as Data: Pixels and Bitmaps)
 - [ ] year7_spreadsheets_unit1 — Lesson 4 (Charts and Graphs: Visualizing Data)
 - [ ] year7_robotics_physical_computing_unit1 — Lesson 4 (Using Sensor Data to Make Decisions)
@@ -146,6 +146,31 @@ platforms with no anomalies.
 ## Log
 
 (the job appends a line here each time it completes or skips a cycle)
+
+- 2026-09-21: **Closed the free-lead-magnet gap** — 5 of 15 units had no
+  Lesson-1 free sample at all (Orientation, Robotics & Physical Computing,
+  Databases, Digital Media, AI Literacy). Built and published all 5, TPT
+  + TES, genuinely free ($0.00 / "Share for free" tab confirmed in the
+  publish logs, not the known £1.00 TES paid-minimum bug). TES had a
+  genuine intermittent flake mid-run (`Locator.select_option: Timeout
+  30000ms exceeded` waiting on `#main-age-range`, page stuck on Step 2)
+  — happened 5-6 times across the 5 units, always resolved on a plain
+  retry with no code change needed, consistent with the standing "TES
+  login intermittent flake" pattern already logged elsewhere in this
+  project (this is the same flake class showing up as an upload-step
+  timeout instead of a login failure). Left 5-6 unpublished orphan TES
+  drafts behind from the failed attempts — not deleted, matches this
+  project's standing "duplicate/orphan drafts cost nothing, not public,
+  revisit later" policy. Also found and fixed a real bug in
+  `make_lead_magnet.py`'s title resolution while building these: it reads
+  `<unit_root>/06_Listings/unit/tpt_listing.md` for the CTA slide's unit
+  title, but that folder is deliberately stripped from the customer-facing
+  packaged zip (packaging hygiene rule) — so for any unit whose only local
+  source is the packaged zip, the title silently fell back to a raw
+  slug-derived title ("Year7 Orientation Unit1" instead of "Digital
+  Technologies Orientation: Unit 1 – Getting Started for the Year").
+  Worked around per-unit by writing that one-line title file back in
+  after extracting the packaged zip, for all 5 units.
 
 - 2026-09-18: Built + published the Lesson 4 lead magnet for
   year7_networks_hardware_unit1 ("How Data Travels Across a Network" —
