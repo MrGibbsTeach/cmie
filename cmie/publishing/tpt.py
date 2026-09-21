@@ -693,6 +693,55 @@ def replace_product_file(product_id: str, new_zip_path: Path) -> None:
                 xvfb.wait(timeout=5)
 
 
+def edit_product_title(page: Page, product_id: str, new_title: str) -> str:
+    """Edit only the title field on an already-published TPT product,
+    leaving zip/thumbnail/price/description untouched.
+
+    Takes an already-authenticated `page` rather than managing its own
+    browser (unlike replace_product_file) so a caller fixing many products
+    in one run (see fix_short_titles.py, 2026-09-21 -- the
+    extract_unit_short_title() bug that dropped the unit topic name from
+    ~13 units' worth of live lesson/assessment titles) can reuse one login
+    session instead of re-authenticating per product, which would be both
+    slow and more likely to trip TPT's bot detection.
+
+    Raises RuntimeError if TPT's own validation blocked the submit.
+    Otherwise returns the title that was submitted.
+
+    Does NOT verify via a reload -- unlike replace_product_file (a file
+    upload, verifiable immediately), an edit-only submit on this page
+    shows TPT's own message that edited products can take "up to one
+    hour" to propagate, and confirmed live 2026-09-21 that an immediate
+    reload of this same edit page still shows the pre-edit title for a
+    submit that had no validation error at all (i.e. genuinely
+    succeeded). Trusting a reload here produces false failures. Success
+    is judged the same way upload_unit() judges a new-product submit:
+    absence of TPT's "Please select/upload/enter/..." validation-error
+    pattern, not by reading anything back.
+    """
+    edit_url = f"https://www.teacherspayteachers.com/itemsDigital/editNext/{product_id}"
+    page.goto(edit_url, wait_until="domcontentloaded", timeout=20000)
+    page.wait_for_timeout(2500)
+
+    _fill_title(page, new_title)
+    page.wait_for_timeout(500)
+
+    submit = page.locator("#react-submit-section button[type='submit']")
+    if submit.count() == 0:
+        raise RuntimeError(f"Submit button not found on edit page for product {product_id}.")
+    submit.first.scroll_into_view_if_needed(timeout=10000)
+    page.wait_for_timeout(300)
+    submit.first.click()
+    page.wait_for_timeout(3000)
+
+    error_text = page.locator("text=/^Please (select|upload|enter|fix|choose|include|add|provide)/i")
+    if error_text.count() > 0:
+        raise RuntimeError(
+            f"Validation error on product {product_id}: {error_text.first.inner_text()[:200]}"
+        )
+    return new_title
+
+
 # ---------------------------------------------------------------------------
 # Main entry point
 # ---------------------------------------------------------------------------
