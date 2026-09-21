@@ -1,10 +1,10 @@
-# Business Review — 2026-09-14 01:05 UTC
+# Business Review — 2026-09-21 01:13 UTC
 
 ## Revenue
 - **TPT**: ERROR — TPT session expired (.tpt_session.json no longer valid). Refresh it manually once: python publish_tpt.py --save-session (automated form login is disabled here — it has triggered TPT bot detection and an account lock before).
 - **Gumroad**: AUD 0 net, 0 sale(s)
-- **TES**: GBP 0.3 net, 1 sale(s)
-- **Combined (not currency-converted)**: AUD0 + GBP0.3
+- **TES**: GBP 6.29 net, 2 sale(s)
+- **Combined (not currency-converted)**: AUD0 + GBP6.29
 
 ## Catalog — 13 live unit(s)
 - year7_algorithms_unit1
@@ -22,14 +22,14 @@
 - year7_web_design_unit1
 
 ## Recent activity (last 8 commits)
+- 2026-09-19 Merge branch 'main' of https://github.com/MrGibbsTeach/cmie
+- 2026-09-19 Build and launch flagship full-curriculum bundle across TPT, Gumroad, TES
+- 2026-09-18 Resource Drop: Lesson 4 lead magnet for year7_networks_hardware_unit1, TES live
+- 2026-09-17 Fix make_bundle.py missing thumbnail (blocked all TPT bundle publishes), publish both queued bundles, update revenue tracker
+- 2026-09-16 Marketing Push: draft Pinterest wave 3 for UX Design, Orientation, Networks & Hardware
+- 2026-09-15 New Unit Production: resume Digital Media unit, TPT still blocked (3rd cycle)
+- 2026-09-14 Scheduled review: business_review.py + integrity checks, no new issues
 - 2026-09-11 Resource Drop: Lesson 4 lead magnet for year7_orientation_unit1, TES live
-- 2026-09-09 Marketing Push: Digital Systems Pinterest wave 3 live; Game Design/Python Programming wave 3 drafted but blocked by account draft cap
-- 2026-09-08 New Unit Production: resume Digital Media unit, TPT still blocked (accepted limitation)
-- 2026-09-07 Scheduled review: business_review.py + integrity checks, no new issues
-- 2026-09-06 Log stray TES draft cleanup and local git repo recovery
-- 2026-09-06 Backfill packaged zips, publish both queued bundles, fix 3 TES bugs
-- 2026-09-05 Fix Resource Drop bundle gap, add ad-domain blocking, restock queue
-- 2026-09-04 Resource Drop: log Programming Foundations bundle as blocked, not built
 
 ## Open items / decisions waiting on you
 - TES Unit 1 (AI series) still has the presenter-placeholder / 'Unknown' quote cosmetic bug -- TPT side fixed 2026-07-19, TES side not attempted yet (unfamiliar edit flow, real risk of repeating the Networks & Hardware licence-corruption mistake without live oversight).
