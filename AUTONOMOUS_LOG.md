@@ -47,6 +47,22 @@ session, not just when asked.
 
 ---
 
+## 2026-09-22 — New Unit Production: queue empty, nothing to build this cycle
+
+Read `data/units/UPCOMING_QUEUE.md` top-to-bottom per the job's own
+instructions. All 3 entries are already `[x]`: Robotics & Physical
+Computing (done 2026-08-22), Databases: Organising and Querying Data (done
+2026-08-26), and Digital Media & Multimedia Production (done 2026-09-21,
+confirmed fully live on all 3 platforms by the prior local-session run).
+No unchecked entry to build, and the queue file's own instructions say not
+to invent a new topic when the list is exhausted. Stopped without writing
+a unit config, running `produce_unit.py`, or touching any publish script —
+nothing to spot-check, nothing to publish, no concurrency check needed
+since no publish was attempted. Also appended the corresponding line to
+`data/units/UPCOMING_QUEUE.md`'s own `## Log` section for visibility
+there. A human should add a new topic to the queue file before the next
+scheduled cycle if new unit production should continue.
+
 (entries below this line, newest first)
 
 ## 2026-09-21 — Scheduled review: business_review.py + integrity checks — new TES sale since last check, everything else steady

@@ -34,6 +34,13 @@ entry is `[x]`, report "queue empty, nothing to build this cycle" and stop
 
 (the job appends a line here each time it completes or skips a cycle)
 
+- 2026-09-22: **Queue empty, nothing to build this cycle.** All 3 entries
+  above are `[x]`. Per this file's own instructions, did not invent a new
+  topic — stopped without writing a config or touching any publish script.
+  See `AUTONOMOUS_LOG.md`'s 2026-09-22 entry. A human should add a new
+  topic here before the next scheduled cycle if new unit production
+  should continue.
+
 - 2026-09-21: **Finished from a local session** — confirmed the "TPT
   blocked in cloud containers by Cloudflare" limitation is genuinely
   container-specific, not account-specific: this local session had
