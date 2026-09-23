@@ -47,6 +47,62 @@ session, not just when asked.
 
 ---
 
+## 2026-09-23 — Marketing Push: 9 Pinterest pins posted and individually verified live across 3 units, closing out a 2-week backlog — the account-wide 50-draft cap flagged 2026-09-09/2026-09-16 has cleared
+
+Task: check each live unit's highest existing Pinterest wave, pick 2-3
+units most due for a fresh wave, draft 3 distinct-angle pins each, post via
+`publish_pinterest.py --unit <id> --wave N`, verify live.
+
+**Selection — reused already-drafted, never-posted content instead of
+writing more.** Read every unit's wave heading in
+`data/units/marketing/*_marketing_content.md`. Five units already had a
+fully-drafted, verified-good wave 3 sitting unposted, blocked since
+2026-09-09/2026-09-16 by the Pinterest account's 50-draft-slot cap (see
+those two log entries): `year7_game_design_unit1` and
+`year7_python_programming_unit1` (drafted 2026-09-09, 14 days stale),
+plus `year7_networks_hardware_unit1`, `year7_orientation_unit1`, and
+`year7_ux_design_unit1` (drafted 2026-09-16, 7 days stale). Per the same
+reasoning used on 2026-08-26, drafting a new wave on top of content that
+was never actually shown to anyone would skip an audience, not reach a
+new one — so picked the 3 stalest of the 5 (game_design,
+python_programming, networks_hardware) and posted their existing wave 3
+as-is. No new pin copy was written this run. `year7_orientation_unit1`
+and `year7_ux_design_unit1` still have a good, unposted wave 3 ready for
+the next run. `year7_digital_media_unit1` remains excluded (still no live
+TPT bundle URL for it).
+
+**Cap status — confirmed cleared, not assumed.** `pip install -r
+requirements.txt` (not preinstalled this container, same as every prior
+session). `--dry-run` for `year7_ux_design_unit1 --wave 3` — the same pin
+that hung on a disabled title field on both 2026-09-09 and 2026-09-16 —
+completed cleanly through all 3 pins this time, no timeout. Dry-ran all 3
+selected units the same way before touching anything live; all clean.
+
+**Posted and individually verified** (`publish_pinterest.py --unit <id>
+--wave 3`, no `--dry-run`, after a clean dry-run pass for all three
+first):
+- `year7_game_design_unit1` — wave 3 (playtesting/iterating lesson,
+  non-specialist pain point, capstone)
+- `year7_python_programming_unit1` — wave 3 (loops lesson,
+  non-specialist pain point, capstone)
+- `year7_networks_hardware_unit1` — wave 3 (network security lesson,
+  capstone, troubleshooting pain point)
+
+**Verification — did not trust the "Submitted" log lines.** Wrote a
+targeted scratch script (not committed) mirroring the 2026-08-26
+approach: loaded the account's own Created page fresh, scrolled to load
+past the virtualized list, took the 9 newest matching pin ids, and for
+each individually reloaded its own pin URL to check `document.title`
+against the exact source title plus the outbound teacherspayteachers.com
+link. All 9 titles and links matched the source markdown exactly out of
+56 total pins on the account. Updated each of the 3 files' wave-3
+heading to record this.
+
+Nothing deleted, no off-brand products touched, no pricing/platform/
+strategy changes — only pre-existing Pinterest wave content posted and
+its status updated. Committed and pushed directly to `main` per this
+run's instructions (isolated branch, not intended to become a PR).
+
 ## 2026-09-22 — New Unit Production: queue empty, nothing to build this cycle
 
 Read `data/units/UPCOMING_QUEUE.md` top-to-bottom per the job's own

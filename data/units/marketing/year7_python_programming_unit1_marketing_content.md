@@ -91,7 +91,7 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 
 **Link**: https://www.teacherspayteachers.com/Product/Introduction-to-Programming-Unit-1-Writing-Your-First-Python-Programs-Year-17047311
 
-## Pinterest pins — wave 3 (drafted 2026-09-09, NOT YET POSTED — blocked by the Pinterest account's 50-draft-slot cap hit mid-run; see AUTONOMOUS_LOG.md 2026-09-09 entry. Post with `publish_pinterest.py --unit year7_python_programming_unit1 --wave 3` once the account is under the cap, then verify live and update this heading.)
+## Pinterest pins — wave 3 (posted 2026-09-23, live — the 50-draft-slot cap cleared; verified individually via each pin's own page, title + outbound TPT link confirmed)
 
 New angles for the third Pinterest posting batch, distinct from wave 1's generic bundle/lesson-pack/free-sample promos and wave 2's if-statements/value-stack/term-3 angles: an unused-lesson deep dive (Lesson 5, Loops), a non-specialist pain point, and a dedicated capstone-project pin (Lesson 7).
 
