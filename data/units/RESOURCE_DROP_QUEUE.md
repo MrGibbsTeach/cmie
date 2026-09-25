@@ -17,7 +17,7 @@ standalone lesson (not one that depends on earlier lessons to make sense).
 - [x] year7_web_design_unit1 — Lesson 6 (Accessibility and Responsive Design Basics) — 2026-08-28
 - [x] year7_orientation_unit1 — Lesson 4 (Passwords, Privacy, and Protecting Your Information) — 2026-09-11, **TPT finished 2026-09-21** (was blocked on a missing thumbnail, generated it and published — https://www.teacherspayteachers.com/Product/Passwords-Privacy-and-Protecting-Your-Information-Lesson-4-FREE-Sample-17708696)
 - [x] year7_networks_hardware_unit1 — Lesson 4 (How Data Travels Across a Network) — 2026-09-18, **TPT finished 2026-09-21** (same missing-thumbnail fix — https://www.teacherspayteachers.com/Product/How-Data-Travels-Across-a-Network-Lesson-4-FREE-Sample-Networks-Hardware-17708703)
-- [ ] year7_data_representation_unit1 — Lesson 5 (Images as Data: Pixels and Bitmaps)
+- [x] year7_data_representation_unit1 — Lesson 5 (Images as Data: Pixels and Bitmaps) — 2026-09-25, TES live (resource 13586837); TPT blocked, `TPT_SESSION_JSON` expired, accepted platform limit, not retried — a human needs to run `python publish_tpt.py --save-session` then `python publish_lead_magnets.py --unit year7_data_representation_unit1 --lesson 5 --platform tpt`
 - [ ] year7_spreadsheets_unit1 — Lesson 4 (Charts and Graphs: Visualizing Data)
 - [ ] year7_robotics_physical_computing_unit1 — Lesson 4 (Using Sensor Data to Make Decisions)
 - [ ] year7_ux_design_unit1 — Lesson 6 (Accessibility and Inclusive Design)
@@ -146,6 +146,52 @@ platforms with no anomalies.
 ## Log
 
 (the job appends a line here each time it completes or skips a cycle)
+
+- 2026-09-25: Built + published the Lesson 5 lead magnet for
+  year7_data_representation_unit1 ("Images as Data: Pixels and Bitmaps" — a
+  standalone conceptual lesson that doesn't depend on Lessons 1-4's
+  binary/text-encoding build-up). Concurrency check (`git fetch origin
+  main`) found no other run had touched this item first. Source note: no
+  `releases/public/` tree existed locally (fresh container), but
+  `data/units/packaged/year7_data_representation_unit1_v001_PUBLIC.zip`
+  contains the exact `01_Lesson_Slides/` layout `make_lead_magnet.py`
+  expects, so it was extracted locally into
+  `releases/public/year7_data_representation_unit1_v001/` (ephemeral,
+  gitignored, not committed) with a one-line `06_Listings/unit/tpt_listing.md`
+  added from the unit's own title in `year7_data_representation_unit1.json`
+  (no new content generated). Also had to `pip install -r requirements.txt`
+  in this fresh container before `python-pptx` etc. were importable. No
+  thumbnail existed for this unit yet (same gap as the orientation and
+  networks_hardware cycles) — generated one locally with
+  `cmie.publishing.thumbnail.generate_thumbnail()` into the ephemeral
+  `releases/thumbnails/` (not committed, same as `releases/public/`),
+  visually confirmed clean before use. TES: `--publish` run completed
+  successfully end-to-end (login, upload, categories, "Share for free"
+  licence, copyright box, "Publish now") and landed on the `.../published`
+  URL for resource **13586837** — genuinely live.
+  `verify_tes_listings.py --keyword "Pixels and Bitmaps" --lead-magnet-lesson 5`
+  found exactly one matching resource (no duplicate); its "could not find
+  £0.00" finding is the already-documented inherent limitation of that
+  static check (TES's Licence step always renders the "Sell my resource"
+  tab by default on reload) — not a real mispricing signal, the publish
+  log's own "Selected 'Share for free' tab" line is the reliable
+  confirmation. TPT: blocked by the accepted platform limit — no valid
+  `TPT_SESSION_JSON` and no `TPT_EMAIL`/`TPT_PASSWORD` fallback configured
+  in this session, so `publish_lead_magnets.py` correctly refused to submit
+  a blank login form rather than risk bot detection / account lock. This
+  time the thumbnail was generated fresh and is not the blocker — purely
+  session expiry, matching the standing "Cloudflare blocks fresh browser
+  fingerprints regardless of cookie validity" limit already logged
+  repeatedly elsewhere in this project. Not retried, no login attempted. A
+  human needs to run `python publish_tpt.py --save-session` (or otherwise
+  refresh `TPT_SESSION_JSON`) then `python publish_lead_magnets.py --unit
+  year7_data_representation_unit1 --lesson 5 --platform tpt` to finish the
+  TPT half — the thumbnail this run generated is only in the ephemeral
+  `releases/thumbnails/` tree, so that human run should regenerate it too
+  (or a maintainer could commit it under
+  `data/units/lead_magnet_source/thumbnails/` to save the regeneration
+  step, matching the pattern already used for the 3 units with a tracked
+  thumbnail).
 
 - 2026-09-21: **Closed the free-lead-magnet gap** — 5 of 15 units had no
   Lesson-1 free sample at all (Orientation, Robotics & Physical Computing,

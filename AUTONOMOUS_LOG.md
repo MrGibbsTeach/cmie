@@ -47,6 +47,66 @@ session, not just when asked.
 
 ---
 
+## 2026-09-25 — Resource Drop: Lesson 5 lead magnet for year7_data_representation_unit1, TES live, TPT blocked (session expired, accepted limit)
+
+Task: Resource Drop Queue's first unchecked item — a second lead magnet
+for `year7_data_representation_unit1`, Lesson 5 ("Images as Data: Pixels
+and Bitmaps"), a standalone conceptual lesson that doesn't depend on
+Lessons 1-4's binary/text-encoding build-up.
+
+Concurrency check (`git fetch origin main` immediately before publishing)
+found this item still unchecked on `origin/main` — no other run had
+touched it first.
+
+Fresh container, no local `releases/` tree: extracted
+`data/units/packaged/year7_data_representation_unit1_v001_PUBLIC.zip`
+into `releases/public/year7_data_representation_unit1_v001/` (ephemeral,
+gitignored, not committed) — it already contained the exact
+`01_Lesson_Slides/` layout `make_lead_magnet.py` needs. Added a one-line
+`06_Listings/unit/tpt_listing.md` from the unit's own title in
+`year7_data_representation_unit1.json` (packaging hygiene strips that
+folder from the customer-facing zip, same known gap as prior cycles). Ran
+`pip install -r requirements.txt` first (fresh container, `python-pptx`
+etc. not yet importable).
+
+No thumbnail existed for this unit (same gap orientation and
+networks_hardware hit on 2026-09-11/2026-09-18) — generated one directly
+with `cmie.publishing.thumbnail.generate_thumbnail()` into the ephemeral
+`releases/thumbnails/` (not committed), visually confirmed clean (correct
+title, no font/layout issues) before using it.
+
+**TES**: `--publish` run completed successfully end-to-end (login,
+upload, categories, "Share for free" licence, copyright box, "Publish
+now") and landed on the `.../published` URL for resource **13586837** —
+genuinely live. `verify_tes_listings.py --keyword "Pixels and Bitmaps"
+--lead-magnet-lesson 5` found exactly one matching resource (no
+duplicate draft this time); its "could not find £0.00" finding is the
+already-documented inherent limitation of that static check (TES's
+Licence step always renders the "Sell my resource" tab by default on
+reload) — not a real mispricing signal, the publish log's own "Selected
+'Share for free' tab" line is the reliable confirmation.
+
+**TPT**: blocked by the accepted platform limit — no valid
+`TPT_SESSION_JSON` and no `TPT_EMAIL`/`TPT_PASSWORD` fallback configured
+in this session; `publish_lead_magnets.py` correctly refused to submit a
+blank login form rather than risk bot detection / account lock. Notably
+the thumbnail was *not* the blocker this cycle (generated fresh above) —
+purely session expiry, the same Cloudflare-fresh-fingerprint limit
+documented 2026-08-24. Not retried, no login attempted. A human needs to
+run `python publish_tpt.py --save-session` (or otherwise refresh
+`TPT_SESSION_JSON`) then `python publish_lead_magnets.py --unit
+year7_data_representation_unit1 --lesson 5 --platform tpt`. The
+thumbnail this run generated only lives in the ephemeral
+`releases/thumbnails/` tree — that human run will regenerate it
+automatically via the same fallback path, or a maintainer could commit
+it under `data/units/lead_magnet_source/thumbnails/` to skip the
+regeneration step.
+
+Queue item marked done in `data/units/RESOURCE_DROP_QUEUE.md` with
+today's date.
+
+---
+
 ## 2026-09-23 — Marketing Push: 9 Pinterest pins posted and individually verified live across 3 units, closing out a 2-week backlog — the account-wide 50-draft cap flagged 2026-09-09/2026-09-16 has cleared
 
 Task: check each live unit's highest existing Pinterest wave, pick 2-3
