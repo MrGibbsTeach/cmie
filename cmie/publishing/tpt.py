@@ -708,23 +708,39 @@ def edit_product_title(page: Page, product_id: str, new_title: str) -> str:
     Raises RuntimeError if TPT's own validation blocked the submit.
     Otherwise returns the title that was submitted.
 
-    Does NOT verify via a reload -- unlike replace_product_file (a file
-    upload, verifiable immediately), an edit-only submit on this page
-    shows TPT's own message that edited products can take "up to one
-    hour" to propagate, and confirmed live 2026-09-21 that an immediate
-    reload of this same edit page still shows the pre-edit title for a
-    submit that had no validation error at all (i.e. genuinely
-    succeeded). Trusting a reload here produces false failures. Success
-    is judged the same way upload_unit() judges a new-product submit:
-    absence of TPT's "Please select/upload/enter/..." validation-error
-    pattern, not by reading anything back.
+    Verifies by reloading the edit page and reading the stored title back.
+    (The 2026-09-21 version judged success by the absence of a validation
+    error and reported ~90 false "FIXED" results -- see the comment above
+    the thumbnails radio click for the real cause.) Raises RuntimeError if
+    the save did not redirect to /Product/ or the stored title differs.
     """
     edit_url = f"https://www.teacherspayteachers.com/itemsDigital/editNext/{product_id}"
     page.goto(edit_url, wait_until="domcontentloaded", timeout=20000)
-    page.wait_for_timeout(2500)
+    page.wait_for_timeout(4000)
+
+    # The description's first line is the original full listing title, never
+    # touched by the title bug, so it is the ground truth for the lesson
+    # number (a config-position guess once mislabelled a Game Design lesson).
+    try:
+        desc = page.locator('[contenteditable="true"]').first.inner_text(timeout=5000)
+        m_desc = re.search(r"\|\s*Lesson\s+(\d+)", desc.split("\n")[0])
+        if m_desc and re.search(r"\|\s*Lesson\s+\d+\s*$", new_title):
+            new_title = re.sub(r"(\|\s*Lesson\s+)\d+\s*$", rf"\g<1>{m_desc.group(1)}", new_title)
+    except Exception:
+        pass
 
     _fill_title(page, new_title)
     page.wait_for_timeout(500)
+
+    # Root cause of the 2026-09-21 "silent no-save" (found 2026-09-26): the
+    # edit page loads with "Upload thumbnails later" (radio value 3) selected,
+    # and TPT's legacy submit handler (uploadPage.js initSubmitHandler) only
+    # proceeds -- convertManual, then form.submit() -- when "Upload thumbnails
+    # now" (#ItemGenerateThumbnail2) is selected. In any other state the click
+    # only runs the title check and stops, with no error. This is NOT
+    # reCAPTCHA. Existing thumbnails are untouched (all actions "no_action").
+    page.get_by_text("Upload thumbnails now", exact=False).first.click()
+    page.wait_for_timeout(800)
 
     submit = page.locator("#react-submit-section button[type='submit']")
     if submit.count() == 0:
@@ -732,13 +748,21 @@ def edit_product_title(page: Page, product_id: str, new_title: str) -> str:
     submit.first.scroll_into_view_if_needed(timeout=10000)
     page.wait_for_timeout(300)
     submit.first.click()
-    page.wait_for_timeout(3000)
 
-    error_text = page.locator("text=/^Please (select|upload|enter|fix|choose|include|add|provide)/i")
-    if error_text.count() > 0:
-        raise RuntimeError(
-            f"Validation error on product {product_id}: {error_text.first.inner_text()[:200]}"
-        )
+    # A successful save redirects to the public /Product/ page.
+    try:
+        page.wait_for_url(re.compile(r"/Product/"), timeout=45000)
+    except Exception:
+        error_text = page.locator("text=/^Please (select|upload|enter|fix|choose|include|add|provide)/i")
+        detail = error_text.first.inner_text()[:200] if error_text.count() > 0 else "no redirect and no visible validation error"
+        raise RuntimeError(f"Save did not complete for product {product_id}: {detail}")
+
+    # Verify by reading the stored value back, not by absence of an error.
+    page.goto(edit_url, wait_until="domcontentloaded", timeout=20000)
+    page.wait_for_timeout(2500)
+    stored = page.locator('input[name="data[Item][name]"]').first.input_value()
+    if stored.strip() != new_title.strip():
+        raise RuntimeError(f"Title not persisted for product {product_id}: stored {stored!r}, wanted {new_title!r}")
     return new_title
 
 
