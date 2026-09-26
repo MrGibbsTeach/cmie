@@ -247,7 +247,19 @@ def product_id(url: str) -> str | None:
 def read_state(page, pid: str) -> dict:
     page.goto(f"https://www.teacherspayteachers.com/itemsDigital/editNext/{pid}", wait_until="domcontentloaded", timeout=30000)
     page.wait_for_timeout(4500)
-    return page.evaluate(READ_STATE_JS)
+    # The React description editor pops in late on some products; an early
+    # read sees an empty description (found 2026-09-26, product 17046914).
+    # A few listings (e.g. 17046914) have NO description section on the edit
+    # form at all; those get everything except the description line.
+    has_editor = True
+    try:
+        page.wait_for_selector('[contenteditable="true"]', timeout=25000)
+    except Exception:
+        has_editor = False
+    page.wait_for_timeout(800)
+    st = page.evaluate(READ_STATE_JS)
+    st["has_editor"] = has_editor
+    return st
 
 
 def plan_for(units: list[dict], st: dict) -> dict:
@@ -264,7 +276,7 @@ def plan_for(units: list[dict], st: dict) -> dict:
         "grades_to_tick": [] if over_limit else to_tick,
         "grades_note": f"would exceed 4 grades ({ticked})" if over_limit else "",
         "tick_au": st["au"] is False,
-        "append_desc": AUDIENCE_MARKER not in st["desc"],
+        "append_desc": st["has_editor"] and AUDIENCE_MARKER not in st["desc"],
     }
 
 

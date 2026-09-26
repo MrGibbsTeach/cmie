@@ -1,0 +1,2190 @@
+{
+ "16835617": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Writing Pseudocode | Algorithms & Programming Logic | Lesson 4",
+  "new_title": "Writing Pseudocode | Algorithms & Programming Logic | Lesson 4 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16818019": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Selecting Network Hardware | Networks & Hardware | Lesson 2",
+  "new_title": "Selecting Network Hardware | Networks & Hardware | Lesson 2 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16818032": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Wired vs Wireless Nets | Networks & Hardware | Lesson 3",
+  "new_title": "Wired vs Wireless Nets | Networks & Hardware | Lesson 3 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16818057": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "How Data Travels Across a Network | Networks & Hardware | Lesson 4",
+  "new_title": "How Data Travels Across a Network | Networks & Hardware | Lesson 4 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16818071": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Network Security Basics | Networks & Hardware | Lesson 5",
+  "new_title": "Network Security Basics | Networks & Hardware | Lesson 5 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16818080": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Connecting & Troubleshooting | Networks & Hardware | Lesson 6",
+  "new_title": "Connecting & Troubleshooting | Networks & Hardware | Lesson 6 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16818090": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing a Network | Networks & Hardware | Lesson 7",
+  "new_title": "Designing a Network | Networks & Hardware | Lesson 7 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16818101": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Networks & Hardware | Assessment Pack | Lower Secondary",
+  "new_title": "Networks & Hardware | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16818112": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Networks & Hardware: Unit 1 – Building and Securing a Network (Lower Secondary)",
+  "new_title": "Networks & Hardware: Unit 1 – Building and Securing a Network | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16835441": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "What Is an Algorithm? | Algorithms & Programming Logic | Lesson 1",
+  "new_title": "What Is an Algorithm? | Algorithms & Programming Logic | Lesson 1 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16835465": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Sequencing, Selection, Repetition | Algorithms & Programming Logic | Lesson 2",
+  "new_title": "Sequencing, Selection, Repetition | Algorithms & Programming Logic | Lesson 2",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16835600": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Representing Algorithms with Flowcharts | Algorithms & Programming Logic |",
+  "new_title": "Representing Algorithms with Flowcharts | Lesson 3 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16835626": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Debugging Logic Errors | Algorithms & Programming Logic | Lesson 5",
+  "new_title": "Debugging Logic Errors | Algorithms & Programming Logic | Lesson 5 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16835638": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Efficiency: Comparing Algorithms | Algorithms & Programming Logic | Lesson 6",
+  "new_title": "Efficiency: Comparing Algorithms | Algorithms & Programming Logic | Lesson 6",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16835694": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing an Algorithm | Algorithms & Programming Logic | Lesson 7",
+  "new_title": "Designing an Algorithm | Algorithms & Programming Logic | Lesson 7 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16835699": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Algorithms & Programming Logic | Assessment Pack | Lower Secondary",
+  "new_title": "Algorithms & Programming Logic | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16835705": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Algorithms & Programming Logic: Unit 1 – Thinking Like a Programmer (Lower",
+  "new_title": "Algorithms & Programming Logic: Unit 1 – Thinking Like a Programmer | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907076": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Why Computers Speak in 1s and 0s | Data Representation | Lesson 1",
+  "new_title": "Why Computers Speak in 1s and 0s | Data Representation | Lesson 1 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907079": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Counting in Binary: Numbers to Bits | Data Representation | Lesson 2",
+  "new_title": "Counting in Binary: Numbers to Bits | Data Representation | Lesson 2",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907083": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Binary Conversions & Addition | Data Representation | Lesson 3",
+  "new_title": "Binary Conversions & Addition | Data Representation | Lesson 3 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907160": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Text as Data: ASCII & Unicode | Data Representation | Lesson 4",
+  "new_title": "Text as Data: ASCII & Unicode | Data Representation | Lesson 4 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907166": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Images as Data: Pixels and Bitmaps | Data Representation | Lesson 5",
+  "new_title": "Images as Data: Pixels and Bitmaps | Data Representation | Lesson 5 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907313": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Sound as Data: Sampling | Data Representation | Lesson 6",
+  "new_title": "Sound as Data: Sampling | Data Representation | Lesson 6 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907377": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing a Data Encoding Scheme | Data Representation | Lesson 7",
+  "new_title": "Designing a Data Encoding Scheme | Data Representation | Lesson 7 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907384": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Data Representation | Assessment Pack | Lower Secondary",
+  "new_title": "Data Representation | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907385": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Data Representation: Unit 1 – Binary and How Computers See the World (Year 7 /",
+  "new_title": "Data Representation: Binary and How Computers See the World | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907410": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "The Cyber Threat Landscape | Cyber Security & Digital Footprints | Lesson 1",
+  "new_title": "The Cyber Threat Landscape | Cyber Security & Digital Footprints | Lesson 1",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907414": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Spotting Phishing & Scams | Cyber Security & Digital Footprints | Lesson 3",
+  "new_title": "Spotting Phishing & Scams | Cyber Security & Digital Footprints | Lesson 3",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16907437": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Passwords & MFA | Cyber Security & Digital Footprints | Lesson 2",
+  "new_title": "Passwords & MFA | Cyber Security & Digital Footprints | Lesson 2 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16908115": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Your Digital Footprint | Cyber Security & Digital Footprints | Lesson 4",
+  "new_title": "Your Digital Footprint | Cyber Security & Digital Footprints | Lesson 4",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16908118": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "What Apps Collect About You | Cyber Security & Digital Footprints | Lesson 5",
+  "new_title": "What Apps Collect About You | Cyber Security & Digital Footprints | Lesson 5",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16908120": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Manage & Clean Your Footprint | Unit 1 – Protecting Yourself Online | Lesson 6",
+  "new_title": "Manage & Clean Your Footprint | Cyber Security & Digital Footprints | Lesson 6",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16908158": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing a Cyber Plan | Cyber Security & Digital Footprints | Lesson 7",
+  "new_title": "Designing a Cyber Plan | Cyber Security & Digital Footprints | Lesson 7",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16908164": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Cyber Security & Digital Footprints | Assessment Pack | Lower Secondary",
+  "new_title": "Cyber Security & Digital Footprints | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16908167": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Cyber Security & Digital Footprints: Unit 1 – Protecting Yourself Online (Year",
+  "new_title": "Cyber Security & Digital Footprints: Protecting Yourself Online | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16908261": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Good Design, Bad Design: What Is UX? | Unit 1 – Designing Apps People Love |",
+  "new_title": "Good Design, Bad Design: What Is UX? | UX & Interface Design | Lesson 1",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16908263": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Knowing Your User: Problems & Stories | Unit 1 – Designing Apps People Love |",
+  "new_title": "Knowing Your User: Problems & Stories | UX & Interface Design | Lesson 2",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "16908267": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Design Criteria: How We'll Know | Unit 1 – Designing Apps People Love | Lesson 3",
+  "new_title": "Design Criteria: How We'll Know | UX & Interface Design | Lesson 3 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17015328": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Interface Building Blocks | Unit 1 – Designing Apps People Love | Lesson 4",
+  "new_title": "Interface Building Blocks | UX & Interface Design | Lesson 4 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17015344": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Wireframing & Prototyping | Unit 1 – Designing Apps People Love | Lesson 5",
+  "new_title": "Wireframing & Prototyping | UX & Interface Design | Lesson 5 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17015351": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Accessibility and Inclusion | Unit 1 – Designing Apps People Love | Lesson 6",
+  "new_title": "Accessibility and Inclusion | UX & Interface Design | Lesson 6 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17015380": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing an App Interface | Unit 1 – Designing Apps People Love | Lesson 7",
+  "new_title": "Designing an App Interface | UX & Interface Design | Lesson 7 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17015387": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Unit 1 – Designing Apps People Love | Assessment Pack | Lower Secondary",
+  "new_title": "UX & Interface Design | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17015398": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "UX & Interface Design: Unit 1 – Designing Apps People Love (Year 7 / Grade 7,",
+  "new_title": "UX & Interface Design: Unit 1 – Designing Apps People Love | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17033469": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Networks & Hardware: Unit 1 – Building and Securing a Network — Lesson 1 FREE",
+  "new_title": "Networks & Hardware: Unit 1 – Building and Securing a Network — Lesson 1 FREE",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17043059": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Algorithms & Programming Logic: Unit 1 – Thinking Like a Programmer — Lesson 1",
+  "new_title": "Algorithms & Programming Logic: Unit 1 – Thinking Like a Programmer — Lesson 1",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17044173": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Data Representation: Unit 1 – Binary and How Computers See the World — Lesson 1",
+  "new_title": "Data Representation: Unit 1 – Binary and How Computers See the World — Lesson 1",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17044201": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Cyber Security & Digital Footprints: Unit 1 – Protecting Yourself Online —",
+  "new_title": "Cyber Security & Digital Footprints: Unit 1 – Protecting Yourself Online —",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17045347": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Cyber Security & Digital Footprints: Unit 1 – Protecting Yourself Online —",
+  "new_title": "Cyber Security & Digital Footprints: Unit 1 – Protecting Yourself Online —",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17045368": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "UX & Interface Design: Unit 1 – Designing Apps People Love — Lesson 1 FREE",
+  "new_title": "UX & Interface Design: Unit 1 – Designing Apps People Love — Lesson 1 FREE",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046818": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Formulas & Functions Basics | Unit 1 – Making Sense of Data with Spreadsheets |",
+  "new_title": "Formulas & Functions Basics | Spreadsheets & Data Analysis | Lesson 2",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046823": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Sorting, Filtering & Organizing | Unit 1 – Making Sense of Data with",
+  "new_title": "Sorting, Filtering & Organizing | Spreadsheets & Data Analysis | Lesson 3",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046831": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Why Spreadsheets? Rows & Cells | Unit 1 – Making Sense of Data with",
+  "new_title": "Why Spreadsheets? Rows & Cells | Spreadsheets & Data Analysis | Lesson 1",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046836": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Charts and Graphs: Visualizing Data | Unit 1 – Making Sense of Data with",
+  "new_title": "Charts and Graphs: Visualizing Data | Spreadsheets & Data Analysis | Lesson 4",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046846": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Conditional Formatting & Validation | Unit 1 – Making Sense of Data with",
+  "new_title": "Conditional Formatting & Validation | Spreadsheets & Data Analysis | Lesson 5",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046849": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Analyzing Real-World Data Sets | Unit 1 – Making Sense of Data with",
+  "new_title": "Analyzing Real-World Data Sets | Spreadsheets & Data Analysis | Lesson 6",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046857": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing a Spreadsheet Plan | Unit 1 – Making Sense of Data with Spreadsheets",
+  "new_title": "Designing a Spreadsheet Plan | Spreadsheets & Data Analysis | Lesson 7",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046862": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Unit 1 – Making Sense of Data with Spreadsheets | Assessment Pack | Lower",
+  "new_title": "Spreadsheets & Data Analysis | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046870": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Spreadsheets & Data Analysis: Unit 1 – Making Sense of Data with Spreadsheets",
+  "new_title": "Spreadsheets & Data Analysis: Unit 1 – Making Sense of Data with Spreadsheets",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046873": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "How the Web Works | Unit 1 – Building Your First Website | Lesson 1",
+  "new_title": "How the Web Works | Websites & Web Design | Lesson 1 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046876": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "HTML Basics: Structuring a Web Page | Unit 1 – Building Your First Website |",
+  "new_title": "HTML Basics: Structuring a Web Page | Websites & Web Design | Lesson 2",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046914": {
+  "status": "ERROR",
+  "error": "save did not redirect: no visible error"
+ },
+ "17046964": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Intro to CSS Styling | Unit 1 – Building Your First Website | Lesson 4",
+  "new_title": "Intro to CSS Styling | Websites & Web Design | Lesson 4 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046970": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Page Layout: Position & Structure | Unit 1 – Building Your First Website |",
+  "new_title": "Page Layout: Position & Structure | Websites & Web Design | Lesson 5",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046978": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Accessibility & Responsive Design | Unit 1 – Building Your First Website |",
+  "new_title": "Accessibility & Responsive Design | Websites & Web Design | Lesson 6",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046988": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing and Building a Website | Unit 1 – Building Your First Website |",
+  "new_title": "Designing and Building a Website | Websites & Web Design | Lesson 7 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17046997": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Unit 1 – Building Your First Website | Assessment Pack | Lower Secondary",
+  "new_title": "Websites & Web Design | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047001": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Websites & Web Design: Unit 1 – Building Your First Website (Year 7 / Grade 7,",
+  "new_title": "Websites & Web Design: Unit 1 – Building Your First Website | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047014": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Inside a Computer: Hardware | Digital Systems | Lesson 1",
+  "new_title": "Inside a Computer: Hardware | Digital Systems | Lesson 1 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047020": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "The CPU: How Computers Process | Digital Systems | Lesson 2",
+  "new_title": "The CPU: How Computers Process | Digital Systems | Lesson 2 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047023": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Memory & Storage Basics | Digital Systems | Lesson 3",
+  "new_title": "Memory & Storage Basics | Digital Systems | Lesson 3 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047036": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Operating Systems: What They Do | Digital Systems | Lesson 4",
+  "new_title": "Operating Systems: What They Do | Digital Systems | Lesson 4 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047042": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Input, Output & Peripherals | Digital Systems | Lesson 5",
+  "new_title": "Input, Output & Peripherals | Digital Systems | Lesson 5 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047046": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Troubleshooting Computer Issues | Digital Systems | Lesson 6",
+  "new_title": "Troubleshooting Computer Issues | Digital Systems | Lesson 6 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047061": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing a Computer Setup | Digital Systems | Lesson 7",
+  "new_title": "Designing a Computer Setup | Digital Systems | Lesson 7 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047065": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Digital Systems | Assessment Pack | Lower Secondary",
+  "new_title": "Digital Systems | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047072": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Digital Systems: Unit 1 – How Computers Actually Work (Year 7 / Grade 7, Middle",
+  "new_title": "Digital Systems: Unit 1 – How Computers Actually Work | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047228": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Spreadsheets & Data Analysis: Unit 1 – Making Sense of Data with Spreadsheets —",
+  "new_title": "Spreadsheets & Data Analysis: Unit 1 – Making Sense of Data with Spreadsheets —",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047240": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Websites & Web Design: Unit 1 – Building Your First Website — Lesson 1 FREE",
+  "new_title": "Websites & Web Design: Unit 1 – Building Your First Website — Lesson 1 FREE",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047248": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Digital Systems: Unit 1 – How Computers Actually Work — Lesson 1 FREE Sample",
+  "new_title": "Digital Systems: Unit 1 – How Computers Actually Work — Lesson 1 FREE Sample",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047275": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "What Is Programming? From Algorithm to Code | Unit 1 – Writing Your First",
+  "new_title": "What Is Programming? From Algorithm to Code | Lesson 1 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047278": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Variables and Data Types | Unit 1 – Writing Your First Python Programs | Lesson",
+  "new_title": "Variables and Data Types | Introduction to Programming | Lesson 2 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047283": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Input and Output: Talking to the User | Unit 1 – Writing Your First Python",
+  "new_title": "Input and Output: Talking to the User | Introduction to Programming | Lesson 3",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047289": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Making Decisions: If Statements | Unit 1 – Writing Your First Python Programs |",
+  "new_title": "Making Decisions: If Statements | Introduction to Programming | Lesson 4",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047291": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Repeating Actions: Loops | Unit 1 – Writing Your First Python Programs | Lesson",
+  "new_title": "Repeating Actions: Loops | Introduction to Programming | Lesson 5 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047296": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Organizing Code with Functions | Unit 1 – Writing Your First Python Programs |",
+  "new_title": "Organizing Code with Functions | Introduction to Programming | Lesson 6",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047303": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Writing a Python Program to Solve a Real Problem | Unit 1 – Writing Your First",
+  "new_title": "Writing a Python Program to Solve a Real Problem | Lesson 7 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047308": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Unit 1 – Writing Your First Python Programs | Assessment Pack | Lower Secondary",
+  "new_title": "Introduction to Programming | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047311": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Introduction to Programming: Unit 1 – Writing Your First Python Programs (Year",
+  "new_title": "Introduction to Programming: Writing Your First Python Programs | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047316": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "What Makes a Game Fun? | Game Design | Lesson 1",
+  "new_title": "What Makes a Game Fun? | Game Design | Lesson 1 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047320": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Game Mechanics: Rules, Goals, Feedback | Game Design | Lesson 2",
+  "new_title": "Game Mechanics: Rules, Goals, Feedback | Game Design | Lesson 2 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047338": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Planning Your Game | Game Design | Lesson 3",
+  "new_title": "Planning Your Game | Game Design | Lesson 3 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047354": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Controls & Scoring Basics | Unit 1 – Designing and Building Your First Game |",
+  "new_title": "Controls & Scoring Basics | Game Design | Lesson 5 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047359": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Playtesting & Iteration | Game Design | Lesson 6",
+  "new_title": "Playtesting & Iteration | Game Design | Lesson 6 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047369": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Sprites & Events in Scratch | Unit 1 – Designing and Building Your First Game |",
+  "new_title": "Sprites & Events in Scratch | Game Design | Lesson 4 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047379": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing and Building a Game | Game Design | Lesson 7",
+  "new_title": "Designing and Building a Game | Game Design | Lesson 7 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047398": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Game Design: Unit 1 – Designing and Building Your First Game (Year 7 / Grade 7,",
+  "new_title": "Game Design: Unit 1 – Designing and Building Your First Game | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047405": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Game Design | Assessment Pack | Lower Secondary",
+  "new_title": "Game Design | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047522": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Introduction to Programming: Unit 1 – Writing Your First Python Programs —",
+  "new_title": "Introduction to Programming: Unit 1 – Writing Your First Python Programs —",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17047528": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Game Design: Unit 1 – Designing and Building Your First Game — Lesson 1 FREE",
+  "new_title": "Game Design: Unit 1 – Designing and Building Your First Game — Lesson 1 FREE",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17077264": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Welcome to Digital Tech | Digital Technologies Orientation | Lesson 1",
+  "new_title": "Welcome to Digital Tech | Digital Technologies Orientation | Lesson 1",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17077267": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Digital Citizenship Basics | Digital Technologies Orientation | Lesson 2",
+  "new_title": "Digital Citizenship Basics | Digital Technologies Orientation | Lesson 2",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17077270": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Organising Files & Folders | Unit 1 – Getting Started for the Year | Lesson 3",
+  "new_title": "Organising Files & Folders | Digital Technologies Orientation | Lesson 3",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17077273": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Passwords & Privacy | Unit 1 – Getting Started for the Year | Lesson 4",
+  "new_title": "Passwords & Privacy | Digital Technologies Orientation | Lesson 4 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17077279": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Netiquette: Communicating Online | Digital Technologies Orientation | Lesson 5",
+  "new_title": "Netiquette: Communicating Online | Digital Technologies Orientation | Lesson 5",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17077283": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Digital Skills & Interests | Unit 1 – Getting Started for the Year | Lesson 6",
+  "new_title": "Digital Skills & Interests | Digital Technologies Orientation | Lesson 6",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17077287": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Setting Goals: What Will I Learn? | Digital Technologies Orientation | Lesson 7",
+  "new_title": "Setting Goals: What Will I Learn? | Digital Technologies Orientation | Lesson 7",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17077290": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Unit 1 – Getting Started for the Year | Assessment Pack | Lower Secondary",
+  "new_title": "Digital Technologies Orientation | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17077293": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Digital Technologies Orientation: Unit 1 – Getting Started for the Year (Year 7",
+  "new_title": "Digital Technologies Orientation: Getting Started for the Year | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17435023": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Debugging: Finding and Fixing Logic Errors — Lesson 5 FREE Sample (Algorithms &",
+  "new_title": "Debugging: Finding and Fixing Logic Errors — Lesson 5 FREE Sample (Algorithms &",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17453225": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "What Is Robotics? Sensors & Control | Unit 1 – Sensors, Actuators, and Building",
+  "new_title": "What Is Robotics? Sensors & Control | Robotics & Physical Computing | Lesson 1",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17453230": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Inputs & Outputs in Machines | Unit 1 – Sensors, Actuators, and Building Smart",
+  "new_title": "Inputs & Outputs in Machines | Robotics & Physical Computing | Lesson 2",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17453234": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Programming Movement | Unit 1 – Sensors, Actuators, and Building Smart Machines",
+  "new_title": "Programming Movement | Robotics & Physical Computing | Lesson 3 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17453237": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Using Sensor Data to Decide | Unit 1 – Sensors, Actuators, and Building Smart",
+  "new_title": "Using Sensor Data to Decide | Robotics & Physical Computing | Lesson 4",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17453242": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Microcontrollers & Boards | Unit 1 – Sensors, Actuators, and Building Smart",
+  "new_title": "Microcontrollers & Boards | Robotics & Physical Computing | Lesson 5",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17453248": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Testing & Debugging | Unit 1 – Sensors, Actuators, and Building Smart Machines",
+  "new_title": "Testing & Debugging | Robotics & Physical Computing | Lesson 6 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17453256": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing a Robotic Solution | Unit 1 – Sensors, Actuators, and Building Smart",
+  "new_title": "Designing a Robotic Solution | Robotics & Physical Computing | Lesson 7",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17453261": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Unit 1 – Sensors, Actuators, and Building Smart Machines | Assessment Pack |",
+  "new_title": "Robotics & Physical Computing | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17453266": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Robotics & Physical Computing: Unit 1 – Sensors, Actuators, and Building Smart",
+  "new_title": "Robotics & Physical Computing: Unit 1 – Sensors, Actuators, and Building Smart",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17480910": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Spotting Phishing and Social Engineering — Lesson 3 FREE Sample (Cyber Security",
+  "new_title": "Spotting Phishing and Social Engineering — Lesson 3 FREE Sample (Cyber Security",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17494521": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "What Is a Database? | Databases Unit 1 – Organising and Querying Data | Lesson 1",
+  "new_title": "What Is a Database? | Databases | Lesson 1 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17494524": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Tables, Fields & Records | Databases Unit 1 – Organising and Querying Data |",
+  "new_title": "Tables, Fields & Records | Databases | Lesson 2 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17494526": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Data Types & Validation | Databases Unit 1 – Organising and Querying Data |",
+  "new_title": "Data Types & Validation | Databases | Lesson 3 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17494531": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Keys and Relationships | Databases Unit 1 – Organising and Querying Data |",
+  "new_title": "Keys and Relationships | Databases | Lesson 4 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17494535": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Ask Questions with Queries | Databases Unit 1 – Organising and Querying Data |",
+  "new_title": "Ask Questions with Queries | Databases | Lesson 5 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17494539": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Forms & Reports: Data In & Out | Databases Unit 1 – Organising and Querying",
+  "new_title": "Forms & Reports: Data In & Out | Databases | Lesson 6 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17494543": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Designing a Database | Databases Unit 1 – Organising and Querying Data | Lesson",
+  "new_title": "Designing a Database | Databases | Lesson 7 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17494545": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Databases Unit 1 – Organising and Querying Data | Assessment Pack | Lower",
+  "new_title": "Databases | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17494550": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Databases Unit 1 – Organising and Querying Data (Year 7 / Grade 7, Middle",
+  "new_title": "Databases Unit 1 – Organising and Querying Data | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17676715": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Programming Foundations Bundle — 2-Unit Digital Technologies Bundle (14 Lessons",
+  "new_title": "Programming Foundations Bundle — 2-Unit Digital Technologies Bundle (14 Lessons",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17676721": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Staying Safe Online Bundle — 2-Unit Digital Technologies Bundle (14 Lessons",
+  "new_title": "Staying Safe Online Bundle — 2-Unit Digital Technologies Bundle (14 Lessons",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17692631": {
+  "status": "OK",
+  "kind": "flagship",
+  "old_title": "The Complete Digital Technologies Curriculum – Full Year Bundle (15 Units, 105 L",
+  "new_title": "The Complete Digital Technologies Curriculum – Full Year Bundle (15 Units, 105 L",
+  "title_note": "flagship: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707144": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Programming Foundations Bundle — 2-Unit Digital Technologies Bundle (14 Lessons",
+  "new_title": "Programming Foundations Bundle — 2-Unit Digital Technologies Bundle (14 Lessons",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707152": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Staying Safe Online Bundle — 2-Unit Digital Technologies Bundle (14 Lessons",
+  "new_title": "Staying Safe Online Bundle — 2-Unit Digital Technologies Bundle (14 Lessons",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707184": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Start of Year Digital Technologies (Year 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "Start of Year Digital Technologies | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707194": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Data & Databases (Year 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "Data & Databases | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707204": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Web Design & UX (Year 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "Web Design & UX | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707217": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Game Design & Coding (Year 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "Game Design & Coding | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707229": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Robotics & Algorithms (Year 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "Robotics & Algorithms | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707248": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "AI Literacy & Cyber Security (Yr 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "AI Literacy & Cyber Security | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707262": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Digital Media & UX Design (Year 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "Digital Media & UX Design | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707274": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Data Skills & AI Literacy (Year 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "Data Skills & AI Literacy | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707285": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Computer Systems & Networks (Yr 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "Computer Systems & Networks | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17707298": {
+  "status": "OK",
+  "kind": "bundle2",
+  "old_title": "Creative Media & Game Design (Yr 7) | 2-Unit Bundle, 14 Lessons",
+  "new_title": "Creative Media & Game Design | 2-Unit Bundle, 14 Lessons | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708516": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "What Is Digital Media? Video, Audio, and Multimedia Storytelling | Digital",
+  "new_title": "What Is Digital Media? Video, Audio, and Multimedia Storytelling | Lesson 1",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708527": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Planning a Story: Scripts, Storyboards, and Shot Lists | Digital Media Unit 1 –",
+  "new_title": "Planning a Story: Scripts, Storyboards, and Shot Lists | Lesson 2 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708540": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Capturing Footage and Sound: Composition and Recording Basics | Digital Media",
+  "new_title": "Capturing Footage and Sound: Composition and Recording Basics | Lesson 3",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708545": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Editing Video: Cuts, Transitions, and Pacing | Digital Media Unit 1 – Video,",
+  "new_title": "Editing Video: Cuts, Transitions, and Pacing | Digital Media | Lesson 4",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708552": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Editing Audio: Levels, Mixing, and Adding Music or Sound Effects | Digital",
+  "new_title": "Editing Audio: Levels, Mixing, and Adding Music or Sound Effects | Lesson 5",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708555": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Titles, Captions, and Visual Effects | Digital Media Unit 1 – Video, Audio, and",
+  "new_title": "Titles, Captions, and Visual Effects | Digital Media | Lesson 6 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708563": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Publishing a Multimedia Project and Reflecting on the Process | Digital Media",
+  "new_title": "Publishing a Multimedia Project and Reflecting on the Process | Lesson 7",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708569": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Digital Media Unit 1 – Video, Audio, and Multimedia Storytelling | Assessment",
+  "new_title": "Digital Media | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708579": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Digital Media Unit 1 – Video, Audio, and Multimedia Storytelling (Year 7 /",
+  "new_title": "Digital Media Unit 1 – Video, Audio, and Multimedia Storytelling | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708606": {
+  "status": "OK",
+  "kind": "unknown",
+  "old_title": "What Is Artificial Intelligence? Defining AI, Machine Learning, and Automation",
+  "new_title": "What Is Artificial Intelligence? Defining AI, Machine Learning, and Automation",
+  "title_note": "unknown kind, title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708612": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "How Machines \"Learn\": Training Data, Patterns, and Prediction | Unit 1 –",
+  "new_title": "How Machines \"Learn\": Training Data, Patterns, and Prediction | Lesson 2",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708630": {
+  "status": "OK",
+  "kind": "unknown",
+  "old_title": "AI in Everyday Life: Recommendation Systems, Voice Assistants, and Smart",
+  "new_title": "AI in Everyday Life: Recommendation Systems, Voice Assistants, and Smart",
+  "title_note": "unknown kind, title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708638": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Bias in AI: How Training Data Shapes Fair (and Unfair) Outcomes | Unit 1 –",
+  "new_title": "Bias in AI: How Training Data Shapes Fair (and Unfair) Outcomes | Lesson 4",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708649": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Generative AI and Prompting: Working Effectively with AI Tools | Unit 1 –",
+  "new_title": "Generative AI and Prompting: Working Effectively with AI Tools | Lesson 5",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708655": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "AI Ethics and Limits: Privacy, Misinformation, and Academic Integrity | Unit 1",
+  "new_title": "AI Ethics and Limits: Privacy, Misinformation, and Academic Integrity | Lesson 6",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708662": {
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "The Future of AI: Careers, Emerging Applications, and Responsible Innovation |",
+  "new_title": "The Future of AI: Careers, Emerging Applications, and Responsible Innovation |",
+  "title_note": "too long, kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708668": {
+  "status": "OK",
+  "kind": "assessment",
+  "old_title": "Unit 1 – Understanding How AI Works and Its Impact | Assessment Pack | Lower",
+  "new_title": "Artificial Intelligence Literacy | Assessment Pack | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708676": {
+  "status": "OK",
+  "kind": "unit",
+  "old_title": "Artificial Intelligence Literacy: Unit 1 – Understanding How AI Works and Its",
+  "new_title": "Artificial Intelligence Literacy: Unit 1 – Understanding How AI Works and Its",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708696": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Passwords, Privacy, and Protecting Your Information — Lesson 4 FREE Sample",
+  "new_title": "Passwords, Privacy, and Protecting Your Information — Lesson 4 FREE Sample",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708703": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "How Data Travels Across a Network — Lesson 4 FREE Sample (Networks & Hardware)",
+  "new_title": "How Data Travels Across a Network — Lesson 4 FREE Sample (Networks & Hardware)",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708709": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Digital Technologies Orientation: Unit 1 – Getting Started for the Year —",
+  "new_title": "Digital Technologies Orientation: Unit 1 – Getting Started for the Year —",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708715": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Robotics & Physical Computing: Unit 1 – Sensors, Actuators, and Building Smart",
+  "new_title": "Robotics & Physical Computing: Unit 1 – Sensors, Actuators, and Building Smart",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708721": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Databases Unit 1 – Organising and Querying Data — Lesson 1 FREE Sample",
+  "new_title": "Databases Unit 1 – Organising and Querying Data — Lesson 1 FREE Sample",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708731": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Digital Media Unit 1 – Video, Audio, and Multimedia Storytelling — Lesson 1",
+  "new_title": "Digital Media Unit 1 – Video, Audio, and Multimedia Storytelling — Lesson 1",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ },
+ "17708801": {
+  "status": "OK",
+  "kind": "leadmagnet",
+  "old_title": "Artificial Intelligence Literacy: Unit 1 – Understanding How AI Works and Its",
+  "new_title": "Artificial Intelligence Literacy: Unit 1 – Understanding How AI Works and Its",
+  "title_note": "leadmagnet: title kept",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
+ }
+}

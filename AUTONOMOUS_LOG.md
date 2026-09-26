@@ -293,6 +293,41 @@ retried). **Needs a human**: add
 Marked the queue item done (2026-09-18). No files deleted, no off-brand
 products touched, no strategic changes.
 
+## 2026-09-26 -- Interactive session: TPT edit path fixed, catalogue retagged Grades 6-8, Pinterest cap cleared
+
+**TPT edit-product saves now work.** The 2026-09-21 conclusion that the edit
+form was "blocked by reCAPTCHA" was wrong. Real cause: the edit page loads
+with "Upload thumbnails later" (radio value 3) selected, and TPT's legacy
+submit handler (`uploadPage.js` `initSubmitHandler`) only proceeds when
+"Upload thumbnails now" is selected; in any other state the Submit click runs
+the title check and silently stops. `edit_product_title()` now selects that
+radio, waits for the redirect to /Product/, and verifies by reading the
+title back (the old absence-of-error check produced ~90 false "FIXED"s).
+
+**Catalogue retag** (`retag_tpt_catalog.py`, log in `data/tpt_retag_log.json`):
+168 of 169 CMIE products edited in one verified pass each: grades 6/7/8
+ticked (existing 9th-grade ticks left alone, nothing unticked), "Appropriate
+for Australia" ticked, audience line appended to the description
+(Grades 6-8 / Year 7 ACARA v9 / KS3 / ages 11-14), "Year 7" / "Lower
+Secondary" dropped from titles and "Grades 6-8" added where it fits in 80
+chars (93 titles; 20 lead magnets, the flagship and lessons with no room keep
+their titles). TPT's tag list is a closed taxonomy with no entry for any of
+those terms, so the description is the only place they can go. Independently
+re-scraped the dashboard afterwards: all 93 expected titles are live, none
+still say "Lower Secondary" or "(Year 7".
+
+**Needs a human decision:**
+- Product 17046914 (Web Design Lesson 3) cannot be edited: its edit form has
+  no Description section (probably TPT's editor crashing on stripped HTML tag
+  text in the description). Grades/AU/title not applied. Fix by hand.
+- Duplicate live listings: "Programming Foundations" bundle (17676715 and
+  17707144) and "Staying Safe Online" bundle (17676721 and 17707152). Retitled
+  consistently, not deleted (no-delete boundary).
+- Grade 9 not added anywhere: difficulty only spot-checked on the Python unit.
+
+**Pinterest:** the 50-draft cap had cleared on its own (15 drafts). Posted the
+5 units' queued wave 3 (15 pins), all confirmed live by verify_pinterest_pins.py.
+
 ## 2026-09-16 — Marketing Push: drafted wave 3 for 3 more units, but posting fully blocked account-wide — the 2026-09-09 Pinterest 50-draft cap has not cleared
 
 Task: check each live unit's highest existing Pinterest wave
