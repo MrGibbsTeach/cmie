@@ -93,7 +93,7 @@ New angles for the second Pinterest posting batch — wave 1 leaned entirely on 
 
 **Link**: https://www.teacherspayteachers.com/Product/Digital-Technologies-Orientation-Unit-1-Getting-Started-for-the-Year-Year-7-17077293
 
-## Pinterest pins — wave 3 (2026-09-16, drafted — not yet posted)
+## Pinterest pins — wave 3 (posted 2026-09-26, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
 
 New angles for the third Pinterest posting batch — wave 1 leaned on back-to-school/Week-1 framing, wave 2 covered passwords & privacy (L4), a "build it yourself" pain point, and an evergreen reframe. This wave pivots to three previously-unused lessons: file organisation (L3), the digital skills check-in (L6, as a diagnostic-assessment angle), and netiquette (L5).
 

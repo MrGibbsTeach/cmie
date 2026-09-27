@@ -91,7 +91,7 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 
 **Link**: https://www.teacherspayteachers.com/Product/UX-Interface-Design-Unit-1-Designing-Apps-People-Love-Year-7-Grade-7-17015398
 
-## Pinterest pins — wave 3 (2026-09-16, drafted — not yet posted)
+## Pinterest pins — wave 3 (posted 2026-09-26, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
 
 New angles for the third Pinterest posting batch — wave 1 was generic bundle/lesson-pack/free-sample promo, wave 2 covered paper prototyping (L5), the value stack, and a "build it yourself" pain point. This wave pivots to a previously-unused standout lesson (accessibility), a dedicated capstone pin (L7, not previously given its own pin), and a distinct non-specialist pain point.
 

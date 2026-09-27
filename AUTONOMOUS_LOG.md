@@ -293,6 +293,41 @@ retried). **Needs a human**: add
 Marked the queue item done (2026-09-18). No files deleted, no off-brand
 products touched, no strategic changes.
 
+## 2026-09-27 -- Interactive session mistake: 9 duplicate Pinterest pins posted, found and cleaned up same session
+
+This session posted wave-3 pins for 5 units (game_design, python_programming,
+ux_design, orientation, networks_hardware) from a LOCAL git checkout that
+predated the scheduled Routine 3 "Marketing Push" cloud run of 2026-09-23
+(commit 42bb116) -- never ran `git pull origin main` first. That cloud run
+had already posted the identical wave 3 for 3 of those 5 units (game_design,
+python_programming, networks_hardware). Result: 9 pins live twice each, same
+title and outbound TPT link, confirmed directly via a full scrape of both
+boards (not by trusting any script's "Submitted" log) -- also revealed
+verify_pinterest_pins.py's PROFILE_USERNAME ("focuslabdigitalteach") differs
+from the account's display handle ("focuslabdigital"), which had caused an
+earlier manual check in this same session to scrape the wrong profile
+entirely and see unrelated saved pins.
+
+User authorized deletion once found (this is the one case fitting the
+"never delete without explicit authorization" boundary above -- the
+authorization). `delete_duplicate_pins.py` deleted the 9 accidental
+2026-09-26 copies only, identified by a clean id-pattern split (originals
+end "...165xxx", accidental reposts end "...411xxx", cross-checked against
+2 ids independently confirmed as originals in the 2026-09-23 run's own log)
+and verified by title match before deleting and by URL re-check after.
+Re-scraped both boards afterward: zero duplicate titles remain.
+
+ux_design and orientation's wave-3 posts were NOT duplicates -- confirmed
+against origin/main before this session touched them, genuinely unposted.
+
+**Root cause / prevention**: any interactive (non-cloud-routine) session
+touching this repo's live-platform scripts must `git pull origin main`
+first. 4 cloud routines already run weekly against this repo (Business
+Review Mon, New Unit Production Tue, Marketing Push Wed, Resource Drop Fri,
+all 1am UTC) -- an interactive session working the same day as one of these
+without pulling first will repeat this mistake on any of them, not just
+Pinterest.
+
 ## 2026-09-27 -- Fixed the last unfixable product (17046914); catalogue retag now 169/169
 
 Root cause of 17046914's failure: its stored description contains literal,

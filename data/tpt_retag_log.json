@@ -582,7 +582,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17043059": {
   "status": "OK",
@@ -595,7 +596,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17044173": {
   "status": "OK",
@@ -608,7 +610,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17044201": {
   "status": "OK",
@@ -621,7 +624,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17045347": {
   "status": "OK",
@@ -634,7 +638,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17045368": {
   "status": "OK",
@@ -647,7 +652,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17046818": {
   "status": "OK",
@@ -1011,7 +1017,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17047240": {
   "status": "OK",
@@ -1024,7 +1031,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17047248": {
   "status": "OK",
@@ -1037,7 +1045,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17047275": {
   "status": "OK",
@@ -1284,7 +1293,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17047528": {
   "status": "OK",
@@ -1297,7 +1307,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17077264": {
   "status": "OK",
@@ -1427,7 +1438,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17453225": {
   "status": "OK",
@@ -1557,7 +1569,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17494521": {
   "status": "OK",
@@ -2116,7 +2129,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17708703": {
   "status": "OK",
@@ -2129,7 +2143,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17708709": {
   "status": "OK",
@@ -2142,7 +2157,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17708715": {
   "status": "OK",
@@ -2155,7 +2171,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17708721": {
   "status": "OK",
@@ -2168,7 +2185,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17708731": {
   "status": "OK",
@@ -2181,7 +2199,8 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  },
  "17708801": {
   "status": "OK",
@@ -2194,6 +2213,7 @@
   ],
   "grades_note": "",
   "tick_au": true,
-  "append_desc": true
+  "append_desc": true,
+  "follow_cta": true
  }
 }
