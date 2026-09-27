@@ -293,6 +293,28 @@ retried). **Needs a human**: add
 Marked the queue item done (2026-09-18). No files deleted, no off-brand
 products touched, no strategic changes.
 
+## 2026-09-27 -- Fixed the last unfixable product (17046914); catalogue retag now 169/169
+
+Root cause of 17046914's failure: its stored description contains literal,
+unescaped tag mentions ("<img>", "<a>", "<ol>", "<ul>", "<li>" written as
+plain text) that TPT's Lexical rich-text editor cannot parse -- it throws on
+load and the description editor never mounts, which silently breaks the
+whole edit form's Submit handler (not reCAPTCHA, not a validation error).
+This was also a genuine live bug independent of anything this project did:
+those tag names were rendering as nothing on the public listing (a browser
+parses the literal "<img>" as a real void element with no visible text).
+
+Fixed with `fix_17046914.py`: intercepts the page's own GraphQL response and
+rewrites the three broken bullet-line phrases (exact-phrase match, not a
+blanket tag-name regex -- the real <ul>/<li> list markup uses the identical
+tag names as the broken text, so a bare-tag substitution would have
+corrupted the genuine list structure) to plain, correct wording before the
+editor ever sees them. The corrected text is what gets saved back, so this
+fixes the live description as a side effect, not just unblocks the retag.
+Applied and independently verified on the live public page. All 169/169
+CMIE products are now retagged (Grades 6-8 / Australia box / audience line
+in the description; see the 2026-09-26 entry for what that covers).
+
 ## 2026-09-26 -- Interactive session: TPT edit path fixed, catalogue retagged Grades 6-8, Pinterest cap cleared
 
 **TPT edit-product saves now work.** The 2026-09-21 conclusion that the edit

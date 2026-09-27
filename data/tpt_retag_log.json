@@ -793,8 +793,17 @@
   "append_desc": true
  },
  "17046914": {
-  "status": "ERROR",
-  "error": "save did not redirect: no visible error"
+  "status": "OK",
+  "kind": "lesson",
+  "old_title": "Images, Links & Lists | Unit 1 – Building Your First Website | Lesson 3",
+  "new_title": "Images, Links & Lists | Websites & Web Design | Lesson 3 | Grades 6-8",
+  "title_note": "",
+  "grades_to_tick": [
+   "6th-grade"
+  ],
+  "grades_note": "",
+  "tick_au": true,
+  "append_desc": true
  },
  "17046964": {
   "status": "OK",
