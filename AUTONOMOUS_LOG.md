@@ -47,6 +47,71 @@ session, not just when asked.
 
 ---
 
+## 2026-09-28 — Business Review + integrity checks (report-only): TES/Gumroad clean, TPT blocked (session expired, accepted limit)
+
+Task: scheduled Business Review job. Ran `python business_review.py --save`
+(output now in `BUSINESS_REVIEW.md`), then integrity checkers across all
+three automatable platforms. Report-only per the job's hard boundaries —
+nothing fixed, edited, or deleted anywhere.
+
+**Revenue** (per `business_review.py --save`, this run):
+- TPT: ERROR — session expired, could not fetch (see below).
+- Gumroad: A$0.00 net, 0 sales.
+- TES: £6.29 net, 2 sales (up from the £0.30 / 1 sale in REVENUE.md's last
+  manual update — one new sale since then, exact order not itemized by
+  this script; REVENUE.md itself not touched by this run).
+- Catalog: 27 live units (15 single units + 12 two-unit bundles), same
+  list as `BUSINESS_REVIEW.md`.
+
+**TPT — blocked, accepted limit, not a bug**: `business_review.py --save`
+and all 15 per-unit `verify_tpt_listings.py --unit <id>` calls (every
+`year7_*_unit1` in the live catalog: ai_literacy, algorithms,
+cybersecurity, data_representation, databases, digital_media,
+digital_systems, game_design, networks_hardware, orientation,
+python_programming, robotics_physical_computing, spreadsheets, ux_design,
+web_design) failed identically and immediately with "not logged in to TPT
+(no valid session found)" / "TPT session expired (.tpt_session.json no
+longer valid)". This is the documented 2026-08-24 Cloudflare
+fresh-fingerprint limit, not a cookie-staleness problem and not
+retriable from this cloud container — no login attempted, no retries, per
+standing instruction. A human (or a session running from the long-lived
+local Chrome profile) needs to run `python publish_tpt.py --save-session`
+to refresh `.tpt_session.json` / `TPT_SESSION_JSON` before TPT-side
+revenue or listing checks can run again.
+
+**Gumroad — clean**: `verify_gumroad_listings.py` checked 15 of 32 total
+products (all matching "Unit 1"). All 15 `[OK]`, all published, no
+findings. Full URL list in the run output (not reproduced here — nothing
+to action).
+
+**TES — clean**: `verify_tes_listings.py` (default `--keyword "Unit 1"`)
+loaded the full dashboard (58 resources total), checked every one, 30
+matched "Unit 1" and all 30 came back `[OK]` — no empty/near-empty
+descriptions, no literal unrendered markdown or HTML. This run took
+~4 minutes end-to-end (58 individual resource-page loads); the earlier
+attempt with a 180s wrapper timeout was killed mid-check (`exited 143`)
+before finishing — re-ran without an artificial timeout to get a
+complete result. No new issues found beyond the ones already tracked
+below.
+
+**Open items carried forward unchanged** (not re-verified this run, no
+new information):
+- TES Unit 1 (AI series) presenter-placeholder / "Unknown" quote cosmetic
+  bug — TES side still not attempted.
+- TES duplicate: "Data Shapes the AI World – Lesson 1" as two resources
+  (13432831, 13432796) — still needs explicit delete authorization.
+- TES resource 13445828 — still permanently broken ("temporary
+  disruption" on every step) — candidate for deletion, needs
+  authorization.
+- Off-brand Gumroad products (A$129 SWMS, ADHD guide) still on the
+  teaching storefront — business-judgment call, undecided.
+- Shelved AI-series Units 3-8 still live on TES (9 resources) —
+  Unit 1's content confirmed clean previously, no action needed.
+
+No new decisions needed from this run beyond the above (all pre-existing).
+
+---
+
 ## 2026-09-25 — Resource Drop: Lesson 5 lead magnet for year7_data_representation_unit1, TES live, TPT blocked (session expired, accepted limit)
 
 Task: Resource Drop Queue's first unchecked item — a second lead magnet
