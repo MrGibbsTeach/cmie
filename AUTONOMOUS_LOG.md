@@ -3192,3 +3192,7 @@ PUSH TEST 2026-07-31 -- confirming GitHub App write access after reinstall.
 ## 2026-09-29 - New Unit Production: queue empty
 
 All 3 entries in data/units/UPCOMING_QUEUE.md are [x]. Nothing built or published this cycle; no topic invented, per the queue file instructions. A human needs to add a new topic to the queue for production to continue.
+
+## 2026-09-30 - Pinterest marketing wave (scheduled routine)
+
+Picked the 3 live units longest since a fresh wave: databases (w2 -> **w3**, last 2026-09-02), robotics_physical_computing (w2 -> **w3**, last 2026-08-26), web_design (w3 -> **w4**, last 2026-09-02). year7_digital_media was skipped: its marketing file still has placeholder bundle URLs (not live). New sections appended to each unit's marketing file with distinct angles (databases: queries / validation / forms & reports; robotics: programming movement / debugging / microcontrollers; web design: how the web works / HTML first page / page layout). Posted with `publish_pinterest.py --unit <id> --wave N`: 9 pins submitted. First web_design attempt errored on the upload input before any pin posted; a retry succeeded. Verified by scrolling the account's Created page and opening each pin: all 9 titles are live with outbound TPT links, no duplicates. (`verify_pinterest_pins.py` alone was not conclusive: it only sees the first ~6 unscrolled pins.)

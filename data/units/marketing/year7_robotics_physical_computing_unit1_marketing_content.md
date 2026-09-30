@@ -90,3 +90,28 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Description**: The final lesson has students design a robotic solution for a real problem of their own — a genuine applied capstone, not just another worksheet. Comes complete with the other 6 lessons, a student workbook, unit roadmap, and full assessment pack with rubric. #digitaltechnologies #projectbasedlearning #y7 #robotics
 
 **Link**: https://www.teacherspayteachers.com/Product/Robotics-Physical-Computing-Unit-1-Sensors-Actuators-and-Building-Smart-17453266
+
+## Pinterest pins — wave 3 (posted 2026-09-30, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
+
+New angles for the third batch — different from wave 1's generic promos and wave 2's sensor-decisions / non-specialist / capstone pins. Pivots to programming movement, debugging, and microcontrollers.
+
+### Pin 1 (standout lesson — programming movement)
+**Title** (58 chars): Programming Movement: Sequences, Loops & Conditionals (Y7)
+
+**Description**: Give students a first taste of making something move on command — sequences, loops, and conditionals in a ready-to-teach robotics lesson. Part of a complete 7-lesson Robotics & Physical Computing unit with workbook, roadmap, and assessment pack. #robotics #digitaltechnologies #computationalthinking #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Robotics-Physical-Computing-Unit-1-Sensors-Actuators-and-Building-Smart-17453266
+
+### Pin 2 (hook — debugging)
+**Title** (65 chars): It Worked on Paper! Teaching Testing & Debugging Physical Systems
+
+**Description**: Debugging looks different when the bug is a wobbly wire or a sensor reading — this lesson teaches Year 7 students to test and fix a physical system methodically. One of 7 planned lessons, with editable slides and assessment included. #digitaltech #robotics #teacherspayteachers #middleschoolcs
+
+**Link**: https://www.teacherspayteachers.com/Product/Robotics-Physical-Computing-Unit-1-Sensors-Actuators-and-Building-Smart-17453266
+
+### Pin 3 (standout lesson — microcontrollers)
+**Title** (62 chars): Microcontrollers Explained for Year 7: A Ready-to-Teach Lesson
+
+**Description**: What is a microcontroller and how does it connect code to the real world? A clear, ready-to-teach introduction to physical computing boards, part of a complete 7-lesson unit with student workbook and full assessment pack. #physicalcomputing #digitaltechnologies #robotics #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Robotics-Physical-Computing-Unit-1-Sensors-Actuators-and-Building-Smart-17453266

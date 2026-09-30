@@ -90,3 +90,28 @@ New angles for the second Pinterest posting batch — different from wave 1's ge
 **Description**: The final lesson has students design their own database for a real-world problem — applying tables, keys, and queries instead of just recalling them. Part of a complete 7-lesson Databases unit for Year 7 / Grade 7 Digital Technologies. #databases #capstoneproject #digitaltechnologies #y7
 
 **Link**: https://www.teacherspayteachers.com/Product/Databases-Unit-1-Organising-and-Querying-Data-Year-7-Grade-7-Middle-17494550
+
+## Pinterest pins — wave 3 (posted 2026-09-30, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
+
+New angles for the third batch — different from wave 1's generic promos and wave 2's keys / non-specialist / capstone pins. Pivots to queries, data validation, and forms & reports.
+
+### Pin 1 (standout lesson — queries)
+**Title** (59 chars): Teach Database Queries: Sorting, Filtering & Searching (Y7)
+
+**Description**: Students ask a database real questions and get answers back — sorting, filtering, and searching records in a ready-to-teach lesson. Part of a complete 7-lesson Databases unit with editable slides, student workbook, and assessment pack. #databases #digitaltechnologies #computerscience #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Databases-Unit-1-Organising-and-Querying-Data-Year-7-Grade-7-Middle-17494550
+
+### Pin 2 (hook — messy data)
+**Title** (57 chars): Why Does the Data Keep Coming Out Wrong? Teach Validation
+
+**Description**: Typos, wrong data types, impossible dates — this lesson shows Year 7 students how data types and validation keep records accurate and consistent. One of 7 fully planned lessons in the Databases unit, with slides, workbook, and rubric included. #digitaltechnologies #databases #middleschoolcs
+
+**Link**: https://www.teacherspayteachers.com/Product/Databases-Unit-1-Organising-and-Querying-Data-Year-7-Grade-7-Middle-17494550
+
+### Pin 3 (standout lesson — forms & reports)
+**Title** (57 chars): Forms & Reports: Getting Data In and Answers Out (Year 7)
+
+**Description**: Move students from storing data to actually using it — build forms to collect records and reports to summarise them. Ready-to-teach lesson from a complete 7-lesson Databases unit with student workbook and assessment pack. #teacherspayteachers #databases #digitaltechnologies #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Databases-Unit-1-Organising-and-Querying-Data-Year-7-Grade-7-Middle-17494550

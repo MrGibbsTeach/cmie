@@ -115,3 +115,28 @@ New angles for the third Pinterest posting batch — different from wave 1's gen
 **Description**: The final lesson has students design and build their own website for a real purpose, applying HTML, CSS, and layout instead of just practicing them in isolation. Part of a complete 7-lesson Websites & Web Design unit. #webdesign #capstoneproject #digitaltechnologies #y7
 
 **Link**: https://www.teacherspayteachers.com/Product/Websites-Web-Design-Unit-1-Building-Your-First-Website-Year-7-Grade-7-17047001
+
+## Pinterest pins — wave 4 (posted 2026-09-30, live — verified individually via each pin's own page, title + outbound TPT link confirmed)
+
+New angles for the fourth batch — different from earlier waves (generic promos, CSS lesson, Term 3 planning, accessibility, non-specialist). Pivots to how the web works, HTML structure, and page layout.
+
+### Pin 1 (hook — how the web works)
+**Title** (62 chars): How Does a Website Actually Load? Teach the Web From the Start
+
+**Description**: Browsers, servers, and requests — a plain-language first lesson that shows Year 7 students what happens when they type a web address. Part of a complete 7-lesson Web Design unit with editable slides, workbook, and assessment pack. #webdesign #digitaltechnologies #computerscience #y7
+
+**Link**: https://www.teacherspayteachers.com/Product/Websites-Web-Design-Unit-1-Building-Your-First-Website-Year-7-Grade-7-17047001
+
+### Pin 2 (standout lesson — HTML)
+**Title** (59 chars): Students Build Their First Web Page: HTML Basics for Year 7
+
+**Description**: Structure a real web page with headings, paragraphs, images, links, and lists — step-by-step, no prior coding needed for you or your students. Ready-to-teach lessons from a full 7-lesson unit with workbook and rubric. #html #teacherspayteachers #digitaltechnologies #middleschoolcs
+
+**Link**: https://www.teacherspayteachers.com/Product/Websites-Web-Design-Unit-1-Building-Your-First-Website-Year-7-Grade-7-17047001
+
+### Pin 3 (standout lesson — layout)
+**Title** (62 chars): Page Layout Made Simple: Positioning & Structure for Beginners
+
+**Description**: Layout is where beginner websites fall apart — this lesson gives students a clear way to position and structure content on the page. Part of a complete 7-lesson Web Design unit with slides, workbook, and assessment pack. #webdesign #digitaltech #y7 #computerscience
+
+**Link**: https://www.teacherspayteachers.com/Product/Websites-Web-Design-Unit-1-Building-Your-First-Website-Year-7-Grade-7-17047001
