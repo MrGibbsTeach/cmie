@@ -18,7 +18,7 @@ standalone lesson (not one that depends on earlier lessons to make sense).
 - [x] year7_orientation_unit1 — Lesson 4 (Passwords, Privacy, and Protecting Your Information) — 2026-09-11, **TPT finished 2026-09-21** (was blocked on a missing thumbnail, generated it and published — https://www.teacherspayteachers.com/Product/Passwords-Privacy-and-Protecting-Your-Information-Lesson-4-FREE-Sample-17708696)
 - [x] year7_networks_hardware_unit1 — Lesson 4 (How Data Travels Across a Network) — 2026-09-18, **TPT finished 2026-09-21** (same missing-thumbnail fix — https://www.teacherspayteachers.com/Product/How-Data-Travels-Across-a-Network-Lesson-4-FREE-Sample-Networks-Hardware-17708703)
 - [x] year7_data_representation_unit1 — Lesson 5 (Images as Data: Pixels and Bitmaps) — 2026-09-25, TES live (resource 13586837); TPT blocked, `TPT_SESSION_JSON` expired, accepted platform limit, not retried — a human needs to run `python publish_tpt.py --save-session` then `python publish_lead_magnets.py --unit year7_data_representation_unit1 --lesson 5 --platform tpt`
-- [ ] year7_spreadsheets_unit1 — Lesson 4 (Charts and Graphs: Visualizing Data)
+- [x] year7_spreadsheets_unit1 — Lesson 4 (Charts and Graphs: Visualizing Data) — 2026-10-02, TES live (resource 13593750); TPT blocked (no valid session, accepted platform limit, not retried) — a human needs to run `python publish_tpt.py --save-session` then `python publish_lead_magnets.py --unit year7_spreadsheets_unit1 --lesson 4 --platform tpt`
 - [ ] year7_robotics_physical_computing_unit1 — Lesson 4 (Using Sensor Data to Make Decisions)
 - [ ] year7_ux_design_unit1 — Lesson 6 (Accessibility and Inclusive Design)
 - [ ] year7_databases_unit1 — Lesson 5 (Asking Questions with Queries: Sorting, Filtering, and Searching)
